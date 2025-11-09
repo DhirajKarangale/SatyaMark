@@ -1,0 +1,15 @@
+python-dotenv
+numpy
+requests
+httpx
+huggingface-hub
+langchain-core
+langchain-huggingface
+transformers
+tqdm
+pydantic
+orjson
+PyYAML
+tenacity
+regex
+langdetect

@@ -1,0 +1,32 @@
+[
+    {
+        "name": "llama3",
+        "model_id": "meta-llama/Meta-Llama-3-8B-Instruct",
+        "task": "conversational",
+        "provider": "auto",
+        "do_sample": false,
+        "temperature": 0.3,
+        "max_new_tokens": 512,
+        "repetition_penalty": 1.03
+    },
+    {
+        "name": "mistral",
+        "model_id": "mistralai/Mistral-7B-Instruct-v0.2",
+        "task": "conversational",
+        "provider": "auto",
+        "do_sample": false,
+        "temperature": 0.3,
+        "max_new_tokens": 512,
+        "repetition_penalty": 1.03
+    },
+    {
+        "name": "phi3",
+        "model_id": "microsoft/Phi-3-mini-4k-instruct",
+        "task": "text-generation",
+        "provider": "auto",
+        "do_sample": false,
+        "temperature": 0.3,
+        "max_new_tokens": 512,
+        "repetition_penalty": 1.03
+    }
+]

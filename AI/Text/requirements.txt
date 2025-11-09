@@ -1,0 +1,7 @@
+python-dotenv
+langdetect
+langchain-core
+langchain-huggingface
+huggingface_hub
+transformers
+argparse

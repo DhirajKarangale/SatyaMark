@@ -1,7 +1,8 @@
 Create & activate a virtual environment
 
-python -m venv venv
-.\venv\Scripts\Activate.ps1
+python -m venv .venv
+
+.\venv\Scripts\activate
 
 Install dependencies
 pip install -r requirements.txt

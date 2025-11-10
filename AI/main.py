@@ -14,5 +14,5 @@ if __name__ == "__main__":
 
     # print("\nSummarize:", summarize_text(statement))
     # print("\nUnverifiable:", check_unverifiable(statement3))
-    print("\nFact:", check_fact(statement5))
-    print("\n\n")
+    print("\nFact:", check_fact(statement4))
+    print("\n")

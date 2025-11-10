@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class Marks(Enum):
     CORRECT = "Correct"
     INCORRECT = "Incorrect"
@@ -7,9 +8,10 @@ class Marks(Enum):
     AI_GENERATED = "AI-Generated"
     PENDING = "Pending"
     UNVERIFIABLE = "Unverifiable"
+    VERIFIABLE = "VERIFIABLE"
 
     def __str__(self):
-        return self.value  
+        return self.value
 
     def __repr__(self):
-        return self.value  
+        return self.value

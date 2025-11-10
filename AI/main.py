@@ -1,15 +1,13 @@
 from connect import connect_llms, get_llm
-from text_factcheck import fact_check
+from text_fact import check_fact
 from text_summarize import summarize_text
-
+from text_unverifiable import check_unverifiable
 
 if __name__ == "__main__":
     llms = connect_llms()
 
-    # summary = summarize_text(
-    #     "Le rapport explique la baisse des ventes au T2 et propose trois actions pour le T3."
-    # )
-    # print("Summary:\n", summary)
+    statement = "John cena is my favourite wrestler"
 
-    fact = fact_check("I Love mango")
-    print("Fact:\n", fact)
+    # print("Summarize:", summarize_text(statement))
+    print("\nUnverifiable:", check_unverifiable(statement))
+    # print("\nFact:", check_fact(statement))

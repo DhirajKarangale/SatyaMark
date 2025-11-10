@@ -8,8 +8,11 @@ class Marks(Enum):
     PENDING = "Pending"
     UNVERIFIABLE = "Unverifiable"
 
+    VERIFIABLE = "Verifiable"
+    NOTFOUND = "NotFound"
+
     def __str__(self):
-        return self.value  
+        return self.value
 
     def __repr__(self):
-        return self.value  
+        return self.value

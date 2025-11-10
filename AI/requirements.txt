@@ -3,7 +3,9 @@ numpy
 requests
 httpx
 huggingface-hub
+langchain
 langchain-core
+langchain_classic
 langchain-huggingface
 transformers
 tqdm

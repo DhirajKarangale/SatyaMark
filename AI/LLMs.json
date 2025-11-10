@@ -20,13 +20,83 @@
         "repetition_penalty": 1.03
     },
     {
-        "name": "phi3",
-        "model_id": "microsoft/Phi-3-mini-4k-instruct",
+        "name": "deepseek_r1",
+        "model_id": "deepseek-ai/DeepSeek-R1",
+        "task": "conversational",
+        "provider": "auto",
+        "do_sample": false,
+        "temperature": 0.2,
+        "max_new_tokens": 512,
+        "repetition_penalty": 1.05
+    },
+    {
+        "name": "deepseek_v3",
+        "model_id": "deepseek-ai/DeepSeek-V3",
+        "task": "conversational",
+        "provider": "auto",
+        "do_sample": false,
+        "temperature": 0.2,
+        "max_new_tokens": 512,
+        "repetition_penalty": 1.05
+    },
+    {
+        "name": "gpt_oss_20b",
+        "model_id": "openai/gpt-oss-20b",
+        "task": "conversational",
+        "provider": "auto",
+        "do_sample": false,
+        "temperature": 0.3,
+        "max_new_tokens": 512,
+        "repetition_penalty": 1.05
+    },
+    {
+        "name": "flux_dev",
+        "model_id": "black-forest-labs/FLUX.1-dev",
         "task": "text-generation",
         "provider": "auto",
         "do_sample": false,
         "temperature": 0.3,
         "max_new_tokens": 512,
-        "repetition_penalty": 1.03
+        "repetition_penalty": 1.05
+    },
+    {
+        "name": "hermes",
+        "model_id": "NousResearch/Hermes-3-Llama-3.1-8B",
+        "task": "conversational",
+        "provider": "auto",
+        "do_sample": false,
+        "temperature": 0.2,
+        "max_new_tokens": 512,
+        "repetition_penalty": 1.04
+    },
+    {
+        "name": "qwen2_5",
+        "model_id": "Qwen/Qwen2.5-14B-Instruct",
+        "task": "conversational",
+        "provider": "auto",
+        "do_sample": false,
+        "temperature": 0.2,
+        "max_new_tokens": 512,
+        "repetition_penalty": 1.04
+    },
+    {
+        "name": "openchat",
+        "model_id": "openchat/openchat-3.5",
+        "task": "conversational",
+        "provider": "auto",
+        "do_sample": false,
+        "temperature": 0.25,
+        "max_new_tokens": 512,
+        "repetition_penalty": 1.04
+    },
+    {
+        "name": "minicheck",
+        "model_id": "BespokeLabs/Bespoke-MiniCheck-7B",
+        "task": "text-generation",
+        "provider": "auto",
+        "do_sample": false,
+        "temperature": 0.2,
+        "max_new_tokens": 512,
+        "repetition_penalty": 1.05
     }
 ]

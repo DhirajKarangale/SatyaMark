@@ -57,25 +57,30 @@ def check_unverifiable(text: str):
         r"<THINK>.*?</THINK>", "", raw_response, flags=re.DOTALL
     ).strip()
 
-    print(raw_response)
+    json_match = re.search(r"\{[\s\S]*?\}", raw_response)
+    classification, reason = "", ""
 
-    try:
-        match = re.search(r"\{.*\}", raw_response, re.DOTALL)
-        if match:
-            parsed = json.loads(match.group(0))
+    if json_match:
+        json_str = json_match.group(0)
+        try:
+            parsed = json.loads(json_str)
             classification = parsed.get("classification", "").strip().upper()
             reason = parsed.get("reason", "").strip()
-        else:
-            classification = raw_response.strip().upper()
-            reason = ""
-    except Exception:
-        classification = raw_response.strip().upper()
-        reason = ""
-
-    if "UNVERIFIABLE" in classification:
-        mark = Marks.UNVERIFIABLE
+        except json.JSONDecodeError:
+            cls_match = re.search(
+                r'"?classification"?\s*[:=]\s*"?(\w+)"?', json_str, re.I
+            )
+            rsn_match = re.search(r'"?reason"?\s*[:=]\s*"?([^"}]+)"?', json_str, re.I)
+            if cls_match:
+                classification = cls_match.group(1).upper()
+            if rsn_match:
+                reason = rsn_match.group(1).strip()
     else:
-        mark = Marks.VERIFIABLE
+        classification = (
+            "UNVERIFIABLE" if "UNVERIFIABLE" in raw_response.upper() else "VERIFIABLE"
+        )
+
+    mark = Marks.UNVERIFIABLE if "UNVERIFIABLE" in classification else Marks.VERIFIABLE
 
     return {
         "mark": mark,

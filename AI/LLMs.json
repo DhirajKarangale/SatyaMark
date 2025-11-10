@@ -88,5 +88,15 @@
         "temperature": 0.25,
         "max_new_tokens": 512,
         "repetition_penalty": 1.04
+    },
+    {
+        "name": "minicheck",
+        "model_id": "BespokeLabs/Bespoke-MiniCheck-7B",
+        "task": "text-generation",
+        "provider": "auto",
+        "do_sample": false,
+        "temperature": 0.2,
+        "max_new_tokens": 512,
+        "repetition_penalty": 1.05
     }
 ]

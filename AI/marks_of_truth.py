@@ -8,7 +8,9 @@ class Marks(Enum):
     AI_GENERATED = "AI-Generated"
     PENDING = "Pending"
     UNVERIFIABLE = "Unverifiable"
-    VERIFIABLE = "VERIFIABLE"
+
+    VERIFIABLE = "Verifiable"
+    NOTFOUND = "NotFound"
 
     def __str__(self):
         return self.value

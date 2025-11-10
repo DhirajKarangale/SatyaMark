@@ -1,6 +1,6 @@
 from enum import Enum
 
-class Verdict(Enum):
+class Marks(Enum):
     CORRECT = "Correct"
     INCORRECT = "Incorrect"
     FIRST_TIME = "First-Time"

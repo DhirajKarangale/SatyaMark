@@ -45,7 +45,7 @@ def connect_llms():
         connected_llms[cfg["name"]] = llm
 
     _connected_llms = connected_llms
-    print(f"{len(_connected_llms)} LLMs connected successfully - ",  list(_connected_llms.keys()))
+    print(f"{len(_connected_llms)} LLMs connected successfully - ", list(_connected_llms.keys()))
     return _connected_llms
 
 

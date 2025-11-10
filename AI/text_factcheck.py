@@ -1,12 +1,12 @@
+import json, re
 from connect import get_llm
-from verdicts import Verdict
+from marks_of_truth import Marks
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-import json, re
 
 llm = get_llm("deepseek_r1")
 
-prompt_template = """
+prompt_template_check_unverifiable = """
 You are a logical reasoning assistant. Your task is to decide whether a statement is **VERIFIABLE** or **UNVERIFIABLE**, and briefly explain why if it is UNVERIFIABLE.
 
 ### Definitions:
@@ -44,17 +44,20 @@ Respond **strictly** in this JSON format:
 Do not include any explanation, chain-of-thought, or tags like <THINK>.
 """
 
-prompt = ChatPromptTemplate.from_template(prompt_template)
+prompt_check_unverifiable = ChatPromptTemplate.from_template(
+    prompt_template_check_unverifiable
+)
 output_parser = StrOutputParser()
 
 
 def check_unverifiable(text: str):
-    formatted_prompt = prompt.format(text=text)
+    formatted_prompt = prompt_check_unverifiable.format(text=text)
     chain = llm | output_parser
     raw_response = chain.invoke(formatted_prompt).strip()
 
-    # --- Clean out DeepSeek's reasoning block if present ---
-    raw_response = re.sub(r"<THINK>.*?</THINK>", "", raw_response, flags=re.DOTALL).strip()
+    raw_response = re.sub(
+        r"<THINK>.*?</THINK>", "", raw_response, flags=re.DOTALL
+    ).strip()
 
     try:
         match = re.search(r"\{.*\}", raw_response, re.DOTALL)
@@ -69,11 +72,23 @@ def check_unverifiable(text: str):
         classification = raw_response.strip().upper()
         reason = ""
 
+    if "UNVERIFIABLE" in classification:
+        verdict = Marks.UNVERIFIABLE
+    else:
+        verdict = Marks.CORRECT  
+
     return {
-        "verdict": classification,
-        "reason": reason if classification == "UNVERIFIABLE" else ""
+        "verdict": verdict,
+        "reason": reason if verdict == Marks.UNVERIFIABLE else "",
     }
 
 
+def check_statement(text: str):
+    return Marks.CORRECT
+
+
 def fact_check(text: str):
-    return check_unverifiable(text)
+    unverifiable = check_unverifiable(text)
+    if unverifiable["verdict"] == Marks.UNVERIFIABLE:
+        return unverifiable
+    return {"verdict": Marks.CORRECT, "reason": ""}

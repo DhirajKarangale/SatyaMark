@@ -1,6 +1,6 @@
 from enum import Enum
 
-class Verdict(Enum):
+class Marks(Enum):
     CORRECT = "Correct"
     INCORRECT = "Incorrect"
     FIRST_TIME = "First-Time"
@@ -9,4 +9,7 @@ class Verdict(Enum):
     UNVERIFIABLE = "Unverifiable"
 
     def __str__(self):
-        return self.name
+        return self.value  
+
+    def __repr__(self):
+        return self.value  

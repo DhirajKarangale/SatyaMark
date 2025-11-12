@@ -15,10 +15,13 @@ based on well-established scientific, historical, or public information.
 If the statement cannot be verified (for example, it refers to future, local, or private data),
 classify it as **NotFound**.
 
+Additionally, provide your **confidence (0–100)** in how sure you are that your mark is accurate.
+
 Respond strictly in this JSON format:
 {{
   "mark": "Correct" or "Incorrect" or "NotFound",
-  "reason": "<short factual reason>"
+  "reason": "<short factual reason>",
+  "accuracy": <integer between 0 and 100>
 }}
 
 Statement: "{text}"
@@ -52,7 +55,7 @@ def check_fact(text: str):
     ).strip()
 
     json_match = re.search(r"\{[\s\S]*?\}", raw_response)
-    mark_value, reason = "", ""
+    mark_value, reason, accuracy = "", "", 0
 
     if json_match:
         json_str = json_match.group(0)
@@ -60,13 +63,17 @@ def check_fact(text: str):
             parsed = json.loads(json_str)
             mark_value = parsed.get("mark", "").strip().lower()
             reason = parsed.get("reason", "").strip()
+            accuracy = int(parsed.get("accuracy", 0))
         except json.JSONDecodeError:
             m_match = re.search(r'"?mark"?\s*[:=]\s*"?(\w+)"?', json_str, re.I)
             r_match = re.search(r'"?reason"?\s*[:=]\s*"?([^"}]+)"?', json_str, re.I)
+            a_match = re.search(r'"?accuracy"?\s*[:=]\s*"?(\d+)"?', json_str, re.I)
             if m_match:
                 mark_value = m_match.group(1).lower()
             if r_match:
                 reason = r_match.group(1).strip()
+            if a_match:
+                accuracy = int(a_match.group(1))
     else:
         lower = raw_response.lower()
         if "correct" in lower:
@@ -75,6 +82,11 @@ def check_fact(text: str):
             mark_value = "incorrect"
         else:
             mark_value = "notfound"
+        accuracy = 50  
+
+    if not isinstance(accuracy, int):
+        accuracy = 0
+    accuracy = max(0, min(accuracy, 100))
 
     if mark_value == "correct":
         mark = Marks.CORRECT
@@ -83,4 +95,8 @@ def check_fact(text: str):
     else:
         mark = Marks.NOTFOUND
 
-    return {"mark": mark, "reason": reason}
+    return {
+        "mark": mark,
+        "reason": reason,
+        "accuracy": accuracy,
+    }

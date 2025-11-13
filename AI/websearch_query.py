@@ -32,7 +32,7 @@ prompt = ChatPromptTemplate.from_template(prompt_template)
 output_parser = StrOutputParser()
 
 
-def search_query(text: str):
+def get_query(text: str):
     response = (prompt | llm | output_parser).invoke({"text": text})
 
     raw = str(response)
@@ -43,7 +43,7 @@ def search_query(text: str):
     if not lines:
         return ""
 
-    final = lines[-1]  
+    final = lines[-1]
     final = final.strip().strip('"').strip("'").strip("`")
     final = re.sub(r"\s+", " ", final).strip()
 

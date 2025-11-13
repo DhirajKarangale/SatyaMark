@@ -48,7 +48,3 @@ def get_urls(query: str):
             break
 
     return urls
-
-
-urls = get_urls("what were the actual casualties in the New Delhi bomb blast")
-print(urls)

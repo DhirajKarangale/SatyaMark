@@ -2,6 +2,7 @@ from connect import connect_llms
 from text_fact import check_fact
 from text_summarize import summarize_text
 from text_unverifiable import check_unverifiable
+from text_websearch import web_search;
 
 if __name__ == "__main__":
     # llms = connect_llms()
@@ -15,5 +16,6 @@ if __name__ == "__main__":
 
     # print("\nSummarize:", summarize_text(statement))
     # print("\nUnverifiable:", check_unverifiable(statement3))
-    print("\nFact:", check_fact(statement6))
+    # print("\nFact:", check_fact(statement6))
+    print("\nWebSearch:", web_search(statement6))
     print("\n")

@@ -24,7 +24,6 @@ def connect_llms():
     connected_llms = {}
 
     for cfg in LLMs:
-        # print(f"Connecting to {cfg['name']} ({cfg['model_id']}) ...")
 
         endpoint = HuggingFaceEndpoint(
             task=cfg["task"],

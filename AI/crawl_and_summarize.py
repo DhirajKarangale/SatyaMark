@@ -98,11 +98,18 @@ def chunk_text(docs, chunk_size=2500, chunk_overlap=200):
 
 # ---------- Pipeline ----------
 def crawl_and_summarize(query: str, use_js=False, k=5):
-    if not os.getenv("HUGGINGFACEHUB_API_TOKEN"):
-        raise RuntimeError("HUGGINGFACEHUB_API_TOKEN missing (set in .env).")
+    if not os.getenv("HF_TOKEN"):
+        raise RuntimeError("HF_TOKEN missing (set in .env).")
 
     print(f"[search] {query}")
-    urls = search_links(query, k=k)
+    # urls = search_links(query, k=k)
+
+    urls = [
+        "https://www.reuters.com/world/india/what-do-we-know-about-delhi-car-blast-that-killed-eight-people-2025-11-11/",
+        "https://www.nytimes.com/2025/11/11/world/asia/india-delhi-explosion-terror.html",
+        "https://www.ndtv.com/india-news/red-fort-blast-delhi-blast-delhi-vs-meerut-red-fort-blast-victims-family-fight-over-place-of-burial-9619250",
+    ]
+
     print(f"[found] {len(urls)} urls")
     for u in urls:
         print(" -", u)

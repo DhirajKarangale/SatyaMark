@@ -4,7 +4,7 @@ from text_summarize import summarize_text
 from text_unverifiable import check_unverifiable
 from text_websearch import web_search
 from websearch_query import get_query
-from websearch_urls import get_urls, test
+from websearch_content import get_content
 
 if __name__ == "__main__":
     # llms = connect_llms()
@@ -23,7 +23,6 @@ if __name__ == "__main__":
     # print("\nFact:", check_fact(statement6))
     # print("\nWebSearch:", web_search(statement6))
     # print("\nQuery:", get_query(statement7))
-    # print("\nURLS:", test(statement8))
+    print("\Web Content:", get_content(statement8))
 
-    test(statement8)
     print("\n")

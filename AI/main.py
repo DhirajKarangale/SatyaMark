@@ -1,7 +1,6 @@
 from connect import connect_llms
 from text_fact import check_fact
 from text_summarize import summarize_text
-from text_subjective import check_subjective
 from websearch_query import get_query
 from websearch_content import get_content
 
@@ -17,11 +16,11 @@ if __name__ == "__main__":
     statement7 = "Africans involved in Delhi bomb blast"
     statement8 = "what were the actual casualties in the New Delhi bomb blast"
     statement9 = "I am big fan of Iron Man Movie"
+    statement10 = "15 people died in Delhi bomb blast this month"
 
     # print("\nSummarize:", summarize_text(statement))
-    print("\nFact:", check_fact(statement5))
-    # print("\nSubjective:", check_subjective(statement3))
+    # print("\nFact:", check_fact(statement5))
     # print("\nQuery:", get_query(statement7))
-    # print("\nWeb Content:", get_content(statement8))
+    print("\nWeb Content:", get_content(statement1))
 
     print("\n")

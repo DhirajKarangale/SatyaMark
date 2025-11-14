@@ -7,27 +7,58 @@ from langchain_core.output_parsers import StrOutputParser
 llm = get_llm("deepseek_r1")
 
 prompt_template = """
-You are a factual verification assistant.
+You are a classification and fact-verification assistant.
 
-Your task is to determine whether the following statement is **factually correct** or **incorrect**
-based on well-established scientific, historical, or public information.
+Follow the steps IN ORDER, and do not skip or mix them.
 
-If the statement cannot be verified (for example, it refers to future, local, or private data),
-classify it as **Insufficient**.
+---
 
-Additionally, provide your **confidence (0-100)** in how sure you are that your mark is accurate.
+### STEP 1 — Subjectivity Check (MANDATORY FIRST STEP)
 
-Respond strictly in this JSON format:
+Determine whether the statement is **SUBJECTIVE** or **VERIFIABLE**.
+
+A statement is **SUBJECTIVE** if:
+- It expresses personal preference (“favorite”, “best”, “I like…”),
+- It contains value judgments (“amazing”, “worst”, “greatest”),
+- It is opinion-based, emotional, or not objectively measurable.
+
+If the statement is SUBJECTIVE:
+    RETURN this JSON immediately:
+    {{
+      "type": "SUBJECTIVE",
+      "mark": "Subjective",
+      "reason": "<explain why it is subjective>",
+      "accuracy": <0-100>
+    }}
+DO NOT proceed to factual verification.
+
+---
+
+### STEP 2 — Factual Verification (ONLY IF VERIFIABLE)
+
+If the statement is VERIFIABLE:
+- Check whether it is factually correct using well-established, objective public information.
+
+Classify as:
+- "Correct"
+- "Incorrect"
+- "Insufficient" (future claims, unknown private info, unverifiable details)
+
+Return JSON:
 {{
+  "type": "VERIFIABLE",
   "mark": "Correct" or "Incorrect" or "Insufficient",
-  "reason": "<short factual reason>",
-  "accuracy": <integer between 0 and 100>
+  "reason": "<brief factual justification>",
+  "accuracy": <0-100>
 }}
+
+---
 
 Statement: "{text}"
 
-Do not include chain-of-thought, reasoning tags, or any text outside JSON.
+Respond with ONLY valid JSON.
 """
+
 
 prompt = ChatPromptTemplate.from_template(prompt_template)
 output_parser = StrOutputParser()
@@ -80,7 +111,7 @@ def check_fact(text: str):
             mark_value = "correct"
         elif "incorrect" in lower:
             mark_value = "incorrect"
-        accuracy = 50  
+        accuracy = 50
 
     if not isinstance(accuracy, int):
         accuracy = 0
@@ -90,6 +121,8 @@ def check_fact(text: str):
         mark = Marks.CORRECT
     elif mark_value == "incorrect":
         mark = Marks.INCORRECT
+    elif mark_value == "subjective":
+        mark = Marks.SUBJECTIVE
     else:
         mark = Marks.INSUFFICIENT
 

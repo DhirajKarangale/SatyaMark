@@ -8,8 +8,7 @@ load_dotenv()
 with open("LLMs.json", "r") as file:
     LLMs = json.load(file)
 
-# _connected_llms = None
-_connected_llms = {}
+_connected_llms = None
 
 
 def connect_llms():
@@ -52,35 +51,8 @@ def connect_llms():
     return _connected_llms
 
 
-# def get_llm(name: str):
-#     llms = connect_llms()
-#     if name not in llms:
-#         raise ValueError(f"LLM '{name}' not found. Available: {list(llms.keys())}")
-#     return llms[name]
-
-
 def get_llm(name: str):
-    if name in _connected_llms:
-        return _connected_llms[name]
-
-    cfg = next((c for c in LLMs if c["name"] == name), None)
-    if not cfg:
-        raise ValueError(f"LLM '{name}' not found in LLMs.json")
-
-    hf_token = os.getenv("HF_TOKEN")
-    endpoint = HuggingFaceEndpoint(
-        task=cfg["task"],
-        repo_id=cfg["model_id"],
-        provider=cfg["provider"],
-        do_sample=cfg["do_sample"],
-        temperature=cfg["temperature"],
-        max_new_tokens=cfg["max_new_tokens"],
-        repetition_penalty=cfg["repetition_penalty"],
-        return_full_text=False,
-        huggingfacehub_api_token=hf_token,
-    )
-
-    llm = ChatHuggingFace(llm=endpoint) if cfg["task"] == "conversational" else endpoint
-    _connected_llms[name] = llm
-    print(f"Connected to LLM: {name}")
-    return llm
+    llms = connect_llms()
+    if name not in llms:
+        raise ValueError(f"LLM '{name}' not found. Available: {list(llms.keys())}")
+    return llms[name]

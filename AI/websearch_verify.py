@@ -14,10 +14,13 @@ prompt = ChatPromptTemplate.from_template(prompt_template)
 output_parser = StrOutputParser()
 
 
-def web_search(text: str):
+def verify(statement, content):
+    mark = Marks.CORRECT  # Marks.CORRECT | Marks.INCORRECT | Marks.UNVERIFIABLE
+    reason = "Exact reason for mark with proof (web urls might be multiple)"
+    accuracy = 98  # Depending all content provided, accuracy for given statement
 
     return {
-        "mark": Marks.CORRECT,
-        "reason": "reason",
-        "accuracy": 100,
+        "mark": mark,
+        "reason": reason,
+        "accuracy": accuracy,
     }

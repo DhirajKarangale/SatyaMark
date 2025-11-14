@@ -89,12 +89,12 @@ def check_unverifiable(text: str):
         classification = (
             "UNVERIFIABLE" if "UNVERIFIABLE" in raw_response.upper() else "VERIFIABLE"
         )
-        accuracy = 70  # default fallback if not provided
+        accuracy = 70
 
     mark = Marks.UNVERIFIABLE if "UNVERIFIABLE" in classification else Marks.VERIFIABLE
 
     return {
         "mark": mark,
         "reason": reason if mark == Marks.UNVERIFIABLE else "",
-        "accuracy": max(0, min(accuracy, 100)),  # clamp to [0, 100]
+        "accuracy": max(0, min(accuracy, 100)),
     }

@@ -2,12 +2,11 @@ from connect import connect_llms
 from text_fact import check_fact
 from text_summarize import summarize_text
 from text_unverifiable import check_unverifiable
-from text_websearch import web_search
 from websearch_query import get_query
 from websearch_content import get_content
 
 if __name__ == "__main__":
-    # llms = connect_llms()
+    llms = connect_llms()
 
     statement1 = "John cena is my favourite wrestler"
     statement2 = "Sun is black"
@@ -21,8 +20,7 @@ if __name__ == "__main__":
     # print("\nSummarize:", summarize_text(statement))
     # print("\nUnverifiable:", check_unverifiable(statement3))
     # print("\nFact:", check_fact(statement6))
-    # print("\nWebSearch:", web_search(statement6))
     # print("\nQuery:", get_query(statement7))
-    print("\Web Content:", get_content(statement8))
+    # print("\nWeb Content:", get_content(statement8))
 
-    print("\n")
+    print("\n") 

@@ -15,7 +15,7 @@ output_parser = StrOutputParser()
 
 
 def verify(statement, content):
-    mark = Marks.CORRECT  # Marks.CORRECT | Marks.INCORRECT | Marks.UNVERIFIABLE
+    mark = Marks.CORRECT  # Marks.CORRECT | Marks.INCORRECT | Marks.SUBJECTIVE
     reason = "Exact reason for mark with proof (web urls might be multiple)"
     accuracy = 98  # Depending all content provided, accuracy for given statement
 

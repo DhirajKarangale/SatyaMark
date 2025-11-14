@@ -7,12 +7,12 @@ from langchain_core.output_parsers import StrOutputParser
 llm = get_llm("deepseek_r1")
 
 prompt_template = """
-You are a logical reasoning assistant. Your task is to decide whether a statement is **VERIFIABLE** or **UNVERIFIABLE**, 
-and briefly explain why if it is UNVERIFIABLE. Also estimate your **confidence (accuracy)** in this classification from 0 to 100%.
+You are a logical reasoning assistant. Your task is to decide whether a statement is **VERIFIABLE** or **SUBJECTIVE**, 
+and briefly explain why if it is SUBJECTIVE. Also estimate your **confidence (accuracy)** in this classification from 0 to 100%.
 
 ### Definitions:
 - **VERIFIABLE** → The statement makes an objective claim that can be confirmed or disproven using facts, evidence, data, or observation.  
-- **UNVERIFIABLE** → The statement is based on personal opinion, belief, feeling, or vague/generalized judgment that cannot be tested objectively.
+- **SUBJECTIVE** → The statement is based on personal opinion, belief, feeling, or vague/generalized judgment that cannot be tested objectively.
 
 ### Examples:
 1. "The Sun is blue."  
@@ -21,7 +21,7 @@ and briefly explain why if it is UNVERIFIABLE. Also estimate your **confidence (
    → **Accuracy:** 95
 
 2. "John Cena is my favourite wrestler."  
-   → **Classification:** UNVERIFIABLE  
+   → **Classification:** SUBJECTIVE  
    → **Reason:** It's a personal preference, not an objective fact.  
    → **Accuracy:** 100
 
@@ -31,7 +31,7 @@ and briefly explain why if it is UNVERIFIABLE. Also estimate your **confidence (
    → **Accuracy:** 90
 
 4. "Undertaker is the best wrestler."  
-   → **Classification:** UNVERIFIABLE  
+   → **Classification:** SUBJECTIVE  
    → **Reason:** “Best” is subjective and depends on personal opinion.  
    → **Accuracy:** 98
 
@@ -42,8 +42,8 @@ Now analyze the following statement:
 
 Respond **strictly** in this JSON format:
 {{
-  "classification": "VERIFIABLE" or "UNVERIFIABLE",
-  "reason": "<short reason only if UNVERIFIABLE, otherwise empty>",
+  "classification": "VERIFIABLE" or "SUBJECTIVE",
+  "reason": "<short reason only if SUBJECTIVE, otherwise empty>",
   "accuracy": <integer from 0 to 100>
 }}
 Do not include any explanation, chain-of-thought, or tags like <THINK>.
@@ -53,7 +53,7 @@ prompt = ChatPromptTemplate.from_template(prompt_template)
 output_parser = StrOutputParser()
 
 
-def check_unverifiable(text: str):
+def check_subjective(text: str):
     formatted_prompt = prompt.format(text=text)
     chain = llm | output_parser
     raw_response = chain.invoke(formatted_prompt).strip()
@@ -87,14 +87,14 @@ def check_unverifiable(text: str):
                 accuracy = int(acc_match.group(1))
     else:
         classification = (
-            "UNVERIFIABLE" if "UNVERIFIABLE" in raw_response.upper() else "VERIFIABLE"
+            "SUBJECTIVE" if "SUBJECTIVE" in raw_response.upper() else "VERIFIABLE"
         )
         accuracy = 70
 
-    mark = Marks.UNVERIFIABLE if "UNVERIFIABLE" in classification else Marks.VERIFIABLE
+    mark = Marks.SUBJECTIVE if "SUBJECTIVE" in classification else Marks.PENDING
 
     return {
         "mark": mark,
-        "reason": reason if mark == Marks.UNVERIFIABLE else "",
+        "reason": reason if mark == Marks.SUBJECTIVE else "",
         "accuracy": max(0, min(accuracy, 100)),
     }

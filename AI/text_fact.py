@@ -13,13 +13,13 @@ Your task is to determine whether the following statement is **factually correct
 based on well-established scientific, historical, or public information.
 
 If the statement cannot be verified (for example, it refers to future, local, or private data),
-classify it as **NotFound**.
+classify it as **Insufficient**.
 
-Additionally, provide your **confidence (0–100)** in how sure you are that your mark is accurate.
+Additionally, provide your **confidence (0-100)** in how sure you are that your mark is accurate.
 
 Respond strictly in this JSON format:
 {{
-  "mark": "Correct" or "Incorrect" or "NotFound",
+  "mark": "Correct" or "Incorrect" or "Insufficient",
   "reason": "<short factual reason>",
   "accuracy": <integer between 0 and 100>
 }}
@@ -80,8 +80,6 @@ def check_fact(text: str):
             mark_value = "correct"
         elif "incorrect" in lower:
             mark_value = "incorrect"
-        else:
-            mark_value = "notfound"
         accuracy = 50  
 
     if not isinstance(accuracy, int):
@@ -93,7 +91,7 @@ def check_fact(text: str):
     elif mark_value == "incorrect":
         mark = Marks.INCORRECT
     else:
-        mark = Marks.NOTFOUND
+        mark = Marks.INSUFFICIENT
 
     return {
         "mark": mark,

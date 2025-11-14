@@ -1,8 +1,7 @@
 from connect import connect_llms
 from text_fact import check_fact
 from text_summarize import summarize_text
-from websearch_query import get_query
-from websearch_content import get_content
+from text_websearch import get_content
 
 if __name__ == "__main__":
     llms = connect_llms()
@@ -20,7 +19,6 @@ if __name__ == "__main__":
 
     # print("\nSummarize:", summarize_text(statement))
     # print("\nFact:", check_fact(statement5))
-    # print("\nQuery:", get_query(statement7))
-    print("\nWeb Content:", get_content(statement1))
+    print("\nWeb Content:", get_content(statement2))
 
     print("\n")

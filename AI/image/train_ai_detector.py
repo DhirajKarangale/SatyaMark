@@ -9,14 +9,10 @@ Outputs:
     - metrics printed to console and a small CSV with embeddings optionally.
 """
 
-import os
-import argparse
 from pathlib import Path
 from PIL import Image
 import numpy as np
-from tqdm import tqdm
 import joblib
-import math
 
 import torch
 from transformers import CLIPProcessor, CLIPModel

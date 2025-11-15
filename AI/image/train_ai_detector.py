@@ -139,14 +139,13 @@ def main(args):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--ai_dir", required=True, help="Folder with AI images")
-    parser.add_argument("--real_dir", required=True, help="Folder with real images")
-    parser.add_argument(
-        "--out", default="ai_detector_lr_model.pkl", help="Output joblib file"
-    )
-    parser.add_argument("--batch_size", type=int, default=16)
-    parser.add_argument("--ai_limit", type=int, default=None)
-    parser.add_argument("--real_limit", type=int, default=None)
-    args = parser.parse_args()
+    args = type("Args", (), {})()
+    args.ai_dir = "./data/ai"
+    args.real_dir = "./data/real"
+    args.out = "ai_detector_lr_model.pkl"
+    args.batch_size = 16
+    args.ai_limit = None
+    args.real_limit = None
+
     main(args)
+

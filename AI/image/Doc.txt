@@ -1,3 +1,0 @@
-python train_ai_detector.py --ai_dir data/ai --real_dir data/real --out ai_detector_lr_model.pkl
-
-python train_ai_detector.py --ai_dir data/ai --real_dir data/real

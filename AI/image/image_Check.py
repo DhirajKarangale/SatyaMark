@@ -120,5 +120,5 @@ def detect_ai(image_path):
 # RUN TEST
 # ========================================================
 if __name__ == "__main__":
-    test_img = "Logo.JPG"  # set the correct path
+    test_img = "./Test/R3.jpeg"  # set the correct path
     print(detect_ai(test_img))

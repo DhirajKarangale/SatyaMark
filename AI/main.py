@@ -17,14 +17,15 @@ if __name__ == "__main__":
     statement8 = "what were the actual casualties in the New Delhi bomb blast"
     statement9 = "I am big fan of Iron Man Movie"
     statement10 = "15 people died in mumbai bomb blast in 2025"
-    
-    # print("\nSummarize:", summarize_text(statement))
-    # print("\nFact:", check_fact(statement10))
-    # print("\nWeb Content:", get_content(statement10))
-    # val1=get_content(statement10)
-    # print("\nSummarize:", summarize_text(val1))
-    sample_web = [
-        {"url": "https://aljazeera.example/article", "data": "At 6:52pm a powerful blast occurred near the Red Fort; at least 13 people were killed."}
-    ]
-    summary = "A car explosion near the Red Fort in Delhi killed 13 people and injured more than 20."
-    print(f"final {verify_summary_against_web(sample_web,summary)}")
+
+    statement = statement8
+
+    summary = summarize_text(statement)
+    fact = check_fact(summary)
+    webcontent = get_content(summary)
+    webverify = verify_summary_against_web(webcontent, summary)
+
+    # print("\nSummary:", summary)
+    # print("\nFact:", fact)
+    # print("\nWeb Content:", webcontent)
+    print("\nWebverify:", webverify)

@@ -232,7 +232,11 @@ def _call_llm_safe(llm, prompt_text: str, timeout_seconds: Optional[int] = None)
 _VERIFICATION_PROMPT = """You are a precise fact-verification assistant.
 Return ONLY a single JSON object (no prose) with keys:
 - verdict: one of ["SUPPORTED","PARTIAL","CONTRADICTED","NOT_FOUND"]
-- reason: a single short sentence explaining why you chose this verdict
+- reason: a single short sentence explaining why you chose this verdict.The reason must be a user-facing statement of fact — do NOT mention process words
+          like "source", "article", "I checked", "the model", "the prompt", "in the sources",
+          "based on the article", "according to the source", etc.
+          Instead phrase it like: "The claim is false because X." or
+          "The claim is supported: X." Use neutral, direct language.
 - supporting: list of short evidence snippets from ARTICLE that support parts of SUMMARY
 - contradicting: list of short evidence snippets that directly contradict parts of SUMMARY
 - unmatched: list of clauses/phrases from SUMMARY that are not found in ARTICLE

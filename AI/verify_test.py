@@ -9,7 +9,7 @@ from AI.img_forensic.img_forensic_verify import (
 
 connect_llms()
 
-print("\n\n")
+print("\n")
 
 # Text
 statement1 = "John cena is my favourite wrestler"
@@ -31,7 +31,7 @@ statement = statement4
 
 
 
-# Image Forensic
+# Image
 
 AI_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__)))
 TEST_PATH = os.path.join(AI_DIR, "dataset", "test")
@@ -44,9 +44,12 @@ path_ai_2 = os.path.join(TEST_AI_PATH, "5840.jpg")
 path_real_1 = os.path.join(TEST_REAL_PATH, "IMG_20220705_123046.jpg")
 path_real_2 = os.path.join(TEST_REAL_PATH, "PassPort 2.jpeg")
 
+
+# Image Forensic
+
 # print(verify_image(path_ai_1))
 # print(evaluate_img_forensic(TEST_AI_PATH, TEST_REAL_PATH))
 print(verify_image_url("https://picsum.photos/id/1/400/400"))
 
 
-print("\n\n")
+print("\n")

@@ -33,3 +33,11 @@ langchain_huggingface
 langchain_core
 mediapipe
 YOLO
+torchvision
+timm
+scikit-image
+scikit-learn
+joblib
+lightgbm
+exifread
+pandas

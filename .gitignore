@@ -50,6 +50,9 @@ AI/venv/
 
 # Ignore compiled LLM models or large downloaded files if any
 AI/models/
+AI/dataset/
 AI/*.bin
 AI/*.pt
 AI/*.ckpt
+
+AI/img_ml/models/saved_models/

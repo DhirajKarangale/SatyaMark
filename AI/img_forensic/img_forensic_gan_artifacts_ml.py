@@ -427,5 +427,3 @@ def gan_artifacts_ml_analyze(image_path: str) -> Dict[str, Any]:
     # if heatmap is not None:
         # result["gan_artifacts"]["details"]["heatmap_preview"] = heatmap
     return result
-
-

@@ -1,13 +1,16 @@
+import os
 import cv2
 import numpy as np
 from PIL import Image, ImageChops, ImageEnhance
 
+AI_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+ELA_TEMP_PATH = os.path.join(AI_DIR, "img_forensic", "ela_temp.jpg")
 
 def ela_analysis(img_np):
     """Compute Error Level Analysis map on a NumPy (cv2) image."""
     im = Image.fromarray(cv2.cvtColor(img_np, cv2.COLOR_BGR2RGB))
 
-    im.save("ela_temp.jpg", "JPEG", quality=95)
+    im.save(ELA_TEMP_PATH, "JPEG", quality=95)
     ela = ImageChops.difference(im, Image.open("ela_temp.jpg"))
     ela = ImageEnhance.Brightness(ela).enhance(20)
     ela_np = np.array(ela)

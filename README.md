@@ -65,6 +65,7 @@ SatyaMark is an AI-powered, centralized verification service designed to provide
 
      run
      python -m AI.text.text_verify
+     python -m AI.img_forensic.img_forensic_evaluate
 
 2. **Frontend:** Currently empty
 3. **Backend:** Currently empty

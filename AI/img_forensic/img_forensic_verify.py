@@ -18,7 +18,6 @@ path_real_2 = os.path.join(TEST_PATH, "real", "PassPort 2.jpeg")
 
 image_path = path_ai_1
 
-
 watermark_output = watermark_analyze(image_path)
 sensor_output = sensor_fingerprint_analyze(image_path)
 gan_output = gan_artifacts_analyze(image_path)

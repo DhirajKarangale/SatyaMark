@@ -21,12 +21,13 @@ SatyaMark is an AI-powered, centralized verification service designed to provide
    - Create and activate a virtual environment:
    ```bash
    python -m venv venv
-   .\venv\Scripts\activate  # Windows
+   .\AI\venv\Scripts\activate  # Windows
    source venv/bin/activate   # Linux/macOS
    ```
 
    - Install dependencies:
    ```bash
+   ca AI
    pip install -r requirements.txt
    ```
 
@@ -61,6 +62,9 @@ SatyaMark is an AI-powered, centralized verification service designed to provide
      - Only include essential dependencies in `requirements.txt`.
      - Activate the virtual environment before running scripts.
      - LLMs in `LLMs.json` can be freely added or modified.
+
+     run
+     python -m AI.text.text_verify
 
 2. **Frontend:** Currently empty
 3. **Backend:** Currently empty

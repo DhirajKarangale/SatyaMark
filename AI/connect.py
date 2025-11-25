@@ -59,3 +59,6 @@ def get_llm(name: str):
     if name not in llms:
         raise ValueError(f"LLM '{name}' not found. Available: {list(llms.keys())}")
     return llms[name]
+
+
+connect_llms()

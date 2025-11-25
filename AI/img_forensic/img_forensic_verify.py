@@ -17,7 +17,7 @@ from AI.img_forensic.img_forensic_semantic_consistency import (
 from AI.img_forensic.img_forensic_forensic_decision import classify_image
 
 
-def verify_image(image_path: str):
+def verify_img_forensic(image_path: str):
     """Run full forensic pipeline on local image path"""
     try:
         w = watermark_analyze(image_path)
@@ -34,7 +34,7 @@ def verify_image(image_path: str):
         return {"error": str(e)}
 
 
-def verify_image_url(url: str, timeout: int = 10, max_bytes: int = 5 * 1024 * 1024):
+def verify_img_forensic_url(url: str, timeout: int = 10, max_bytes: int = 5 * 1024 * 1024):
     """Validate URL, download image safely, run analysis"""
     try:
         p = urlparse(url)
@@ -68,7 +68,7 @@ def verify_image_url(url: str, timeout: int = 10, max_bytes: int = 5 * 1024 * 10
             except:
                 return {"error": "Downloaded file is not an image"}
 
-        return verify_image(temp_path)
+        return verify_img_forensic(temp_path)
 
     except Exception as e:
         return {"error": str(e)}
@@ -93,7 +93,7 @@ def evaluate_img_forensic(ai_folder: str, real_folder: str):
             img_path = os.path.join(path, file)
             total += 1
 
-            result = verify_image(img_path)
+            result = verify_img_forensic(img_path)
             predicted = result.get("mark", "").upper()
 
             if predicted == expected.upper():

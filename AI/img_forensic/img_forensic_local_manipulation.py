@@ -3,8 +3,9 @@ import cv2
 import numpy as np
 from PIL import Image, ImageChops, ImageEnhance
 
-AI_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-ELA_TEMP_PATH = os.path.join(AI_DIR, "img_forensic", "ela_temp.jpg")
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+ELA_TEMP_PATH = os.path.join(BASE_DIR, "ela_temp.jpg")
+
 
 def ela_analysis(img_np):
     """Compute Error Level Analysis map on a NumPy (cv2) image."""

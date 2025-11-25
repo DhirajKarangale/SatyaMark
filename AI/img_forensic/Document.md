@@ -1,13 +1,7 @@
-
 # Image Forensics Toolkit — Full Documentation
 
 ## Overview
 A comprehensive system for detecting AI-generated vs real images using multi-stage forensic analysis: watermark detection, sensor fingerprinting, GAN artifacts, metadata verification, semantic consistency, and an LLM decision engine.
-
-## Local Usage Guide
-- Run single-image analysis: `python img_forensic.py`
-- Run URL-based analysis: use `analyze_image_from_url(url)`
-- Run dataset evaluation: `python img_forensic_evaluate.py`
 
 ## Architecture
 1. **Watermark Detection** – C2PA, SynthID, SDXL tags.
@@ -29,15 +23,6 @@ A comprehensive system for detecting AI-generated vs real images using multi-sta
 - **img_forensic_forensic_decision.py** – Final classifier using LLM.
 - **img_forensic_url_image_checker.py** – Secure URL → image pipeline.
 - **img_forensic_evaluate.py** – Batch scoring.
-
-## Dataset Structure
-```
-/dataset
-    /train
-    /test
-        /ai
-        /real
-```
 
 ## Final Notes
 This system combines classical forensics + ML + multimodal reasoning to maximize reliability in AI image detection.

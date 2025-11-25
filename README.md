@@ -67,5 +67,11 @@ SatyaMark is an AI-powered, centralized verification service designed to provide
      python -m AI.text.text_verify
      python -m AI.img_forensic.img_forensic_evaluate
 
+     python -m AI.img_ml.fusion.train_fusion
+     python -m AI.img_ml.scripts.make_dataset_csv
+
+     pip install --index-url https://download.pytorch.org/whl/cu121 -- install to this to check GPU
+     python -c "import torch;print(torch.cuda.is_available(), torch.cuda.get_device_name(0))" -- check GPU
+
 2. **Frontend:** Currently empty
 3. **Backend:** Currently empty

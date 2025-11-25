@@ -1,10 +1,11 @@
 import os
 from AI.connect import connect_llms
 from AI.text.text_verify import verify_text
+from AI.img_ml.img_ml_verify import verify_img_ml, evaluate_img_ml, verify_img_ml_url
 from AI.img_forensic.img_forensic_verify import (
-    verify_image,
-    verify_image_url,
+    verify_img_forensic,
     evaluate_img_forensic,
+    verify_img_forensic_url,
 )
 
 connect_llms()
@@ -27,10 +28,6 @@ statement = statement4
 # print(verify_text(statement))
 
 
-
-
-
-
 # Image
 
 AI_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__)))
@@ -46,10 +43,14 @@ path_real_2 = os.path.join(TEST_REAL_PATH, "PassPort 2.jpeg")
 
 
 # Image Forensic
-
-# print(verify_image(path_ai_1))
+# print(verify_img_forensic(path_ai_1))
 # print(evaluate_img_forensic(TEST_AI_PATH, TEST_REAL_PATH))
-print(verify_image_url("https://picsum.photos/id/1/400/400"))
+# print(verify_img_forensic_url("https://picsum.photos/id/1/400/400"))
+
+# Image ML
+# print(verify_img_ml(path_ai_1))
+# print(evaluate_img_ml(TEST_AI_PATH, TEST_REAL_PATH))
+print(verify_img_forensic_url("https://picsum.photos/id/1/400/400"))
 
 
 print("\n")

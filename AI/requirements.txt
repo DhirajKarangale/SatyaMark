@@ -41,3 +41,4 @@ joblib
 lightgbm
 exifread
 pandas
+torchaudio

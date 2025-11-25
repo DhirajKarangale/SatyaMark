@@ -1,4 +1,5 @@
 import sys, os
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import os
@@ -17,11 +18,14 @@ from AI.img_ml.inference.dino import get_dino_embedding
 from AI.img_ml.inference.ghostnet import get_ghostnet_prob
 from AI.img_ml.inference.mantranet import get_mantranet_heatmap, reduce_heatmap_to_score
 from AI.img_ml.inference.clip_models import clip_h14_prob, clip_bigg_prob
-from AI.img_ml.inference.fatformer import get_fatformer_prob   
+from AI.img_ml.inference.fatformer import get_fatformer_prob
 from AI.img_ml.forensics.forensic_features import compute_forensic_features
 from AI.img_ml.models.model_wrappers import get_device
 
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+DATASET_CSV = os.path.join(ROOT_DIR, "dataset.csv")
 SAVED_DIR = os.path.join(os.path.dirname(__file__), "..", "models", "saved_models")
+METHOD = "logistic"
 
 
 def extract_features_for_image(path, device=None):
@@ -52,12 +56,12 @@ def extract_features_for_image(path, device=None):
         "fatformer_prob": fat_p,
         "ghostnet_prob": ghost_p,
         "mantra_anomaly": mantra,
-        "forensic_score": forensic.get("forensic_score", 0.0)
+        "forensic_score": forensic.get("forensic_score", 0.0),
     }
 
 
-def main(args):
-    df = pd.read_csv(args.dataset_csv)
+def main():
+    df = pd.read_csv(DATASET_CSV)
     os.makedirs(SAVED_DIR, exist_ok=True)
     device = get_device()
 
@@ -147,7 +151,9 @@ def main(args):
         yf.append(int(row["label"]))
 
     if len(Xf) == 0:
-        raise RuntimeError("Fusion feature extraction produced 0 samples. Cannot train.")
+        raise RuntimeError(
+            "Fusion feature extraction produced 0 samples. Cannot train."
+        )
 
     Xf = np.vstack(Xf)
     yf = np.array(yf)
@@ -157,7 +163,7 @@ def main(args):
     )
 
     print("Training fusion model...")
-    meta = create_meta_model(method=args.method)
+    meta = create_meta_model(method=METHOD)
     meta.fit(X_train, y_train)
 
     y_pred = meta.predict(X_val)
@@ -175,8 +181,4 @@ def main(args):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--dataset-csv", required=True)
-    parser.add_argument("--method", default="logistic")
-    args = parser.parse_args()
-    main(args)
+    main()

@@ -1,6 +1,6 @@
 import json, re
-from connect import get_llm
-from marks_of_truth import Marks
+from AI.connect import get_llm
+from AI.marks_of_truth import Marks
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
@@ -75,7 +75,6 @@ def _invoke_chain(text: str):
             return response.content
         return str(response)
     except Exception as e:
-        print(f"[DEBUG] invoke error: {e}")
         return ""
 
 

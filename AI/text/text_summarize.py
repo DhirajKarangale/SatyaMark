@@ -8,7 +8,7 @@ try:
 except Exception:
     detect = None
 
-from connect import get_llm
+from AI.connect import get_llm
 
 # Small stopword list for content-word checking (keeps function self-contained)
 _STOPWORDS = {

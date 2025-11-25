@@ -2,7 +2,7 @@
 
 from typing import Any, Dict, List, Optional
 
-from connect import get_llm  # same module you use in verifiable.py
+from AI.connect import get_llm  # same module you use in verifiable.py
 
 _PREFERRED_MODELS = ["deepseek_r1", "qwen2_5", "hermes", "llama3"]
 

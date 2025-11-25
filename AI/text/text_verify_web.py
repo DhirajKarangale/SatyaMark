@@ -1,13 +1,11 @@
 # verifiable.py
 import re
 import json
-import ast
 from html import unescape
-from typing import Any, List, Optional, Tuple
-from text_summarize import summarize_text
-from connect import get_llm
-from marks_of_truth import Marks
-from text_summarize_web import summarize_web_content_in_place
+from typing import Any, List, Optional
+from AI.connect import get_llm
+from AI.marks_of_truth import Marks
+from AI.text.text_summarize_web import summarize_web_content_in_place
 # Preferred LLM order (will try to get_llm(name) in this order)
 _PREFERRED_MODELS = [  "deepseek_r1","qwen2_5", "hermes", "llama3"]
 
@@ -278,7 +276,6 @@ def verify_summary_against_web(
     if isinstance(web_content, list):
         #will create this function
         new_obj = summarize_web_content_in_place(web_content,summary)
-        print(f"new obj is {new_obj}")
     else:
         new_obj = web_content
 

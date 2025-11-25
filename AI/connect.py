@@ -5,7 +5,10 @@ from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
 
 load_dotenv()
 
-with open("LLMs.json", "r") as file:
+BASE_DIR = os.path.dirname(__file__)
+JSON_PATH = os.path.join(BASE_DIR, "LLMs.json")
+
+with open(JSON_PATH, "r") as file:
     LLMs = json.load(file)
 
 _connected_llms = None

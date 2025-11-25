@@ -128,5 +128,15 @@
         "temperature": 0.2,
         "max_new_tokens": 256,
         "repetition_penalty": 1.05
+    },
+    {
+        "name": "deepseek_r1_distill_llama_8b",
+        "model_id": "deepseek-ai/DeepSeek-R1-Distill-Llama-8B",
+        "task": "conversational",
+        "provider": "auto",
+        "do_sample": false,
+        "temperature": 0.2,
+        "max_new_tokens": 512,
+        "repetition_penalty": 1.05
     }
 ]

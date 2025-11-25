@@ -1,8 +1,8 @@
-from connect import connect_llms
-from text_fact import check_fact
-from text_summarize import summarize_text
-from text_websearch import get_content
-from verifiable import verify_summary_against_web
+from AI.connect import connect_llms
+from AI.text.text_fact import check_fact
+from AI.text.text_websearch import get_content
+from AI.text.text_summarize import summarize_text
+from AI.text.text_verify_web import verify_summary_against_web
 
 if __name__ == "__main__":
     llms = connect_llms()
@@ -18,7 +18,7 @@ if __name__ == "__main__":
     statement9 = "I am big fan of Iron Man Movie"
     statement10 = "15 people died in mumbai bomb blast in 2025"
 
-    statement = statement8
+    statement = statement4
 
     summary = summarize_text(statement)
     fact = check_fact(summary)

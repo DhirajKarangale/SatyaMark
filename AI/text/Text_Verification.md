@@ -1,4 +1,4 @@
-# Text Verification System – Documentation
+# Text Verification Using HuggingFace Models
 
 ## Overview
 This system performs **end-to-end text verification** using a multi-stage pipeline.  

@@ -1,4 +1,4 @@
-# Image Forensics Verification — Documentation
+# Image Verification Using Forensics Methods 
 
 ## Overview
 This system verifies whether an image is **AI-generated or real** by combining multiple forensic signals. Unlike single-model detectors, it evaluates camera noise, metadata, GAN fingerprints, semantic realism, and editing traces, then merges all results using a weighted LLM-based decision model.

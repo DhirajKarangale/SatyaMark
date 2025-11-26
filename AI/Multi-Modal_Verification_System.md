@@ -189,7 +189,7 @@ python -m venv venv
 ## 2️⃣ Activate Virtual Environment (if not already active)
 
 ```
-.env\Scriptsctivate
+.\AI\venv\Scripts\activate
 ```
 
 ---
@@ -205,7 +205,7 @@ pip install -r AI/requirements.txt
 ## 4️⃣ Run the Example Script
 
 ```
-python AI/verify.py
+python -m AI.text.verify
 ```
 
 ### 🔧 Note:

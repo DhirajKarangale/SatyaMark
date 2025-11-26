@@ -25,7 +25,7 @@ statement9 = "I am big fan of Iron Man Movie"
 statement10 = "15 people died in mumbai bomb blast in 2025"
 statement = statement4
 
-# print(verify_text(statement))
+print(verify_text(statement))
 
 
 # Image

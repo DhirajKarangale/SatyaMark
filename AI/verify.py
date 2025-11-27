@@ -23,7 +23,8 @@ statement7 = "Africans involved in Delhi bomb blast"
 statement8 = "what were the actual casualties in the New Delhi bomb blast"
 statement9 = "I am big fan of Iron Man Movie"
 statement10 = "15 people died in mumbai bomb blast in 2025"
-statement = statement4
+statement11 = "BREAKING : **Amid news of Imran Khan** murder inside /i Adiala Jail /i by Pakistan Army, <p> thousands of PTI supporters</p> are reaching Adiala Jail. Pakistan Army Chief has ordered <h2>the deployment of Pakistan Army after high</h2> level security meeting."
+statement = statement11
 
 print(verify_text(statement))
 

@@ -28,7 +28,7 @@ If the statement is SUBJECTIVE:
       "type": "SUBJECTIVE",
       "mark": "Subjective",
       "reason": "<explain why it is subjective>",
-      "accuracy": <0-100>
+      "confidence": <0-100>
     }}
 DO NOT proceed to factual verification.
 
@@ -49,7 +49,7 @@ Return JSON:
   "type": "VERIFIABLE",
   "mark": "Correct" or "Incorrect" or "Insufficient",
   "reason": "<brief factual justification>",
-  "accuracy": <0-100>
+  "confidence": <0-100>
 }}
 
 ---
@@ -85,7 +85,7 @@ def check_fact(text: str):
     ).strip()
 
     json_match = re.search(r"\{[\s\S]*?\}", raw_response)
-    mark_value, reason, accuracy = "", "", 0
+    mark_value, reason, confidence = "", "", 0
 
     if json_match:
         json_str = json_match.group(0)
@@ -93,28 +93,28 @@ def check_fact(text: str):
             parsed = json.loads(json_str)
             mark_value = parsed.get("mark", "").strip().lower()
             reason = parsed.get("reason", "").strip()
-            accuracy = int(parsed.get("accuracy", 0))
+            confidence = int(parsed.get("confidence", 0))
         except json.JSONDecodeError:
             m_match = re.search(r'"?mark"?\s*[:=]\s*"?(\w+)"?', json_str, re.I)
             r_match = re.search(r'"?reason"?\s*[:=]\s*"?([^"}]+)"?', json_str, re.I)
-            a_match = re.search(r'"?accuracy"?\s*[:=]\s*"?(\d+)"?', json_str, re.I)
+            a_match = re.search(r'"?confidence"?\s*[:=]\s*"?(\d+)"?', json_str, re.I)
             if m_match:
                 mark_value = m_match.group(1).lower()
             if r_match:
                 reason = r_match.group(1).strip()
             if a_match:
-                accuracy = int(a_match.group(1))
+                confidence = int(a_match.group(1))
     else:
         lower = raw_response.lower()
         if "correct" in lower:
             mark_value = "correct"
         elif "incorrect" in lower:
             mark_value = "incorrect"
-        accuracy = 50
+        confidence = 50
 
-    if not isinstance(accuracy, int):
-        accuracy = 0
-    accuracy = max(0, min(accuracy, 100))
+    if not isinstance(confidence, int):
+        confidence = 0
+    confidence = max(0, min(confidence, 100))
 
     if mark_value == "correct":
         mark = Marks.CORRECT
@@ -128,5 +128,5 @@ def check_fact(text: str):
     return {
         "mark": mark,
         "reason": reason,
-        "accuracy": accuracy,
+        "confidence": confidence,
     }

@@ -15,7 +15,6 @@ STREAM_KEY = os.getenv("STREAM_KEY", "stream:ai:jobs")
 GROUP = os.getenv("CONSUMER_GROUP", "workers")
 CONSUMER = os.getenv("CONSUMER_NAME", "worker-1")
 RESULT_RECEIVER = os.getenv("RESULT_RECEIVER")
-HMAC_SECRET = os.getenv("JOB_HMAC_SECRET", "dev-secret")
 
 r = redis.from_url(REDIS_URL, decode_responses=True)
 
@@ -23,11 +22,6 @@ try:
     r.xgroup_create(STREAM_KEY, GROUP, id="$", mkstream=True)
 except:
     pass
-
-
-def sign(data):
-    msg = json.dumps(data, sort_keys=True)
-    return hmac.new(HMAC_SECRET.encode(), msg.encode(), hashlib.sha256).hexdigest()
 
 
 def process_loop():
@@ -60,8 +54,6 @@ def process_loop():
                 "job_token": job["job_token"],
             }
 
-            payload["hmac"] = sign(payload)
-
             requests.post(callback_url, json=payload)
 
             r.xack(STREAM_KEY, GROUP, msg_id)
@@ -75,14 +67,3 @@ def process_loop():
 
 if __name__ == "__main__":
     process_loop()
-
-
-# from AI.workers.worker_base import process_loop
-# from AI.img_ml.img_ml_verify import verify_img_ml_url
-
-# def run(job):
-#     url = job["payload"]["url"]
-#     result = verify_img_ml_url(url)
-#     return result
-
-# process_loop(run)

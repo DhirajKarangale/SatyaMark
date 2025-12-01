@@ -7,7 +7,7 @@ def verify_text(statement):
     summary = summarize_text(statement)
     fact = check_fact(summary)
 
-    if fact and "accuracy" in fact and fact["accuracy"] < 50:
+    if fact and "confidence" in fact and fact["confidence"] < 50:
         webcontent = get_content(summary)
         webverify = verify_summary_against_web(webcontent, summary)
         return webverify

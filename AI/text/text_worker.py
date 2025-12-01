@@ -15,7 +15,6 @@ STREAM_KEY = os.getenv("STREAM_KEY", "stream:ai:jobs")
 GROUP = os.getenv("CONSUMER_GROUP", "workers")
 CONSUMER = os.getenv("CONSUMER_NAME", "worker-1")
 RESULT_RECEIVER = os.getenv("RESULT_RECEIVER")
-HMAC_SECRET = os.getenv("JOB_HMAC_SECRET", "dev-secret")
 
 r = redis.from_url(REDIS_URL, decode_responses=True)
 
@@ -23,11 +22,6 @@ try:
     r.xgroup_create(STREAM_KEY, GROUP, id="$", mkstream=True)
 except:
     pass
-
-
-def sign(data):
-    msg = json.dumps(data, sort_keys=True)
-    return hmac.new(HMAC_SECRET.encode(), msg.encode(), hashlib.sha256).hexdigest()
 
 
 def process_loop():
@@ -50,17 +44,17 @@ def process_loop():
         try:
             text = job["payload"]["text"]
             result = verify_text(text)
+            print(result)
 
             payload = {
                 "taskId": job["taskId"],
                 "userId": job["userId"],
-                "mark": result["mark"],
+                "mark": str(result["mark"]),
                 "reason": result.get("reason"),
                 "confidence": result.get("confidence"),
                 "job_token": job["job_token"],
             }
 
-            payload["hmac"] = sign(payload)
             requests.post(callback_url, json=payload)
             r.xack(STREAM_KEY, GROUP, msg_id)
 
@@ -73,15 +67,3 @@ def process_loop():
 
 if __name__ == "__main__":
     process_loop()
-
-
-# from AI.workers.worker_base import process_loop
-# from AI.text.text_verify import verify_text
-
-# def run(job):
-#     text = job["payload"]["text"]
-#     result = verify_text(text)
-#     return result
-
-
-# process_loop(run)

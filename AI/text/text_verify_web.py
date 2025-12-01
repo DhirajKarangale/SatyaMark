@@ -131,7 +131,7 @@ def _safe_parse_json(s: str) -> Optional[dict]:
                 out = {}
                 for k, v in kvs:
                     v_clean = v.strip().strip('"').strip()
-                    if k.lower() in ("confidence", "accuracy", "score"):
+                    if k.lower() in ("confidence", "confidence", "score"):
                         m = re.search(r"(\d+)", v_clean)
                         out[k] = int(m.group(1)) if m else v_clean
                     else:
@@ -326,14 +326,14 @@ def verify_summary_against_web(
         reason = "LLM invocation failed; falling back to extractive overlap check."
         if overlap >= 0.8:
             mark = Marks.CORRECT
-            accuracy = int(min(95, int(overlap * 100)))
+            confidence = int(min(95, int(overlap * 100)))
         elif overlap >= 0.4:
             mark = Marks.INSUFFICIENT
-            accuracy = int(min(75, int(overlap * 100)))
+            confidence = int(min(75, int(overlap * 100)))
         else:
             mark = Marks.INSUFFICIENT
-            accuracy = int(min(50, int(overlap * 100)))
-        return {"mark": mark, "reason": reason, "accuracy": accuracy, "url": None}
+            confidence = int(min(50, int(overlap * 100)))
+        return {"mark": mark, "reason": reason, "confidence": confidence, "url": None}
 
     # 10) Parse JSON
     parsed = None
@@ -359,7 +359,7 @@ def verify_summary_against_web(
         supporting = parsed.get("supporting") or parsed.get("supports") or []
         contradicting = parsed.get("contradicting") or parsed.get("contradicts") or []
         unmatched = parsed.get("unmatched") or parsed.get("missing") or []
-        confidence = parsed.get("confidence") or parsed.get("accuracy") or parsed.get("score") or 0
+        confidence = parsed.get("confidence") or parsed.get("confidence") or parsed.get("score") or 0
         notes = parsed.get("notes") or ""
         raw_url = (parsed.get("url") or "").strip()
 
@@ -409,13 +409,13 @@ def verify_summary_against_web(
     confidence = max(0, min(100, confidence))
 
     if mark in (Marks.CORRECT, Marks.INCORRECT):
-        # For clear verdicts, accuracy is directly how confident the model is
-        accuracy = confidence if confidence > 0 else 50
+        # For clear verdicts, confidence is directly how confident the model is
+        confidence = confidence if confidence > 0 else 50
     else:
         # For INSUFFICIENT (PARTIAL / NOT_FOUND), we inherently have lower certainty.
         # Use confidence but cap it so it never looks "very sure".
         base = confidence if confidence > 0 else 50
-        accuracy = min(base, 70)
+        confidence = min(base, 70)
 
     # If model did not provide a reason or it's empty, fall back to a simple default
     if not reason:
@@ -430,6 +430,6 @@ def verify_summary_against_web(
     return {
         "mark": mark,
         "reason": reason,
-        "accuracy": accuracy,
+        "confidence": confidence,
         "url": selected_url,
     }

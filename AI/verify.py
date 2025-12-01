@@ -51,7 +51,7 @@ path_real_2 = os.path.join(TEST_REAL_PATH, "PassPort 2.jpeg")
 # Image ML
 # print(verify_img_ml(path_ai_1))
 # print(evaluate_img_ml(TEST_AI_PATH, TEST_REAL_PATH))
-# print(verify_img_forensic_url("https://picsum.photos/id/1/400/400"))
+# print(verify_img_ml_url("https://picsum.photos/id/1/400/400"))
 
 
 print("\n")

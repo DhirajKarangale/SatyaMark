@@ -6,7 +6,10 @@ from AI.text.text_verify_web import verify_summary_against_web
 def verify_text(statement):
     summary = summarize_text(statement)
     fact = check_fact(summary)
-    webcontent = get_content(summary)
-    webverify = verify_summary_against_web(webcontent, summary)
 
-    return webverify
+    if fact and "accuracy" in fact and fact["accuracy"] < 50:
+        webcontent = get_content(summary)
+        webverify = verify_summary_against_web(webcontent, summary)
+        return webverify
+
+    return fact

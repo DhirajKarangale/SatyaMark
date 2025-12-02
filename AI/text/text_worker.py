@@ -14,7 +14,7 @@ REDIS_URL = os.getenv("REDIS_URL")
 STREAM_KEY = os.getenv("STREAM_KEY", "stream:ai:jobs")
 GROUP = os.getenv("CONSUMER_GROUP", "workers")
 CONSUMER = os.getenv("CONSUMER_NAME", "worker-1")
-RESULT_RECEIVER = os.getenv("RESULT_RECEIVER")
+# RESULT_RECEIVER = os.getenv("RESULT_RECEIVER")
 
 r = redis.from_url(REDIS_URL, decode_responses=True)
 
@@ -39,7 +39,7 @@ def process_loop():
         job = json.loads(fields["data"])
         print(f"[{CONSUMER}] Processing: {job['taskId']}")
 
-        callback_url = job.get("callback_url") or RESULT_RECEIVER
+        callback_url = job.get("callback_url") 
 
         try:
             text = job["payload"]["text"]

@@ -1,49 +1,48 @@
-// ws-server.js
-const WebSocket = require("ws");
-const redis = require("redis");
-const jwt = require("jsonwebtoken");
-const { promisify } = require("util");
 require("dotenv").config();
+const WebSocket = require("ws");
 
-const REDIS_URL = process.env.REDIS_URL;
-const JWT_SECRET = process.env.JWT_SECRET || "dev-jwt-secret";
+let wss = null;
+let clients = new Map();
+const PORT = process.env.PORT;
 
-const r = redis.createClient({ url: REDIS_URL });
-r.connect().catch(console.error);
+function initWebSocketServer() {
+  if (wss) return wss;
 
-const wss = new WebSocket.Server({ noServer: true });
+  wss = new WebSocket.Server({ port: PORT });
 
-// map userId -> set of ws (in-memory)
-const userSockets = new Map();
+  wss.on("connection", (socket) => {
 
-function addSocket(userId, ws) {
-  const s = userSockets.get(userId) || new Set();
-  s.add(ws);
-  userSockets.set(userId, s);
-}
-function removeSocket(userId, ws) {
-  const s = userSockets.get(userId);
-  if (!s) return;
-  s.delete(ws);
-  if (s.size === 0) userSockets.delete(userId);
-}
+    socket.on("message", (msg) => {
+      const data = JSON.parse(msg);
+      receivedData(data);
+      
+      if (data.clientId) {
+        const id = String(data.clientId);
+        clients.set(id, socket);
+      }
+    });
 
-wss.on("connection", (ws, req, userId) => {
-  addSocket(userId, ws);
-
-  ws.on("close", () => {
-    removeSocket(userId, ws);
+    socket.on("close", () => {
+      for (const [id, s] of clients.entries()) {
+        if (s === socket) clients.delete(id);
+      }
+    });
   });
-});
 
-// helper to broadcast result to a user
-function notifyUser(userId, payload) {
-  const s = userSockets.get(userId);
-  if (!s) return;
-  const msg = JSON.stringify(payload);
-  for (const ws of s) {
-    if (ws.readyState === WebSocket.OPEN) ws.send(msg);
+  return wss;
+}
+
+function sendData(clientId, data) {
+  const id = String(clientId);
+  const socket = clients.get(id);
+  if (socket && socket.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify(data));
   }
 }
 
-module.exports = { wss, notifyUser };
+function receivedData(data) {
+  console.log("Data Rec: ", data);
+  
+}
+
+module.exports = { initWebSocketServer, sendData };

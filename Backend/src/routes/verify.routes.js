@@ -1,22 +1,24 @@
 const express = require("express");
 const router = express.Router();
+const { generateTextHashes } = require('../hash/text_hash');
 const { enqueueJob } = require("../utils/enqueueJob");
+const modelHash = require('../model/modelHash');
 
-// TEXT
+const callback_url_text = process.env.RESULT_RECEIVER_TEXT;
+
 router.post("/text", async (req, res) => {
   try {
-    // const userId = req.user.userId; // coming from JWT middleware
-    const userId = req.body.userId; // coming from JWT middleware
     const { text } = req.body;
 
     if (!text) return res.status(400).json({ error: "text missing" });
 
-    const callback_url = process.env.RESULT_RECEIVER_URL;
+    const { originalHash, summaryHash } = generateTextHashes(text)
+    const textData = await modelHash.GetText(originalHash, summaryHash);
+    if (textData) return res.json(textData);
 
     const { taskId } = await enqueueJob({
-      userId,
       payload: { text },
-      callback_url,
+      callback_url: callback_url_text,
     });
 
     res.json({ queued: true, taskId });
@@ -26,7 +28,6 @@ router.post("/text", async (req, res) => {
   }
 });
 
-// IMAGE ML
 router.post("/img-ml", async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -34,7 +35,7 @@ router.post("/img-ml", async (req, res) => {
 
     if (!url) return res.status(400).json({ error: "url missing" });
 
-    const callback_url = process.env.RESULT_RECEIVER_URL;
+    const callback_url = process.env.RESULT_RECEIVER_IMG;
 
     const { taskId } = await enqueueJob({
       userId,
@@ -49,7 +50,6 @@ router.post("/img-ml", async (req, res) => {
   }
 });
 
-// IMAGE FORENSIC
 router.post("/img-forensic", async (req, res) => {
   try {
     const userId = req.user.userId;

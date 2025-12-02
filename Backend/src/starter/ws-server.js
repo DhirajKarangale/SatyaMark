@@ -1,11 +1,12 @@
 require("dotenv").config();
 const WebSocket = require("ws");
+const process_task = require('../utils/process_task');
 
 let wss = null;
 let clients = new Map();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT_WS;
 
-function initWebSocketServer() {
+function startws() {
   if (wss) return wss;
 
   wss = new WebSocket.Server({ port: PORT });
@@ -14,8 +15,8 @@ function initWebSocketServer() {
 
     socket.on("message", (msg) => {
       const data = JSON.parse(msg);
-      receivedData(data);
-      
+      process_task.getTask(data);
+
       if (data.clientId) {
         const id = String(data.clientId);
         clients.set(id, socket);
@@ -40,9 +41,4 @@ function sendData(clientId, data) {
   }
 }
 
-function receivedData(data) {
-  console.log("Data Rec: ", data);
-  
-}
-
-module.exports = { initWebSocketServer, sendData };
+module.exports = { startws, sendData };

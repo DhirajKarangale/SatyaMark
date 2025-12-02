@@ -1,7 +1,7 @@
 let socket: WebSocket | null = null;
 
 export function connect() {
-    socket = new WebSocket("ws://localhost:3001");
+    socket = new WebSocket("ws://localhost:2402");
     socket.onopen = () => { };
     socket.onmessage = (event) => { receiveData(JSON.parse(event.data)); };
     socket.onclose = () => { };

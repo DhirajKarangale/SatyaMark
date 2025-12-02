@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { connect, sendData } from "./utils/WebSocketService";
+import { connect, sendData } from "./utils/ws-service";
 
 function App() {
   useEffect(() => {
@@ -7,7 +7,12 @@ function App() {
   }, []);
 
   return (
-    <button onClick={() => sendData({ msg: "Hello from client", clientId: "123" })}>
+    <button onClick={() => sendData({
+      clientId: "123",
+      jobId: "456",
+      text: "I am alien",
+      image_url: "",
+    })}>
       Send
     </button>
   );

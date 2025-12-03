@@ -1,8 +1,8 @@
 require("dotenv").config();
-const modelHash = require('../model/modelHash');
+const modelText = require('../model/modelText');
 const { enqueueJob } = require("../utils/enqueueJob");
-const { sendData } = require("../starter/ws-server");
 const { generateTextHashes } = require('../hash/text_hash');
+const eventBus = require("../starter/eventBus");
 
 const callback_url_text = process.env.RESULT_RECEIVER_TEXT;
 
@@ -17,11 +17,22 @@ function getTask(data) {
 }
 
 async function process_text(clientId, jobId, text) {
-    const { originalHash, summaryHash } = generateTextHashes(text)
-    const textData = await modelHash.GetText(originalHash, summaryHash);
+    const { text_hash, summary_hash } = generateTextHashes(text)
+    const textData = await modelText.GetText(text_hash, summary_hash);
 
     if (textData) {
-        sendData(textData);
+        const payload = {
+            jobId,
+            clientId,
+            text_hash: textData.text_hash,
+            summary_hash: textData.summary_hash,
+            mark: textData.mark,
+            reason: textData.reason,
+            confidence: Number(textData.confidence),
+            urls: textData.urls
+        };
+
+        eventBus.emit("sendData", { clientId, payload });
         return;
     }
 
@@ -29,6 +40,8 @@ async function process_text(clientId, jobId, text) {
         text: text,
         jobId: jobId,
         clientId: clientId,
+        text_hash: text_hash,
+        summary_hash: summary_hash,
         callback_url: callback_url_text,
     });
 }

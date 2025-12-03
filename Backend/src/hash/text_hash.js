@@ -24,17 +24,14 @@ function createHash(str) {
 }
 
 function generateTextHashes(input) {
-    const originalHash = createHash(input);
+    const text_hash = createHash(input);
     const normalized = normalizeText(input);
-    const summaryHash = createHash(normalized);
+    const summary_hash = createHash(normalized);
 
     return {
-        originalHash,
-        summaryHash,
+        text_hash,
+        summary_hash,
     };
 }
-
-// const input = "<i>Hello</i> **WORLD**";
-// console.log(generateTextHashes(input));
 
 module.exports = { generateTextHashes }

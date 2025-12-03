@@ -10,7 +10,7 @@ function App() {
     <button onClick={() => sendData({
       clientId: "123",
       jobId: "456",
-      text: "I am alien",
+      text: "Sun is red",
       image_url: "",
     })}>
       Send

@@ -34,12 +34,13 @@ def process_loop():
         msg_id, fields = messages[0]
 
         job = json.loads(fields["data"])
-        print(fields)
 
         text = job.get("text")
         jobId = job.get("jobId")
         clientId = job.get("clientId")
         callback_url = job.get("callback_url")
+        text_hash = job.get("text_hash")
+        summary_hash = job.get("summary_hash")
 
         print(f"[{CONSUMER}] Processing: {jobId}")
 
@@ -49,6 +50,8 @@ def process_loop():
             payload = {
                 "jobId": jobId,
                 "clientId": clientId,
+                "text_hash": text_hash,
+                "summary_hash": summary_hash,
                 "mark": str(result["mark"]),
                 "reason": result.get("reason"),
                 "confidence": result.get("confidence"),

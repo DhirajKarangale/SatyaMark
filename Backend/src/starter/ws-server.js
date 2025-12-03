@@ -1,10 +1,11 @@
 require("dotenv").config();
 const WebSocket = require("ws");
-const process_task = require('../utils/process_task');
+const eventBus = require("./eventBus"); 
+const process_task = require("../utils/process_task")
 
 let wss = null;
-let clients = new Map();
-const PORT = process.env.PORT_WS;
+const clients = new Map();
+const PORT = process.env.PORT_WS || 8080;
 
 function startws() {
   if (wss) return wss;
@@ -12,15 +13,20 @@ function startws() {
   wss = new WebSocket.Server({ port: PORT });
 
   wss.on("connection", (socket) => {
-
     socket.on("message", (msg) => {
-      const data = JSON.parse(msg);
-      process_task.getTask(data);
-
-      if (data.clientId) {
-        const id = String(data.clientId);
-        clients.set(id, socket);
+      let data;
+      try {
+        data = JSON.parse(msg);
+      } catch (err) {
+        console.log("Invalid JSON from websocket client:", err);
+        return;
       }
+
+      if (data && data.clientId) {
+        clients.set(String(data.clientId), socket);
+      }
+
+      process_task.getTask(data);
     });
 
     socket.on("close", () => {
@@ -28,17 +34,31 @@ function startws() {
         if (s === socket) clients.delete(id);
       }
     });
+
+    socket.on("error", (err) => {
+      console.log("WebSocket error:", err);
+    });
+  });
+
+  eventBus.on("sendData", ({ clientId, payload }) => {
+    const id = String(clientId);
+    const socket = clients.get(id);
+    if (!socket) {
+      console.log(`No socket for client ${id}`);
+      return;
+    }
+    if (socket.readyState === WebSocket.OPEN) {
+      try {
+        socket.send(JSON.stringify(payload));
+      } catch (err) {
+        console.log("Failed to send message:", err);
+      }
+    } else {
+      console.log(`Socket not open for client ${id}`);
+    }
   });
 
   return wss;
 }
 
-function sendData(clientId, data) {
-  const id = String(clientId);
-  const socket = clients.get(id);
-  if (socket && socket.readyState === WebSocket.OPEN) {
-    socket.send(JSON.stringify(data));
-  }
-}
-
-module.exports = { startws, sendData };
+module.exports = { startws };

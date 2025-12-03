@@ -1,8 +1,9 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const helmet = require("helmet");
-
-const { sendToUser } = require("./ws-server");
+const modelText = require('../model/modelText');
+const eventBus = require("../starter/eventBus"); 
+// const wsserver = require("./ws-server");
 
 const app = express();
 
@@ -13,7 +14,8 @@ app.use(bodyParser.json({ limit: "1mb" }));
 app.post("/ai-callback/text", async (req, res) => {
     try {
         const body = req.body;
-        console.log("Callback received:", body);
+        await modelText.PostText(body);
+        eventBus.emit("sendData", { clientId: body.clientId, payload: body });
         res.json({ ok: true });
 
     } catch (err) {

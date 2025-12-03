@@ -4,10 +4,10 @@ const redis = require("../redis/redis");
 const STREAM_KEY = process.env.STREAM_KEY || "stream:ai:jobs";
 
 function generateJobToken() {
-    return uuidv4() + ":" + Date.now(); 
+    return uuidv4() + ":" + Date.now();
 }
 
-async function enqueueJob({ text, jobId, clientId, callback_url, image_url }) {
+async function enqueueJob({ text, jobId, clientId, callback_url, image_url, text_hash, summary_hash }) {
     const taskId = uuidv4();
     const job_token = generateJobToken();
 
@@ -16,6 +16,8 @@ async function enqueueJob({ text, jobId, clientId, callback_url, image_url }) {
         jobId,
         clientId,
         callback_url,
+        text_hash,
+        summary_hash,
         image_url
     };
 

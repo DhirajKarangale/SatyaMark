@@ -9,8 +9,9 @@ from AI.img_forensic.img_forensic_verify import verify_img_forensic_url
 load_dotenv()
 
 REDIS_URL = os.getenv("REDIS_URL")
-GROUP = os.getenv("CONSUMER_GROUP", "workers")
-CONSUMER = os.getenv("CONSUMER_NAME", "worker-1")
+
+GROUP = "workers"
+CONSUMER = "image-forensic-worker-1"
 STREAM_KEY = "stream:ai:imageforensic:jobs"
 
 r = redis.from_url(REDIS_URL, decode_responses=True)

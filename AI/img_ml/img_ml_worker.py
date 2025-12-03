@@ -11,8 +11,9 @@ from AI.img_ml.img_ml_verify import verify_img_ml_url
 load_dotenv()
 
 REDIS_URL = os.getenv("REDIS_URL")
-GROUP = os.getenv("CONSUMER_GROUP", "workers")
-CONSUMER = os.getenv("CONSUMER_NAME", "worker-1")
+
+GROUP = "workers"
+CONSUMER = "image-ml-worker-1"
 STREAM_KEY = "stream:ai:imageml:jobs"
 
 r = redis.from_url(REDIS_URL, decode_responses=True)

@@ -6,11 +6,15 @@ const { generateTextHashes } = require('../hash/text_hash');
 const { generateImageHash } = require('../hash/image_hash');
 const eventBus = require("../starter/eventBus");
 
+const IMAGE_ALGO = process.env.IMAGE_ALGO;
 const callback_url_text = process.env.RESULT_RECEIVER_TEXT;
 const callback_url_image = process.env.RESULT_RECEIVER_IMG;
 const STREAM_KEY_TEXT = "stream:ai:text:jobs";
 const STREAM_KEY_IMAGE_ML = "stream:ai:imageml:jobs";
 const STREAM_KEY_IMAGE_Forensic = "stream:ai:imageforensic:jobs";
+let STREAM_KEY_IMAGE = STREAM_KEY_IMAGE_Forensic;
+
+if (IMAGE_ALGO && IMAGE_ALGO.toLowerCase() == "ml") STREAM_KEY_IMAGE = STREAM_KEY_IMAGE_ML;
 
 function getTask(data) {
     const clientId = data.clientId;
@@ -78,7 +82,7 @@ async function process_image(clientId, jobId, image_url) {
         image_url: image_url,
         image_hash: image_hash,
         callback_url: callback_url_image,
-        STREAM_KEY: STREAM_KEY_IMAGE_Forensic
+        STREAM_KEY: STREAM_KEY_IMAGE
     });
 }
 

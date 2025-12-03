@@ -4,7 +4,8 @@ import json
 import redis
 import requests
 from dotenv import load_dotenv
-from AI.text.text_verify import verify_text
+from text_verify import verify_text
+from connect import connect_llms
 
 load_dotenv()
 
@@ -24,6 +25,7 @@ except:
 
 def process_loop():
     print(f"[{CONSUMER}] Text Worker started...")
+    connect_llms()
 
     while True:
         entries = r.xreadgroup(GROUP, CONSUMER, {STREAM_KEY: ">"}, count=1, block=5000)

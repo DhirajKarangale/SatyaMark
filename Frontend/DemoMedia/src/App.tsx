@@ -10,8 +10,8 @@ function App() {
     <button onClick={() => sendData({
       clientId: "123",
       jobId: "456",
-      // text: "15 August is indias independece day",
-      image_url: "https://picsum.photos/200/300/?blur",
+      text: "15 August is indias republic day",
+      // image_url: "https://picsum.photos/200/300/?blur",
     })}>
       Send
     </button>

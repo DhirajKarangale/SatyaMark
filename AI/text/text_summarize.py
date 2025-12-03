@@ -7,7 +7,7 @@ try:
 except Exception:
     detect = None
 
-from AI.connect import get_llm
+from connect import get_llm
 
 
 def _extract_text(output: Any) -> str:

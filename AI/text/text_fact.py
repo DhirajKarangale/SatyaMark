@@ -1,6 +1,6 @@
 import json, re
-from AI.connect import get_llm
-from AI.marks_of_truth import Marks
+from connect import get_llm
+from marks_of_truth import Marks
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 

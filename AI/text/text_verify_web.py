@@ -3,9 +3,9 @@ import re
 import json
 from html import unescape
 from typing import Any, List, Optional
-from AI.connect import get_llm
-from AI.marks_of_truth import Marks
-from AI.text.text_summarize_web import summarize_web_content_in_place
+from connect import get_llm
+from marks_of_truth import Marks
+from text_summarize_web import summarize_web_content_in_place
 # Preferred LLM order (will try to get_llm(name) in this order)
 _PREFERRED_MODELS = [  "deepseek_r1","qwen2_5", "hermes", "llama3"]
 

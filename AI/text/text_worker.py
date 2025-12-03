@@ -9,9 +9,9 @@ from AI.text.text_verify import verify_text
 load_dotenv()
 
 REDIS_URL = os.getenv("REDIS_URL")
-STREAM_KEY = os.getenv("STREAM_KEY", "stream:ai:jobs")
 GROUP = os.getenv("CONSUMER_GROUP", "workers")
 CONSUMER = os.getenv("CONSUMER_NAME", "worker-1")
+STREAM_KEY = "stream:ai:text:jobs"
 
 r = redis.from_url(REDIS_URL, decode_responses=True)
 

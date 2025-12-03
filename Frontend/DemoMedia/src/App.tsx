@@ -10,8 +10,8 @@ function App() {
     <button onClick={() => sendData({
       clientId: "123",
       jobId: "456",
-      text: "Sun is red",
-      image_url: "",
+      text: "",
+      image_url: "https://picsum.photos/seed/picsum/200/300",
     })}>
       Send
     </button>

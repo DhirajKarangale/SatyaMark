@@ -11,7 +11,7 @@ Below are the three major verification systems included in SatyaMark, each with 
 
 ---
 
-## [📝 **Text Verification System (LLM-Driven Fact Checking)**](https://github.com/DhirajKarangale/SatyaMark/blob/dev/AI/text/Text_Verification.md)
+## [📝 **Text Verification System (LLM-Driven Fact Checking)**](https://github.com/DhirajKarangale/SatyaMark/blob/main/AI/text/README.md)
 
 This pipeline evaluates statements for:
 - **Correct**
@@ -28,7 +28,7 @@ Uses an LLM-driven multi-stage pipeline:
 
 ---
 
-## [🖼️ **Image Verification Using HuggingFace Models (ML-Based Ensemble)**](https://github.com/DhirajKarangale/SatyaMark/blob/dev/AI/img_ml/Image_ML_Verification.md)
+## [🖼️ **Image Verification Using HuggingFace Models (ML-Based Ensemble)**](https://github.com/DhirajKarangale/SatyaMark/blob/main/AI/img_ml/README.md)
 
 This module detects whether an image is **AI-generated or real** using:
 - CLIP/Transformers semantic similarity  
@@ -39,7 +39,7 @@ This module detects whether an image is **AI-generated or real** using:
 
 ---
 
-## [🔍 **Image Verification Using Forensic Signals (Advanced Forensics)**](https://github.com/DhirajKarangale/SatyaMark/blob/dev/AI/img_forensic/Image_Forensic_Verification.md)
+## [🔍 **Image Verification Using Forensic Signals (Advanced Forensics)**](https://github.com/DhirajKarangale/SatyaMark/blob/main/AI/img_forensic/README.md)
 
 Performs deep forensic analysis using:
 - **ELA (Error Level Analysis)**  

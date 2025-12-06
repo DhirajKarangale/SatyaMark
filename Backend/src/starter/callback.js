@@ -14,6 +14,7 @@ app.use(bodyParser.json({ limit: "1mb" }));
 app.post("/ai-callback/text", async (req, res) => {
     try {
         const body = req.body;
+        console.log(`[TEXT] Callback received → client=${body.clientId}, job=${body.jobId}`);
         await modelText.PostText(body);
         eventBus.emit("sendData", { clientId: body.clientId, payload: body });
         res.json({ ok: true });
@@ -26,8 +27,8 @@ app.post("/ai-callback/text", async (req, res) => {
 
 app.post("/ai-callback/image", async (req, res) => {
     try {
-        
         const body = req.body;
+        console.log(`[IMAGE] Callback received → client=${body.clientId}, job=${body.jobId}`);
         await modelImage.PostImage(body);
         eventBus.emit("sendData", { clientId: body.clientId, payload: body });
         res.json({ ok: true });

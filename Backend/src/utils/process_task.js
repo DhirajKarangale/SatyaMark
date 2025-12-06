@@ -27,10 +27,14 @@ function getTask(data) {
 }
 
 async function process_text(clientId, jobId, text) {
+    console.log(`[TEXT] Task received → client=${clientId}, job=${jobId}`);
+
     const { text_hash, summary_hash } = generateTextHashes(text)
     const textData = await modelText.GetText(text_hash, summary_hash);
 
     if (textData) {
+        console.log(`[TEXT] Result found in cache → job=${jobId}`);
+
         const payload = {
             jobId,
             clientId,
@@ -46,6 +50,8 @@ async function process_text(clientId, jobId, text) {
         return;
     }
 
+    console.log(`[TEXT] Task enqueued → job=${jobId}`);
+
     await enqueueJob({
         text: text,
         jobId: jobId,
@@ -58,10 +64,14 @@ async function process_text(clientId, jobId, text) {
 }
 
 async function process_image(clientId, jobId, image_url) {
+    console.log(`[IMAGE] Task received → client=${clientId}, job=${jobId}`);
+
     const { image_hash } = await generateImageHash(image_url)
     const imageData = await modelImage.GetImage(image_url, image_hash);
 
     if (imageData) {
+        console.log(`[IMAGE] Result found in cache → job=${jobId}`);
+
         const payload = {
             jobId,
             clientId,
@@ -76,6 +86,7 @@ async function process_image(clientId, jobId, image_url) {
         return;
     }
 
+    console.log(`[IMAGE] Task enqueued → job=${jobId}, algo=${IMAGE_ALGO}`);
     await enqueueJob({
         jobId: jobId,
         clientId: clientId,

@@ -1,8 +1,9 @@
 import os
 from PIL import Image
+import shutil
 
-ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-DATASET_DIR = os.path.join(ROOT_DIR, "dataset", "train")
+AI_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+DATASET_DIR = os.path.join(AI_DIR, "dataset", "train")
 
 def is_valid_image(path):
     try:

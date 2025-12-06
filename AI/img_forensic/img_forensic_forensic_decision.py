@@ -55,7 +55,7 @@ Return ONLY compact JSON:
 {{
   "mark": "AI" or "NONAI",
   "reason": "short explanation",
-  "confidence": "confidence": "0-1 number"
+  "confidence": "0-1 number"
 }}
 """
 

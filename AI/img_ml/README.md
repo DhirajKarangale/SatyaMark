@@ -163,99 +163,23 @@ All features must be scaled/normalized the same way used during training (see `f
 
 ---
 
-# ⚙️ Setup & Usage
-
-Follow these steps to run and test the verification worker locally.
-
----
-
-## **1. Clone this repository**
-```
-git clone https://github.com/DhirajKarangale/ai-image-hf-verify-worker
-```
-
-Move into the project directory:
-```
-cd ai-image-hf-verify-worker
-```
-
-(Or your local machine path:  
-`cd C:\SatyaMark\AI\ai-image-hf-verify-worker`)
-
----
-
-## **2. Create Virtual Environment (first time only)**
-```
-python -m venv venv
-```
-
-## **3. Activate Virtual Environment**
-**Windows:**
-```
-venv\Scripts\activate
-```
-
-**Linux/Mac:**
-```
-source venv/bin/activate
-```
-
----
-
-## **4. Install Dependencies (first time only)**
-```
-pip install -r requirements.txt
-```
-
----
-
-## **5. Create `.env` File**
-
-Create `.env` in the project root:
-
-```
-HF_TOKEN=your_hf_token_here
-REDIS_URL=your_upstash_redis_url_here
-```
-
-### Redis uses Streams  
-Example:
-```
-redis://default:password@eu2-magic-redis.upstash.io:12345
-```
-
----
-
-## **6. Run Local Test**
-```
-python .\local_test.py
-```
-
-This will:
-- Connect all LLMs  
-- Prompt for your test input  
-- Run the entire summarization → fact-check → web verification pipeline  
-- Print results in terminal  
-
----
-
-## **7. When Prompted: Enter Environment URL**
-`local_test.py` may ask:
-
-```
-Enter environment URL:
-```
-
-Provide your Upstash Redis URL if required.
-
----
-
 ## Instructions — Device Check, Dataset, Clean, Train
+
+> **📌 Important:**  
+> 1. **Activate your virtual environment (`venv`) first.**  
+> 2. Then run **all commands from the root of the `SatyaMark` directory**, for example:
+> ```
+> SatyaMark/     ← run commands here after venv activation
+> └── AI/
+>     └── img_ml/
+> ```
+
+---
 
 ### 1) Check Device (GPU)
 Use the provided utility:
 ```bash
-python -c "from utils.device import get_device; print(get_device())"
+python -c "from img_ml.utils.device import get_device; print(get_device())"
 ```
 Or manually:
 ```bash
@@ -269,17 +193,17 @@ pip install --index-url https://download.pytorch.org/whl/cu121 torch torchvision
 ### 2) Build / Clean Dataset
 - **Create CSV of dataset** (labels folder-based):
 ```bash
-python -m scripts.make_dataset_csv 
+python -m AI.img_ml.scripts.make_dataset_csv 
 ```
 - **Clean dataset (remove corrupt / tiny images)**:
 ```bash
-python -m scripts.clean_dataset 
+python -m AI.img_ml.scripts.clean_dataset 
 ```
 - Confirm `dataset.csv` exists and contains columns: `filepath,label,split`.
 
 ### 3) Train Fusion Classifier
 ```bash
-python -m fusion.train_fusion 
+python -m AI.img_ml.fusion.train_fusion 
 ```
 - `train_fusion.py` will:
   - Load per-image features (or compute them on-the-fly)
@@ -307,10 +231,5 @@ python -m fusion.train_fusion
 
 ## Final Note
 This repository provides a practical, modular pipeline to detect synthetic images by merging orthogonal signals. It's designed for offline use, explainability, and easy extensibility. Keep datasets fresh and retrain periodically as synthetic image quality evolves.
-
----
-
-### **Note**
-*Not 100% accurate. Honestly, nothing I build ever is. Good thing you have a real brain to verify stuff.*
 
 ---

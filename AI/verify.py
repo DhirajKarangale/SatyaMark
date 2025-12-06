@@ -1,47 +1,40 @@
-import os
-from AI.connect import connect_llms
-from AI.text.text_verify import verify_text
-from AI.img_ml.img_ml_verify import verify_img_ml, evaluate_img_ml, verify_img_ml_url
-from AI.img_forensic.img_forensic_verify import (
-    verify_img_forensic,
-    evaluate_img_forensic,
-    verify_img_forensic_url,
-)
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), "text"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "img_ml"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "img_forensic"))
 
-connect_llms()
+from text_verify import verify_text
+from img_ml_verify import verify_img_ml, evaluate_img_ml, verify_img_ml_url
+from img_forensic_verify import verify_img_forensic,evaluate_img_forensic,verify_img_forensic_url
 
 print("\n")
 
-# Text
-statement1 = "John cena is my favourite wrestler"
-statement2 = "Sun is black"
-statement3 = "Brock Lesnar is best in the world"
-statement4 = "On 09/10/2025 had big accident in Pune between bus and truck"
-statement5 = "India got independence in 1947"
-statement6 = "Brazil won 2022 cricket world cup"
-statement7 = "Africans involved in Delhi bomb blast"
-statement8 = "what were the actual casualties in the New Delhi bomb blast"
-statement9 = "I am big fan of Iron Man Movie"
-statement10 = "15 people died in mumbai bomb blast in 2025"
-statement11 = "BREAKING : **Amid news of Imran Khan** murder inside /i Adiala Jail /i by Pakistan Army, <p> thousands of PTI supporters</p> are reaching Adiala Jail. Pakistan Army Chief has ordered <h2>the deployment of Pakistan Army after high</h2> level security meeting."
-statement = statement11
+# Text Data
+statement1 = "The Great Wall of China is located in China."
+statement2 = "The Eiffel Tower is located in Germany."
+statement3 = "In the grand tapestry of human innovation, renewable energy stands as a beacon of sustainable progress."
+statement4 = "NASA will announce evidence of alien life in 2030."
+statement5 = "Chocolate ice cream is the best flavor ever."
+statement6 = "The committee approved the proposal yesterday."
+statement = statement1
 
-print(verify_text(statement))
-
-
-# Image
-
-AI_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__)))
-TEST_PATH = os.path.join(AI_DIR, "dataset", "test")
-TRAIN_PATH = os.path.join(AI_DIR, "dataset", "train")
+# Image Data
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+TEST_PATH = os.path.join(ROOT_DIR, "dataset", "test")
+TRAIN_PATH = os.path.join(ROOT_DIR, "dataset", "train")
 TEST_AI_PATH = os.path.join(TEST_PATH, "ai")
 TEST_REAL_PATH = os.path.join(TEST_PATH, "real")
 
 path_ai_1 = os.path.join(TEST_AI_PATH, "1.jpg")
-path_ai_2 = os.path.join(TEST_AI_PATH, "5840.jpg")
-path_real_1 = os.path.join(TEST_REAL_PATH, "IMG_20220705_123046.jpg")
-path_real_2 = os.path.join(TEST_REAL_PATH, "PassPort 2.jpeg")
+path_ai_2 = os.path.join(TEST_AI_PATH, "2.jpg")
+path_real_1 = os.path.join(TEST_REAL_PATH, "2.jpg")
+path_real_2 = os.path.join(TEST_REAL_PATH, "2.jpg")
 
+
+
+
+# Text
+# print(verify_text(statement))
 
 # Image Forensic
 # print(verify_img_forensic(path_ai_1))
@@ -52,6 +45,5 @@ path_real_2 = os.path.join(TEST_REAL_PATH, "PassPort 2.jpeg")
 # print(verify_img_ml(path_ai_1))
 # print(evaluate_img_ml(TEST_AI_PATH, TEST_REAL_PATH))
 # print(verify_img_ml_url("https://picsum.photos/id/1/400/400"))
-
 
 print("\n")

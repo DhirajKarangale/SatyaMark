@@ -170,52 +170,59 @@ test/
 
 # ⚙️ Setup & Usage
 
-All commands must be run from the **root directory**:
-
+## 1️⃣ Clone the Repository
 ```
-PS E:\FullStack\SatyaMark>
+git clone https://github.com/DhirajKarangale/SatyaMark.git
+cd SatyaMark
 ```
 
----
+## 2️⃣ Navigate to AI Engine
+```
+cd AI
+```
 
-## 1️⃣ Create Virtual Environment (only first time, if not created)
+## 3️⃣ Create Virtual Environment (first time only)
 
+### Windows
 ```
 python -m venv venv
 ```
 
----
-
-## 2️⃣ Activate Virtual Environment (if not already active)
-
+### macOS/Linux
 ```
-.\AI\venv\Scripts\activate
+python3 -m venv venv
 ```
 
----
+## 4️⃣ Activate Environment
 
-## 3️⃣ Install Dependencies (only if not installed)
-
+### Windows
 ```
-pip install -r AI/requirements.txt
-```
-
----
-
-## 4️⃣ Run the Example Script
-
-```
-python -m AI.text.verify
+venv\Scripts\activate
 ```
 
-### 🔧 Note:
-Inside `verify.py`, **comment/uncomment** the part you want to test:
-
-```python
-# print(verify_text(statement))
-# print(verify_img_ml(path))
-# print(verify_img_forensic(path))
+### macOS/Linux
 ```
+source venv/bin/activate
+```
+
+## 5️⃣ Install Dependencies
+```
+pip install -r requirements.txt
+```
+
+## 6️⃣ Create `.env`
+```
+SERPER_API_KEY=your_serper_key
+HF_TOKEN=your_hf_token
+REDIS_URL=your_upstash_redis_streams_url
+```
+
+## 7️⃣ Run Local Tests
+```
+python verify.py
+```
+
+Uncomment the test you want to run inside the file.
 
 ---
 
@@ -228,3 +235,9 @@ SatyaMark is built to be:
 
 You can add new LLMs, new detectors, new forensic modules, or replace entire pipelines without breaking the architecture.
 
+---
+
+### **Note**
+*Not 100% accurate. Honestly, nothing I build ever is. Good thing you have a real brain to verify stuff.*
+
+---

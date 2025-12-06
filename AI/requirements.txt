@@ -1,0 +1,3 @@
+-r image_ml/requirements.txt
+-r image_forensic/requirements.txt
+-r text/requirements.txt

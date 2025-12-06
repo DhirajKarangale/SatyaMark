@@ -9,7 +9,8 @@ import traceback
 import numpy as np
 import cv2
 import torch
-import mediapipe as mp
+# import mediapipe as mp
+from ultralytics import YOLO
 import warnings
 import logging
 from PIL import Image
@@ -20,6 +21,7 @@ os.environ["ULTRALYTICS_VERBOSITY"] = "0"
 warnings.filterwarnings("ignore")
 logging.getLogger("torch.hub").setLevel(logging.NOTSET)
 
+pose_model = YOLO("yolov8n-pose.pt")
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 try:
@@ -143,13 +145,26 @@ def estimate_anatomy_validity(pil_img: Image.Image) -> float:
         img = pil_to_rgb_np(pil_img)
         H, W = img.shape[:2]
         if MEDIAPIPE_AVAILABLE:
-            mp_pose = mp.solutions.pose
-            with mp_pose.Pose(static_image_mode=True) as pose:
-                res = pose.process(cv2.cvtColor(img, cv2.COLOR_RGB2BGR))
-                if not res.pose_landmarks:
-                    return 0.0
-                lm = res.pose_landmarks.landmark
-                keypoints = np.array([[l.x * W, l.y * H, l.visibility] for l in lm])
+            # mp_pose = mp.solutions.pose
+            # with mp_pose.Pose(static_image_mode=True) as pose:
+            #     res = pose.process(cv2.cvtColor(img, cv2.COLOR_RGB2BGR))
+            #     if not res.pose_landmarks:
+            #         return 0.0
+            #     lm = res.pose_landmarks.landmark
+            #     keypoints = np.array([[l.x * W, l.y * H, l.visibility] for l in lm])
+
+            results = pose_model(img, imgsz=512, conf=0.25)
+
+            if len(results[0].keypoints) == 0:
+                return 0.0
+            
+            # YOLO gives (x,y,confidence)
+            keypoints = results[0].keypoints.xy[0].cpu().numpy()
+            conf = results[0].keypoints.conf[0].cpu().numpy()
+            
+            # Normalize into same format as your old code
+            keypoints = np.hstack([keypoints, conf.reshape(-1, 1)])
+
         else:
             return 0.5
 

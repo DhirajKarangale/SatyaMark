@@ -75,3 +75,37 @@ SatyaMark is an AI-powered, centralized verification service designed to provide
 
 2. **Frontend:** Currently empty
 3. **Backend:** Currently empty
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+git submodule add https://github.com/DhirajKarangale/ai-text-verify-worker AI/ai-text-verify-worker

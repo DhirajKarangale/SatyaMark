@@ -1,6 +1,0 @@
-redis
-dotenv
-requests
-trafilatura
-langchain_huggingface 
-langchain_community

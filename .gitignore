@@ -49,10 +49,10 @@ AI/venv/
 *.backup
 
 # Ignore compiled LLM models or large downloaded files if any
+# AI/dataset/ 
 AI/models/
-AI/dataset/
 AI/*.bin
 AI/*.pt
 AI/*.ckpt
 
-AI/Old/img_ml/models/saved_models/
+AI/img_ml/models/saved_models/

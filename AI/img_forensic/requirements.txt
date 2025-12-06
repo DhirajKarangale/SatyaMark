@@ -1,4 +1,3 @@
---verbose
 dotenv
 numpy
 torch

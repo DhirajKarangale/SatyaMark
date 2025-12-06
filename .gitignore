@@ -49,7 +49,7 @@ AI/venv/
 *.backup
 
 # Ignore compiled LLM models or large downloaded files if any
-# AI/dataset/ 
+AI/dataset/ 
 AI/models/
 AI/*.bin
 AI/*.pt

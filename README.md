@@ -111,3 +111,5 @@ Add Submodule
 git submodule add https://github.com/DhirajKarangale/ai-text-verify-worker AI/ai-text-verify-worker
 
 git submodule add https://github.com/DhirajKarangale/ai-image-forensic-verify-worker AI/ai-image-forensic-verify-worker
+
+git submodule add https://github.com/DhirajKarangale/ai-image-hf-verify-worker.git AI/ai-image-hf-verify-worker.git

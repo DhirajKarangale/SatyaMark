@@ -1,6 +1,0 @@
-[submodule "AI/ai-text-verify-worker"]
-	path = AI/ai-text-verify-worker
-	url = https://github.com/DhirajKarangale/ai-text-verify-worker
-[submodule "AI/ai-image-forensic-verify-worker"]
-	path = AI/ai-image-forensic-verify-worker
-	url = https://github.com/DhirajKarangale/ai-image-forensic-verify-worker

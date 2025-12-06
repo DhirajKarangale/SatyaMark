@@ -1,0 +1,11 @@
+dotenv
+numpy
+torch
+redis
+piexif
+pathlib
+requests
+mediapipe
+PyWavelets
+langchain_core
+langchain_huggingface

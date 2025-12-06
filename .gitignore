@@ -55,4 +55,4 @@ AI/*.bin
 AI/*.pt
 AI/*.ckpt
 
-AI/Old/img_ml/models/saved_models/
+AI/image-hf/models/saved_models/

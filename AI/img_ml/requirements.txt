@@ -1,0 +1,16 @@
+opencv-python
+redis
+numpy==1.26.4
+torch
+dotenv
+pandas
+joblib
+pathlib
+scikit-learn
+exifread
+requests
+PyWavelets
+torchvision
+transformers
+langchain-core>=0.2.0
+langchain-huggingface>=0.1.0

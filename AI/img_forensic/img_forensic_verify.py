@@ -8,7 +8,6 @@ from urllib.parse import urlparse
 from img_forensic_watermark_signature import watermark_analyze
 from img_forensic_sensor_fingerprint import sensor_fingerprint_analyze
 from img_forensic_gan_artifacts import gan_artifacts_analyze
-from img_forensic_gan_artifacts_ml import gan_artifacts_ml_analyze
 from img_forensic_local_manipulation import local_manipulation_analyze
 from img_forensic_metadata import metadata_analysis
 from img_forensic_semantic_consistency import (
@@ -23,7 +22,6 @@ def verify_img_forensic(image_path: str):
         w = watermark_analyze(image_path)
         s = sensor_fingerprint_analyze(image_path)
         g = gan_artifacts_analyze(image_path)
-        gml = gan_artifacts_ml_analyze(image_path)
         l = local_manipulation_analyze(image_path)
         m = metadata_analysis(image_path)
         sc = semantic_consistency_analyze(image_path)

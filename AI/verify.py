@@ -37,9 +37,9 @@ path_real_2 = os.path.join(TEST_REAL_PATH, "2.jpg")
 # print(verify_text(statement))
 
 # Image Forensic
-print(verify_img_forensic(path_ai_1))
+# print(verify_img_forensic(path_ai_1))
 # print(evaluate_img_forensic(TEST_AI_PATH, TEST_REAL_PATH))
-# print(verify_img_forensic_url("https://picsum.photos/id/1/400/400"))
+print(verify_img_forensic_url("https://picsum.photos/id/1/400/400"))
 
 # Image ML
 # print(verify_img_ml(path_ai_1))

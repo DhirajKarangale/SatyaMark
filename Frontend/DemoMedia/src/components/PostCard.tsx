@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { process } from "../satyamark/satyamark_process";
-import { onReceive } from "../satyamark/satyamark_connect";
 import { type PostData } from "../utils/PostData";
+import { registerStatus } from "../satyamark/satyamark_status_controller";
 
 type PostCardProps = {
     postData: PostData;
@@ -54,53 +54,8 @@ export default function PostCard({ postData }: PostCardProps) {
     }, []);
 
     useEffect(() => {
-        if (!jobId) return;
-
-        const unsubscribe = onReceive((data) => {
-            if (!data || !data.jobId || data.jobId !== jobId) return;
-
-            const container = cardRef.current?.querySelector("[data-status-container]");
-            if (!container) return;
-
-            let icon = container.querySelector("img") as HTMLImageElement;
-            if (!icon) {
-                icon = document.createElement("img");
-                icon.className = "w-5 h-5 object-contain";
-                icon.alt = "status";
-                container.appendChild(icon);
-            }
-
-            let image = "/pending.png";
-
-            switch (data.mark?.toLowerCase()) {
-                case "correct":
-                    image = "/correct.png";
-                    break;
-                case "incorrect":
-                    image = "/incorrect.png";
-                    break;
-                case "insufficient":
-                    image = "/insufficient.png";
-                    break;
-                case "ai":
-                    image = "/ai.png";
-                    break;
-                case "real":
-                    image = "/real.png";
-                    break;
-                case "subjective":
-                    image = "/subjective.png";
-                    break;
-                default:
-                    image = "/pending.png";
-            }
-
-            icon.src = image;
-
-            console.log("Data Received: ", data);
-        });
-
-        return () => unsubscribe();
+        if (!jobId || !cardRef.current) return;
+        registerStatus(jobId, cardRef.current, { iconSize: 20 });
     }, [jobId]);
 
     return (
@@ -133,7 +88,17 @@ export default function PostCard({ postData }: PostCardProps) {
                 )}
             </div>
 
-            <div className="w-full flex justify-end mt-4 pt-3 border-t border-[#2a2d33]" data-status-container></div>
+            <div
+                style={{
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    marginTop: "12px",
+                    paddingTop: "12px",
+                    borderTop: "1px solid #2a2d33",
+                }}
+                data-status-container
+            ></div>
 
         </div>
     );

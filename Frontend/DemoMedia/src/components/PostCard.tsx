@@ -35,7 +35,7 @@ export default function PostCard({ postData }: PostCardProps) {
 
             while (mounted && !id) {
                 attempt++;
-                id = await process(cardRef.current);
+                id = await process(cardRef.current, postData.id);
 
                 if (id) {
                     if (!mounted) return;

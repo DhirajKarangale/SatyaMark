@@ -33,13 +33,13 @@ const extractFromDiv = (root: HTMLDivElement) => {
     return { text, images };
 };
 
-export async function process(divRef: HTMLDivElement) {
+export async function process(divRef: HTMLDivElement, dataId: string) {
     const { text, images } = extractFromDiv(divRef);
 
     const mergedText = mergeText(text);
     const validImage = await getFirstValidImage(images);
 
-    const jobId = sendData(mergedText, validImage ?? "");
+    const jobId = sendData(mergedText, validImage ?? "", dataId);
 
     return jobId;
 }

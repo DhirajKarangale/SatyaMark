@@ -22,8 +22,22 @@ function getTask(data) {
     const text = data.text;
     const image_url = data.image_url;
 
-    if (image_url) process_image(clientId, jobId, image_url);
-    else if (text) process_text(clientId, jobId, text);
+    // if (image_url) process_image(clientId, jobId, image_url);
+    // else if (text) process_text(clientId, jobId, text);
+
+
+    const hasText = typeof text === "string" && text.trim().length > 0;
+    const hasImage = typeof image_url === "string" && image_url.trim().length > 0;
+
+    if (hasImage) {
+        process_image(clientId, jobId, image_url);
+        return;
+    }
+
+    if (hasText) {
+        process_text(clientId, jobId, text);
+        return;
+    }
 }
 
 async function process_text(clientId, jobId, text) {

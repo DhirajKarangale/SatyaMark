@@ -1,5 +1,5 @@
-// const wsUrl = "wss://satyamark.onrender.com";
-const wsUrl = "ws://localhost:1000";
+const wsUrl = "wss://satyamark.onrender.com";
+// const wsUrl = "ws://localhost:1000";
 let socket: WebSocket | null = null;
 let storedConnectionData: SatyaMarkConnectionData | null = null;
 
@@ -57,7 +57,25 @@ function safeSend(msg: any) {
     socket.send(JSON.stringify(msg));
 }
 
-export function sendData(text: string, image_url: string) {
+function uniqueTimestamp() {
+    const now = new Date();
+
+    const yyyy = now.getFullYear();
+    const MM = String(now.getMonth() + 1).padStart(2, "0");
+    const dd = String(now.getDate()).padStart(2, "0");
+
+    const hh = String(now.getHours()).padStart(2, "0");
+    const mm = String(now.getMinutes()).padStart(2, "0");
+    const ss = String(now.getSeconds()).padStart(2, "0");
+    const ms = String(now.getMilliseconds()).padStart(3, "0");
+
+    const micro = String(Math.floor(Math.random() * 1000)).padStart(3, "0");
+
+    return `${yyyy}${MM}${dd}${hh}${mm}${ss}${ms}${micro}`;
+}
+
+
+export function sendData(text: string, image_url: string, dataId: string) {
     if (!storedConnectionData) {
         console.warn("No connectionData found. Call connect() first.");
         return;
@@ -69,8 +87,8 @@ export function sendData(text: string, image_url: string) {
     }
 
     const { app_id, user_id } = storedConnectionData;
-    const timestamp = Date.now();
-    const jobId = `${app_id}_${user_id}_${timestamp}`;
+    const timestamp = uniqueTimestamp();
+    const jobId = `${app_id}_${user_id}_${dataId}_${timestamp}`;
 
     const data = {
         clientId: user_id,

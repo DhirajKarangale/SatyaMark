@@ -65,7 +65,7 @@
     {
         "id": "10",
         "title": "Image Post",
-        "imageURL": "https://picsum.photos/600/400?55",
+        "description": "Roman reings is my favourate wrestler",
         "userName": "ts_ninja",
         "date": "2025-04-11"
     }

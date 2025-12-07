@@ -19,7 +19,7 @@ export function onReceive(cb: ReceiveCallback) {
     };
 }
 
-export function connect(connectionData: SatyaMarkConnectionData) {
+export function init(connectionData: SatyaMarkConnectionData) {
     storedConnectionData = connectionData;
 
     socket = new WebSocket(wsUrl);

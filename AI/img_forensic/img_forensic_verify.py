@@ -1,5 +1,5 @@
 import os
-import imghdr
+from PIL import Image
 import requests
 import tempfile
 from PIL import Image
@@ -57,14 +57,11 @@ def verify_img_forensic_url(url: str, timeout: int = 10, max_bytes: int = 5 * 10
                 if size > max_bytes:
                     return {"error": "File too large (>5MB)"}
                 tmp.write(chunk)
-
-        kind = imghdr.what(temp_path)
-        if kind is None:
-            try:
-                with Image.open(temp_path) as im:
-                    im.verify()
-            except:
-                return {"error": "Downloaded file is not an image"}
+        try:
+            with Image.open(temp_path) as im:
+                im.verify()
+        except:
+            return {"error": "Downloaded file is not an image"}
 
         return verify_img_forensic(temp_path)
 

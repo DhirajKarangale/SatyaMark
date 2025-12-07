@@ -1,14 +1,14 @@
+requests
 json5
 regex
-dotenv
+python-dotenv
 numpy
-torch
 redis
 piexif
 pathlib
 requests
-# mediapipe
-ultralytics
+Pillow
+opencv-python-headless
 PyWavelets
 langchain_core
 langchain_huggingface

@@ -158,15 +158,11 @@ def classify_image(
             "semantic": summarize(semantic),
         }
 
-        print("formatted: ", formatted)
-
         # Get raw response from LLM
         response = (prompt | llm | output_parser).invoke(formatted)
 
         if isinstance(response, dict):
             response = response.get("text", "")
-
-        print("\nraw LLM response preview:\n", response[:500], "\n")
 
         # 1) Extract any JSON block or fallback
         raw_json = extract_json_block(response)

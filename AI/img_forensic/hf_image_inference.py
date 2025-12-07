@@ -1,7 +1,9 @@
 import os
 import requests
+from dotenv import load_dotenv
 
-HF_TOKEN = os.getenv("HF_TOKEN")  # required
+load_dotenv()
+HF_TOKEN = os.getenv("HF_TOKEN")  
 HF_API_URL = "https://api-inference.huggingface.co/models/{}"
 
 

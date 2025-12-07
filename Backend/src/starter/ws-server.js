@@ -11,8 +11,6 @@ function startws(server) {
   wss = new WebSocket.Server({ server });
 
   wss.on("connection", (socket) => {
-    console.log("Client connected");
-
     socket.on("message", (msg) => {
       let data;
       try {
@@ -21,14 +19,20 @@ function startws(server) {
         return;
       }
 
-      if (data.clientId) clients.set(String(data.clientId), socket);
+      if (data.type === "handshake" && data.clientId) {
+        clients.set(String(data.clientId), socket);
+        console.log("Client registered:", data.clientId);
+        return;
+      }
 
+      console.log("Client message:", data.clientId);
       process_task.getTask(data);
     });
 
     socket.on("close", () => {
       for (const [id, s] of clients.entries()) {
         if (s === socket) clients.delete(id);
+        console.log("Connection Closed: ", id);
       }
     });
   });

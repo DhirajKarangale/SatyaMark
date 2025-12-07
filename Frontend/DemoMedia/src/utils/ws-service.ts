@@ -1,8 +1,10 @@
 let socket: WebSocket | null = null;
+import { urlBase } from "./APIs";
+
+const wsUrl = urlBase.replace(/^http/, "ws");
 
 export function connect() {
-    // socket = new WebSocket("ws://localhost:2402");
-    socket = new WebSocket("wss://satyamark.onrender.com");
+    socket = new WebSocket(wsUrl);
     socket.onopen = () => { };
     socket.onmessage = (event) => { receiveData(JSON.parse(event.data)); };
     socket.onclose = () => { };

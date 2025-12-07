@@ -55,22 +55,6 @@ Designed for cases where ML detectors fail (highly compressed or edited images).
 
 # 📁 Repository Structure
 
-```
-SatyaMark/
-│── AI/
-│   ├── text/                 # Text verification system
-│   ├── img_ml/               # ML-based AI image detection
-│   ├── img_forensic/         # Forensic detection engine
-│   ├── dataset/              # ai/real -> train/test folders
-│   ├── connect.py            # Connects all LLMs
-│   ├── LLMs.json             # Model configuration file
-│   ├── marks_of_truth.py     # Label enums used in text verification
-│   ├── verify.py             # Local test runner for all modules
-│   ├── requirements.txt
-│   └── __init__.py
-└── venv/ (optional)
-```
-
 ---
 
 # 📌 File Responsibilities

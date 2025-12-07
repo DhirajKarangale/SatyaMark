@@ -1,5 +1,5 @@
-const wsUrl = "wss://satyamark.onrender.com";
-// const wsUrl = "ws://localhost:1000";
+// const wsUrl = "wss://satyamark.onrender.com";
+const wsUrl = "ws://localhost:1000";
 let socket: WebSocket | null = null;
 let storedConnectionData: SatyaMarkConnectionData | null = null;
 
@@ -79,35 +79,25 @@ export function sendData(text: string, image_url: string) {
         image_url
     };
 
-    // console.log("Send: ", data);
     socket.send(JSON.stringify(data));
 
     return jobId;
 }
 
 export function receiveData(data: any) {
-    // console.log("Received:", data);
+    if (!storedConnectionData || data.clientId != storedConnectionData.user_id) return;
+
+    const payload = {
+        jobId: data.jobId,
+        dataId: data.dataId,
+        mark: data.mark,
+    }
 
     for (const cb of Array.from(listeners)) {
         try {
-            cb(data);
+            cb(payload);
         } catch (err) {
             console.error("listener error", err);
         }
     }
 }
-
-
-/*
-
-{
-    "jobId": "APP123_USER999_1765119655256",
-    "clientId": "USER999",
-    "image_url": "https://picsum.photos/600/400?99",
-    "image_hash": "f12bd6449274fe7c898d7b91b2eb35faba2bad53720182454ad68bb656633844",
-    "mark": "AI",
-    "reason": "High GAN artifacts and manipulation detected despite weak sensor and present EXIF.",
-    "confidence": 0.7
-}
-
-*/

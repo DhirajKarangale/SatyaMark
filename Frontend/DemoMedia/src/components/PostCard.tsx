@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import { type PostData } from "../utils/PostData";
 import { process } from "../satyamark/satyamark_process";
 import { onReceive } from "../satyamark/satyamark_connect";
+import { type PostData } from "../utils/PostData";
 
 type PostCardProps = {
     postData: PostData;
@@ -58,12 +58,9 @@ export default function PostCard({ postData }: PostCardProps) {
         if (!jobId) return;
 
         const unsubscribe = onReceive((data) => {
-            if (!data || !data.jobId) return;
-
-            if (data.jobId === jobId) {
-                console.log("PostCard got its data:", data);
-                setResult(data);
-            }
+            if (!data || !data.jobId || data.jobId != jobId) return;
+            setResult(data);
+            console.log("PostCard got its data:", data);
         });
 
         return () => { unsubscribe(); };

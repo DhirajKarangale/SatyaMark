@@ -33,17 +33,13 @@ async function process_text(clientId, jobId, text) {
     const textData = await modelText.GetText(text_hash, summary_hash);
 
     if (textData) {
-        console.log(`[TEXT] Result found in cache → job=${jobId}`);
+        console.log(`[TEXT] Result found in cache → job=${jobId}: `);
 
         const payload = {
             jobId,
             clientId,
-            text_hash: textData.text_hash,
-            summary_hash: textData.summary_hash,
+            dataId: textData.id,
             mark: textData.mark,
-            reason: textData.reason,
-            confidence: Number(textData.confidence),
-            urls: textData.urls
         };
 
         eventBus.emit("sendData", { clientId, payload });
@@ -75,11 +71,8 @@ async function process_image(clientId, jobId, image_url) {
         const payload = {
             jobId,
             clientId,
-            image_url: imageData.image_url,
-            image_hash: imageData.image_hash,
+            dataId: imageData.id,
             mark: imageData.mark,
-            reason: imageData.reason,
-            confidence: Number(imageData.confidence),
         };
 
         eventBus.emit("sendData", { clientId, payload });

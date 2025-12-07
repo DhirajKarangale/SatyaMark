@@ -15,8 +15,16 @@ app.post("/ai-callback/text", async (req, res) => {
     try {
         const body = req.body;
         console.log(`[TEXT] Callback received → client=${body.clientId}, job=${body.jobId}`);
-        await modelText.PostText(body);
-        eventBus.emit("sendData", { clientId: body.clientId, payload: body });
+        const savedData = await modelText.PostText(body);
+        
+        const payload = {
+            jobId: body.jobId,
+            clientId: body.clientId,
+            dataId: savedData.id,
+            mark: savedData.mark,
+        };
+
+        eventBus.emit("sendData", { clientId: body.clientId, payload: payload });
         res.json({ ok: true });
 
     } catch (err) {

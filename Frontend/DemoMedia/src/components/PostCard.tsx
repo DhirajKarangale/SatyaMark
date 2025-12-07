@@ -1,7 +1,9 @@
 import { useState, useRef, useEffect } from "react";
-import { process } from "../satyamark/satyamark_process";
 import { type PostData } from "../utils/PostData";
-import { registerStatus } from "../satyamark/satyamark_status_controller";
+// import { process } from "../satyamark/satyamark_process_old";
+// import { registerStatus } from "../satyamark/satyamark_status_controller_old";
+import { registerStatus } from "satyamark";
+import { process } from "satyamark";
 
 type PostCardProps = {
     postData: PostData;

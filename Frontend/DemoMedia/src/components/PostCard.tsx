@@ -21,7 +21,6 @@ const formatDate = (dateStr: string) => {
 export default function PostCard({ postData }: PostCardProps) {
     const { title, description, imageURL, userName, date } = postData;
     const [jobId, setJobId] = useState<string | null>(null);
-    const [result, setResult] = useState<any | null>(null);
     const cardRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
@@ -58,14 +57,51 @@ export default function PostCard({ postData }: PostCardProps) {
         if (!jobId) return;
 
         const unsubscribe = onReceive((data) => {
-            if (!data || !data.jobId || data.jobId != jobId) return;
-            setResult(data);
-            console.log("PostCard got its data:", data);
+            if (!data || !data.jobId || data.jobId !== jobId) return;
+
+            const container = cardRef.current?.querySelector("[data-status-container]");
+            if (!container) return;
+
+            let icon = container.querySelector("img") as HTMLImageElement;
+            if (!icon) {
+                icon = document.createElement("img");
+                icon.className = "w-5 h-5 object-contain";
+                icon.alt = "status";
+                container.appendChild(icon);
+            }
+
+            let image = "/pending.png";
+
+            switch (data.mark?.toLowerCase()) {
+                case "correct":
+                    image = "/correct.png";
+                    break;
+                case "incorrect":
+                    image = "/incorrect.png";
+                    break;
+                case "insufficient":
+                    image = "/insufficient.png";
+                    break;
+                case "ai":
+                    image = "/ai.png";
+                    break;
+                case "real":
+                    image = "/real.png";
+                    break;
+                case "subjective":
+                    image = "/subjective.png";
+                    break;
+                default:
+                    image = "/pending.png";
+            }
+
+            icon.src = image;
+
+            console.log("Data Received: ", data);
         });
 
-        return () => { unsubscribe(); };
+        return () => unsubscribe();
     }, [jobId]);
-
 
     return (
         <div
@@ -97,10 +133,8 @@ export default function PostCard({ postData }: PostCardProps) {
                 )}
             </div>
 
-            {/* BOTTOM ACTION AREA */}
-            <div className="mt-4 pt-3 border-t border-gray-800 flex justify-end">
-                <div className="w-3 h-3 rounded-full bg-blue-500" />
-            </div>
+            <div className="w-full flex justify-end mt-4 pt-3 border-t border-[#2a2d33]" data-status-container></div>
+
         </div>
     );
 }

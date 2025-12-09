@@ -2,11 +2,13 @@ import { defineConfig } from "tsup";
 
 export default defineConfig({
   entry: ["src/index.ts"],
-  format: ["cjs", "esm"],
+  format: ["esm", "cjs"],
   dts: true,
-  sourcemap: false,
   clean: true,
   external: ["react"],
-  minify: false,
-  target: "es2019"
+  target: "es2019",
+  loader: {
+    ".png": "copy"
+  },
+  publicDir: "icons-mark"
 });

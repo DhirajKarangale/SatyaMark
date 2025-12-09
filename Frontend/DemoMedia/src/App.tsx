@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import Home from "./components/Home";
-// import { init } from './satyamark/satyamark_connect'
 import { init } from "satyamark-react";
 
 export default function App() {

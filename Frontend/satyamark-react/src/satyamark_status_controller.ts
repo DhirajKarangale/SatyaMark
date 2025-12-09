@@ -1,5 +1,13 @@
 import { onReceive } from "./satyamark_connect";
 
+import correctIcon from "../icons-mark/correct.png";
+import incorrectIcon from "../icons-mark/incorrect.png";
+import insufficientIcon from "../icons-mark/insufficient.png";
+import aiIcon from "../icons-mark/ai.png";
+import realIcon from "../icons-mark/real.png";
+import subjectiveIcon from "../icons-mark/subjective.png";
+import pendingIcon from "../icons-mark/pending.png";
+
 type StatusOptions = {
     iconSize?: number;
 };
@@ -14,13 +22,13 @@ const jobMap: Record<string, JobEntry> = {};
 const DEFAULT_ICON_SIZE = 20;
 
 const iconMap: Record<string, string> = {
-    correct: "/correct.png",
-    incorrect: "/incorrect.png",
-    insufficient: "/insufficient.png",
-    ai: "/ai.png",
-    real: "/real.png",
-    subjective: "/subjective.png",
-    pending: "/pending.png",
+    correct: correctIcon,
+    incorrect: incorrectIcon,
+    insufficient: insufficientIcon,
+    ai: aiIcon,
+    real: realIcon,
+    subjective: subjectiveIcon,
+    pending: pendingIcon,
 };
 
 export function registerStatus(

@@ -1,9 +1,9 @@
 [
     {
-        "id": "9",
-        "title": "Image Post",
-        "imageURL": "https://picsum.photos/600/400?99",
-        "userName": "devops",
-        "date": "2025-05-02"
+        "id": "2",
+        "title": "I Love MS Dhoni",
+        "description": "I have been a huge fan of MS Dhoni since childhood. His calm attitude inspires me every day.",
+        "userName": "dkcodes",
+        "date": "2025-11-28"
     }
 ]

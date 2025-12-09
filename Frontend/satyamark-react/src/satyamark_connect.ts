@@ -1,5 +1,5 @@
-// const wsUrl = "wss://satyamark.onrender.com";
-const wsUrl = "ws://localhost:1000";
+const wsUrl = "wss://satyamark.onrender.com";
+// const wsUrl = "ws://localhost:1000";
 let socket: WebSocket | null = null;
 let storedConnectionData: SatyaMarkConnectionData | null = null;
 

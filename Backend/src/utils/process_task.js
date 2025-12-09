@@ -46,17 +46,17 @@ async function process_text(clientId, jobId, text) {
     const { text_hash, summary_hash } = generateTextHashes(text)
     const textData = await modelText.GetText(text_hash, summary_hash);
 
-    if (textData) {
+    if (textData && typeof textData === "object") {
         console.log(`[TEXT] Result found in cache → job=${jobId}: `);
 
         const payload = {
             jobId,
             clientId,
-            dataId: textData.id,
-            mark: textData.mark,
-            confidence: textData.confidence,
-            reason: textData.reason,
-            urls: textData.urls,
+            dataId: textData.id ?? null,
+            mark: textData.mark ?? null,
+            confidence: textData.confidence ?? null,
+            reason: textData.reason ?? null,
+            urls: textData.urls ?? null,
         };
 
         eventBus.emit("sendData", { clientId, payload });
@@ -82,16 +82,16 @@ async function process_image(clientId, jobId, image_url) {
     const { image_hash } = await generateImageHash(image_url)
     const imageData = await modelImage.GetImage(image_url, image_hash);
 
-    if (imageData) {
+    if (imageData && typeof imageData === "object") {
         console.log(`[IMAGE] Result found in cache → job=${jobId}`);
 
         const payload = {
             jobId,
             clientId,
-            dataId: imageData.id,
-            mark: imageData.mark,
-            confidence: textData.confidence,
-            reason: imageData.reason,
+            dataId: imageData.id ?? null,
+            mark: imageData.mark ?? null,
+            confidence: imageData.confidence ?? null,
+            reason: imageData.reason ?? null,
         };
 
         eventBus.emit("sendData", { clientId, payload });

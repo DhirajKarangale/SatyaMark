@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const modelText = require('../model/modelText');
 const modelImage = require('../model/modelImage');
-const eventBus = require("../starter/eventBus"); 
+const eventBus = require("../starter/eventBus");
 
 const app = express();
 
@@ -16,12 +16,15 @@ app.post("/ai-callback/text", async (req, res) => {
         const body = req.body;
         console.log(`[TEXT] Callback received → client=${body.clientId}, job=${body.jobId}`);
         const savedData = await modelText.PostText(body);
-        
+
         const payload = {
             jobId: body.jobId,
             clientId: body.clientId,
             dataId: savedData.id,
             mark: savedData.mark,
+            confidence: savedData.confidence,
+            reason: savedData.reason,
+            urls: savedData.urls,
         };
 
         eventBus.emit("sendData", { clientId: body.clientId, payload: payload });
@@ -37,8 +40,18 @@ app.post("/ai-callback/image", async (req, res) => {
     try {
         const body = req.body;
         console.log(`[IMAGE] Callback received → client=${body.clientId}, job=${body.jobId}`);
-        await modelImage.PostImage(body);
-        eventBus.emit("sendData", { clientId: body.clientId, payload: body });
+        const savedData = await modelImage.PostImage(body);
+
+        const payload = {
+            jobId: body.jobId,
+            clientId: body.clientId,
+            dataId: savedData.id,
+            mark: savedData.mark,
+            confidence: savedData.confidence,
+            reason: savedData.reason,
+        };
+
+        eventBus.emit("sendData", { clientId: body.clientId, payload: payload });
         res.json({ ok: true });
 
     } catch (err) {

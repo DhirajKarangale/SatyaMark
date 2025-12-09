@@ -1,5 +1,5 @@
-const wsUrl = "wss://satyamark.onrender.com";
-// const wsUrl = "ws://localhost:1000";
+// const wsUrl = "wss://satyamark.onrender.com";
+const wsUrl = "ws://localhost:1000";
 let socket: WebSocket | null = null;
 let storedConnectionData: SatyaMarkConnectionData | null = null;
 
@@ -104,6 +104,8 @@ export function sendData(text: string, image_url: string, dataId: string) {
 
 export function receiveData(data: any) {
     if (!storedConnectionData || data.clientId != storedConnectionData.user_id) return;
+
+    console.log("Received Data: ", data);
 
     const payload = {
         jobId: data.jobId,

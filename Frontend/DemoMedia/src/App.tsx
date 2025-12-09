@@ -1,17 +1,11 @@
-import { useState, useEffect } from "react";
-import { init } from "satyamark";
+import { useEffect } from "react";
+import { init } from './satyamark/satyamark_connect'
 import Home from "./components/Home";
 
 export default function App() {
-  const [ready, setReady] = useState(false);
-
   useEffect(() => {
-    init({ app_id: "APP123", user_id: "USER999" }, "ws://localhost:1000")
-      .then(() => setReady(true))
-      .catch(console.error);
+    init({ app_id: "APP123", user_id: "USER999" })
   }, []);
-
-  if (!ready) return <div>Connecting…</div>;
 
   return <Home />;
 }

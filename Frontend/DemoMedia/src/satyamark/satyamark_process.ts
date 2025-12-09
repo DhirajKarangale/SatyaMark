@@ -1,4 +1,4 @@
-import { sendData } from "./satyamark_connect_old";
+import { sendData } from "./satyamark_connect";
 
 const mergeText = (texts: string[]) => texts.join(", ");
 

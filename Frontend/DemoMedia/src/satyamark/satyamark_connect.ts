@@ -1,5 +1,5 @@
-// const wsUrl = "wss://satyamark.onrender.com";
-const wsUrl = "ws://localhost:1000";
+const wsUrl = "wss://satyamark.onrender.com";
+// const wsUrl = "ws://localhost:1000";
 let socket: WebSocket | null = null;
 let storedConnectionData: SatyaMarkConnectionData | null = null;
 
@@ -77,12 +77,12 @@ function uniqueTimestamp() {
 
 export function sendData(text: string, image_url: string, dataId: string) {
     if (!storedConnectionData) {
-        console.warn("No connectionData found. Call connect() first.");
+        console.log("No connectionData found. Call connect() first.");
         return;
     }
 
     if (!socket || socket.readyState !== WebSocket.OPEN) {
-        console.warn("Socket not ready");
+        console.log("Socket not ready");
         return;
     }
 

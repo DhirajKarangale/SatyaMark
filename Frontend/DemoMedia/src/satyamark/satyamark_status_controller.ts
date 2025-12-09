@@ -1,4 +1,4 @@
-import { onReceive } from "./satyamark_connect_old";
+import { onReceive } from "./satyamark_connect";
 
 type StatusOptions = {
     iconSize?: number;

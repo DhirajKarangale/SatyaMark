@@ -16,7 +16,7 @@ function Home() {
 
     return (
         <div className="w-full h-full flex flex-col gap-2 justify-between items-center py-2 bg-red-5001">
-            <ResultCard data={null} />
+            <ResultCard data={result} />
             <ChatInput onSend={(msg) => console.log("Sent:", msg)} />
         </div>
     );

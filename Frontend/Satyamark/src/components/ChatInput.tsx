@@ -1,5 +1,6 @@
 import { memo, useState, useRef, useEffect } from "react";
 import { Send } from "lucide-react";
+import { motion } from "framer-motion";
 
 function ChatInput({
     onSend,
@@ -25,35 +26,52 @@ function ChatInput({
     };
 
     return (
-        <div className="w-full bg-white/5 border border-white/20 
-            backdrop-blur-sm rounded-xl p-3 flex flex-col gap-2">
-
-            <textarea
+        <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, ease: "easeOut" }}
+            className="w-full bg-white/5 border border-white/20 
+                backdrop-blur-sm rounded-xl p-3 flex flex-col gap-2"
+        >
+            {/* TEXTAREA — no focus glow anymore */}
+            <motion.textarea
                 ref={textareaRef}
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 placeholder="Type a message..."
                 rows={1}
-                className="w-full resize-none bg-transparent1 text-white outline-none
-                max-h-[120px] overflow-y-auto custom-scroll"
+                className="w-full resize-none bg-transparent text-white outline-none
+                    max-h-[120px] overflow-y-auto custom-scroll"
+                whileFocus={{
+                    scale: 1,    
+                }}
+                transition={{ duration: 0.2 }}
             />
 
+            {/* SEND BUTTON */}
             <div className="flex justify-end">
-                <button
+                <motion.button
                     onClick={send}
                     disabled={!isValid}
+                    whileHover={isValid ? { scale: 1.05 } : {}}
+                    whileTap={isValid ? { scale: 0.9 } : {}}
+                    animate={{
+                        scale: isValid ? 1 : 0.95,
+                        opacity: isValid ? 1 : 0.4,
+                    }}
+                    transition={{ duration: 0.2 }}
                     className={`
-                            w-12 h-10 py-2 rounded-lg flex justify-center items-center
-                            text-white transition-all duration-150
-                            ${isValid
-                            ? "bg-cyan-500 hover:bg-cyan-400 active:scale-95"
-                            : "bg-zinc-700 opacity-40 cursor-not-allowed"}
-                        `}
+                        w-12 h-10 py-2 rounded-lg flex justify-center items-center
+                        text-white
+                        ${isValid
+                            ? "bg-cyan-500 hover:bg-cyan-400"
+                            : "bg-zinc-700 cursor-not-allowed"}
+                    `}
                 >
                     <Send size={22} />
-                </button>
+                </motion.button>
             </div>
-        </div>
+        </motion.div>
     );
 }
 

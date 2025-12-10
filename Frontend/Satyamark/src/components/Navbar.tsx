@@ -6,8 +6,8 @@ import { Home, Info, FileText } from "lucide-react";
 import { routeHome, routeAbout, routeDoccu } from "../utils/Routes";
 
 const navItems = [
-    { name: "About", path: routeAbout, icon: <Info size={20} /> },
     { name: "Home", path: routeHome, icon: <Home size={20} /> },
+    { name: "About", path: routeAbout, icon: <Info size={20} /> },
     { name: "Documentation", path: routeDoccu, icon: <FileText size={20} /> },
 ];
 
@@ -30,8 +30,8 @@ function Navbar() {
                             to={item.path}
                             className={({ isActive }) =>
                                 `relative rounded-lg text-white text-base font-medium
-            transition-all duration-300 overflow-hidden
-            ${isActive ? "bg-cyan-600" : "hover:bg-white/10"}`
+                                transition-all duration-300 overflow-hidden
+                                ${isActive ? "bg-cyan-600" : "hover:bg-white/10"}`
                             }
                         >
                             <motion.div
@@ -80,8 +80,8 @@ function Navbar() {
                             to={item.path}
                             className={({ isActive }) =>
                                 `relative flex flex-col items-center justify-center text-white text-xs
-            font-medium transition-all duration-200 w-full py-2
-            ${isActive ? "bg-cyan-600 text-cyan-400 rounded-md" : "hover:text-cyan-300"}`
+                                font-medium transition-all duration-200 w-full py-2
+                                ${isActive ? "bg-cyan-600 text-cyan-400 rounded-md" : "hover:text-cyan-300"}`
                             }
                         >
                             <motion.div

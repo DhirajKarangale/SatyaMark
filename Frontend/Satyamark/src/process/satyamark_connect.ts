@@ -1,5 +1,5 @@
-const wsUrl = "wss://satyamark.onrender.com";
-// const wsUrl = "ws://localhost:1000";
+const wsUrl = import.meta.env.VITE_URL_WS;
+
 let socket: WebSocket | null = null;
 let storedConnectionData: SatyaMarkConnectionData | null = null;
 

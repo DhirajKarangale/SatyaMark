@@ -1,33 +1,28 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const helmet = require("helmet");
+const cors = require("cors");
 const modelText = require('../model/modelText');
 const modelImage = require('../model/modelImage');
 const eventBus = require("../starter/eventBus");
 
 const app = express();
 
+app.use(cors());
 app.use(helmet());
 app.use(express.json());
 app.use(bodyParser.json({ limit: "1mb" }));
 
-app.get("/getResult", async (req, res) => {
-    const id = req.params.id;
-
+app.get("/getTextResult", async (req, res) => {
+    const id = req.query.id;
     const textData = await modelText.GetTextById(id);
-    if (textData) {
-        res.json(textData);
-        return;
-    }
+    res.json(textData);
+});
 
+app.get("/getImageResult", async (req, res) => {
+    const id = req.query.id;
     const imageData = await modelImage.GetImageById(id);
-
-    if (imageData) {
-        res.json(imageData);
-        return;
-    }
-
-    res.json("No Data found");
+    res.json(imageData);
 });
 
 app.post("/ai-callback/text", async (req, res) => {

@@ -1,7 +1,8 @@
-import { memo, useState, useEffect } from "react";
 import Alert from "./Alert";
-import { motion, type Variants } from "framer-motion";
 import { jobStore } from "../store/jobStore";
+import { resultBus } from "../store/resultBus";
+import { memo, useState, useEffect } from "react";
+import { motion, type Variants } from "framer-motion";
 import { onReceive } from "../process/satyamark_connect";
 import GradientText from "../reactbits/GradientText/GradientText";
 
@@ -20,8 +21,6 @@ function ResultCard() {
     const [queue, setQueue] = useState<ResultData[]>([]);
     const [showAlert, setShowAlert] = useState(false);
 
-    /* ---------------- animations ---------------- */
-
     const cardVariants: Variants = {
         hidden: { opacity: 0, scale: 0.95 },
         visible: {
@@ -39,8 +38,6 @@ function ResultCard() {
             transition: { delay: 0.1 + i * 0.05, duration: 0.35 }
         })
     };
-
-    /* ---------------- receive + queue ---------------- */
 
     useEffect(() => {
         const unsubscribe = onReceive((received) => {
@@ -62,13 +59,32 @@ function ResultCard() {
         return unsubscribe;
     }, [currentData]);
 
-    /* ---------------- job store rerender ---------------- */
+    useEffect(() => {
+        const unsubscribe = resultBus.subscribe((data) => {
+            const parsedData = {
+                ...data,
+                dataId: data.id,
+            };
+            delete parsedData.id;
+
+            setQueue((q) => {
+                if (!currentData) {
+                    setCurrentData(parsedData);
+                    return q;
+                }
+
+                setShowAlert(true);
+
+                return [parsedData, ...q];
+            });
+        });
+
+        return unsubscribe;
+    }, [currentData]);
 
     useEffect(() => {
         return jobStore.subscribe(() => forceUpdate(v => v + 1));
     }, []);
-
-    /* ---------------- helpers ---------------- */
 
     const loadNext = () => {
         setQueue((q) => {
@@ -83,8 +99,6 @@ function ResultCard() {
         !currentData &&
         queue.length === 0 &&
         jobStore.hasJobs();
-
-    /* ---------------- empty / loader ---------------- */
 
     if (!currentData) {
         if (showLoader) {
@@ -123,8 +137,6 @@ function ResultCard() {
         );
     }
 
-    /* ---------------- main card ---------------- */
-
     return (
         <>
             <motion.div
@@ -135,7 +147,6 @@ function ResultCard() {
                 backdrop-blur-sm flex flex-col gap-4 overflow-y-auto
                 custom-scroll rounded-xl p-4"
             >
-                {/* TOP */}
                 <motion.div
                     custom={0}
                     variants={contentVariants}
@@ -157,7 +168,6 @@ function ResultCard() {
                     </div>
                 </motion.div>
 
-                {/* REASON */}
                 <motion.div
                     custom={1}
                     variants={contentVariants}
@@ -168,7 +178,6 @@ function ResultCard() {
                     {currentData.reason}
                 </motion.div>
 
-                {/* URLS */}
                 {currentData.urls?.length ? (
                     <motion.div
                         custom={2}
@@ -192,7 +201,6 @@ function ResultCard() {
                     </motion.div>
                 ) : null}
 
-                {/* LOAD NEXT BUTTON */}
                 {queue.length > 0 && (
                     <button
                         onClick={loadNext}
@@ -205,7 +213,6 @@ function ResultCard() {
                     </button>
                 )}
 
-                {/* PROCESSING INDICATOR */}
                 {queue.length === 0 && jobStore.hasJobs() && (
                     <div className="absolute bottom-4 right-4 flex items-center gap-2
                     bg-black/40 backdrop-blur-md px-3 py-2 rounded-lg
@@ -218,7 +225,6 @@ function ResultCard() {
                 )}
             </motion.div>
 
-            {/* ALERT */}
             <Alert
                 isOpen={showAlert}
                 message="New result is ready. Load it now?"

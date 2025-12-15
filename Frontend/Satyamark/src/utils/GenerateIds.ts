@@ -1,3 +1,5 @@
+const KEY = "satyamark_user_id";
+
 export function uniqueTimestamp() {
     const now = new Date();
 
@@ -16,9 +18,14 @@ export function uniqueTimestamp() {
 }
 
 export function getUserId() {
-    const uuid = crypto.randomUUID();
-    const time = uniqueTimestamp();
-    const id = `${uuid}_${time}`;
+    let id = localStorage.getItem(KEY);
+
+    if (!id) {
+        const uuid = crypto.randomUUID();
+        const time = uniqueTimestamp();
+        id = `${uuid}_${time}`;
+    }
+
     return id;
 }
 

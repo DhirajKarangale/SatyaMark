@@ -20,6 +20,22 @@ function ChatInput() {
 
     const isValid = text.trim().length > 0;
 
+    function getErrorMessage(error: unknown): string {
+        if (error instanceof Error) return error.message;
+
+        if (typeof error === "string") return error;
+
+        if (typeof error === "object" && error !== null) {
+            // @ts-ignore
+            return error?.response?.data?.message
+                // @ts-ignore
+                || error?.message
+                || "Something went wrong. Please try again.";
+        }
+
+        return "Something went wrong. Please try again.";
+    }
+
     const send = async () => {
         if (!isValid) return;
         setText("");
@@ -28,8 +44,7 @@ function ChatInput() {
             if (!jobId) return;
             jobStore.add(jobId);
         } catch (error) {
-            console.log("Error: ", error);
-            setMsg("error");
+            setMsg(getErrorMessage(error));
         }
     };
 
@@ -47,6 +62,12 @@ function ChatInput() {
                     ref={textareaRef}
                     value={text}
                     onChange={(e) => setText(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                            e.preventDefault();
+                            if (isValid) send();
+                        }
+                    }}
                     placeholder="Type a message..."
                     rows={1}
                     className="w-full resize-none bg-transparent text-white outline-none

@@ -41,10 +41,10 @@ export function registerStatus(
         iconSize: options.iconSize ?? DEFAULT_ICON_SIZE,
     };
 
-    updateIcon(jobId, "pending");
+    updateIcon(jobId, "pending", null);
 }
 
-function updateIcon(jobId: string, mark: string) {
+function updateIcon(jobId: string, mark: string, data: any) {
     const entry = jobMap[jobId];
     if (!entry) return;
 
@@ -66,9 +66,26 @@ function updateIcon(jobId: string, mark: string) {
     icon.style.width = iconSize + "px";
     icon.style.height = iconSize + "px";
     icon.src = iconMap[mark] || iconMap["pending"];
+
+    const type = data?.type;
+    const isValidType = type === "text" || type === "image";
+    const isClickable = !!data?.dataId && isValidType && mark !== "pending";
+
+    if (isClickable) {
+        icon.style.cursor = "pointer";
+        icon.onclick = () => {
+            window.open(
+                `http://localhost:5173/${type}/${data.dataId}`,
+                "_blank"
+            );
+        };
+    } else {
+        icon.style.cursor = "default";
+        icon.onclick = null;
+    }
 }
 
 onReceive((data) => {
     if (!data?.jobId) return;
-    updateIcon(data.jobId, data.mark?.toLowerCase() ?? "pending");
+    updateIcon(data.jobId, data.mark?.toLowerCase() ?? "pending", data);
 });

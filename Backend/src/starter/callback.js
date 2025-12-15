@@ -39,6 +39,7 @@ app.post("/ai-callback/text", async (req, res) => {
             confidence: savedData.confidence,
             reason: savedData.reason,
             urls: savedData.urls,
+            type: "text",
         };
 
         eventBus.emit("sendData", { clientId: body.clientId, payload: payload });
@@ -63,6 +64,7 @@ app.post("/ai-callback/image", async (req, res) => {
             mark: savedData.mark,
             confidence: savedData.confidence,
             reason: savedData.reason,
+            type: "image",
         };
 
         eventBus.emit("sendData", { clientId: body.clientId, payload: payload });

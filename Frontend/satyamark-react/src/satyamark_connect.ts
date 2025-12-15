@@ -132,7 +132,7 @@ export function receiveData(data: any) {
 
     for (const cb of Array.from(listeners)) {
         try {
-            cb(payload);
+            cb(data);
         } catch (err) {
             console.error("listener error", err);
         }

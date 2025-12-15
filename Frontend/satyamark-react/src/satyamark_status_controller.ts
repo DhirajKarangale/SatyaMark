@@ -20,6 +20,7 @@ type JobEntry = {
 const jobMap: Record<string, JobEntry> = {};
 
 const DEFAULT_ICON_SIZE = 20;
+const satyamark_url = "http://localhost:5173";
 
 const iconMap: Record<string, string> = {
     correct: correctIcon,
@@ -75,7 +76,7 @@ function updateIcon(jobId: string, mark: string, data: any) {
         icon.style.cursor = "pointer";
         icon.onclick = () => {
             window.open(
-                `http://localhost:5173/${type}/${data.dataId}`,
+                `${satyamark_url}/${type}/${data.dataId}`,
                 "_blank"
             );
         };

@@ -1,9 +1,253 @@
 import { memo } from "react";
+import { type Variants } from "framer-motion";
+import { motion } from "framer-motion";
+import { MARK_META } from "../utils/MARK_META";
+import GradientText from "../reactbits/GradientText/GradientText";
+
+const fadeUp: Variants = {
+    hidden: { opacity: 0, y: 14 },
+    visible: (i: number) => ({
+        opacity: 1,
+        y: 0,
+        transition: { delay: 0.08 * i, duration: 0.4, ease: "easeOut" }
+    })
+};
 
 function About() {
     return (
-        <div>
-            <h1>About</h1>
+        <div className="min-h-screen w-full bg-transparent px-4 md:px-8 py-10">
+            <motion.div
+                initial="hidden"
+                animate="visible"
+                className="
+          max-w-5xl mx-auto
+          flex flex-col gap-12
+          text-gray-300
+        "
+            >
+                {/* HERO */}
+                <motion.section custom={0} variants={fadeUp}>
+                    <GradientText
+                        colors={["#40ffaa", "#4079ff", "#40ffaa"]}
+                        animationSpeed={6}
+                        showBorder={false}
+                        className="text-4xl md:text-5xl font-semibold"
+                    >
+                        SatyaMark
+                    </GradientText>
+
+                    <p className="mt-4 text-lg leading-relaxed text-gray-300 max-w-3xl">
+                        SatyaMark is a centralized, AI-powered verification service designed
+                        to help people and platforms distinguish truth from misinformation
+                        in real time — across text, images, links, and media.
+                    </p>
+                </motion.section>
+
+                {/* PROBLEM */}
+                <motion.section custom={1} variants={fadeUp} className="space-y-3">
+                    <h2 className="text-white text-xl font-semibold">
+                        The Problem We’re Solving
+                    </h2>
+
+                    <p className="leading-relaxed">
+                        Misinformation spreads faster than facts across social platforms,
+                        leading to confusion, mistrust, and real-world harm. Existing
+                        fact-checking systems are slow, fragmented, and tightly coupled to
+                        individual platforms — leaving users unsure what to trust.
+                    </p>
+                </motion.section>
+
+                {/* WHY UNSOLVED */}
+                <motion.section custom={2} variants={fadeUp} className="space-y-3">
+                    <h2 className="text-white text-xl font-semibold">
+                        Why This Remains Unsolved
+                    </h2>
+
+                    <ul className="list-disc pl-5 space-y-1">
+                        <li>No unified, cross-platform verification layer</li>
+                        <li>Limited detection of AI-generated or manipulated media</li>
+                        <li>Lack of transparent, evidence-backed verdicts</li>
+                    </ul>
+                </motion.section>
+
+                {/* SOLUTION */}
+                <motion.section custom={3} variants={fadeUp} className="space-y-3">
+                    <h2 className="text-white text-xl font-semibold">
+                        Our Solution
+                    </h2>
+
+                    <p className="leading-relaxed">
+                        SatyaMark provides a universal “mark of truth” for digital content.
+                        Platforms integrate a lightweight SDK or API that displays trust
+                        indicators next to posts. Users can inspect detailed verification
+                        results, confidence scores, and sources — or request rechecks.
+                    </p>
+                </motion.section>
+
+                {/* AI FLOW */}
+                <motion.section custom={4} variants={fadeUp} className="space-y-3">
+                    <h2 className="text-white text-xl font-semibold">
+                        How the AI Works
+                    </h2>
+
+                    <ul className="list-disc pl-5 space-y-1">
+                        <li>Ingests multi-modal content (text, links, images, video)</li>
+                        <li>Extracts factual claims using NLP and vision models</li>
+                        <li>
+                            Cross-verifies claims using trusted sources, RAG, and vector search
+                            (FAISS / Milvus)
+                        </li>
+                        <li>Detects AI-generated or synthetic media</li>
+                        <li>
+                            Assigns verdicts such as Correct, Incorrect, AI-Generated, Pending,
+                            or Unverifiable — with confidence scores
+                        </li>
+                        <li>Continuously improves via user feedback and rechecks</li>
+                    </ul>
+                </motion.section>
+
+                <motion.section className="space-y-4">
+                    <h2 className="text-white text-xl font-semibold">
+                        Verification Marks
+                    </h2>
+
+                    <p className="text-gray-400 max-w-3xl">
+                        SatyaMark assigns clear, visual trust indicators to content so users
+                        can instantly understand verification status.
+                    </p>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-3xl">
+                        {Object.values(MARK_META).map((mark, i) => (
+                            <motion.div
+                                key={mark.label}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.05 * i }}
+                                className="
+          flex items-center gap-3
+          bg-white/5 border border-white/15 backdrop-blur-sm
+          rounded-xl px-4 py-3
+        "
+                            >
+                                <img
+                                    src={mark.icon}
+                                    alt={mark.label}
+                                    className="w-6 h-6 object-contain"
+                                />
+
+                                <span className={`font-medium ${mark.color}`}>
+                                    {mark.label}
+                                </span>
+                            </motion.div>
+                        ))}
+                    </div>
+                </motion.section>
+
+                {/* PRIVACY */}
+                <motion.section custom={5} variants={fadeUp} className="space-y-3">
+                    <h2 className="text-white text-xl font-semibold">
+                        Privacy & Data Handling
+                    </h2>
+
+                    <p className="leading-relaxed">
+                        SatyaMark does <span className="text-white font-medium">not</span>{" "}
+                        collect, store, or sell user data. Submitted content is processed
+                        ephemerally and discarded after analysis.
+                    </p>
+
+                    <p className="leading-relaxed text-gray-400">
+                        To perform verification, SatyaMark may route content through
+                        third-party or self-hosted Large Language Models (LLMs). These models
+                        process data transiently for analysis purposes only and are not used
+                        to build user profiles.
+                    </p>
+                </motion.section>
+
+                {/* MODELS */}
+                <motion.section custom={6} variants={fadeUp} className="space-y-3">
+                    <h2 className="text-white text-xl font-semibold">
+                        AI Models Used
+                    </h2>
+
+                    <p className="text-gray-400">
+                        Depending on task and availability, SatyaMark may use models such as:
+                    </p>
+
+                    <ul className="list-disc pl-5 space-y-1 text-gray-300">
+                        <li>LLaMA 3 (Meta)</li>
+                        <li>Mistral 7B</li>
+                        <li>DeepSeek R1 & V3</li>
+                        <li>Hermes 3</li>
+                        <li>Qwen 2.5</li>
+                    </ul>
+                </motion.section>
+
+                {/* GTM */}
+                <motion.section custom={7} variants={fadeUp} className="space-y-3">
+                    <h2 className="text-white text-xl font-semibold">
+                        Go-To-Market Strategy
+                    </h2>
+
+                    <ul className="list-disc pl-5 space-y-1">
+                        <li>Pilot SDK with niche publishers and fact-checking NGOs</li>
+                        <li>Partnerships with messaging apps and CMS platforms</li>
+                        <li>Developer-first documentation and sample integrations</li>
+                    </ul>
+                </motion.section>
+
+                {/* REVENUE */}
+                <motion.section custom={8} variants={fadeUp} className="space-y-3">
+                    <h2 className="text-white text-xl font-semibold">
+                        Revenue Model
+                    </h2>
+
+                    <ul className="list-disc pl-5 space-y-1">
+                        <li>Tiered API / SDK subscriptions</li>
+                        <li>Advanced AI features for enterprise platforms</li>
+                        <li>Analytics dashboards for moderation teams</li>
+                    </ul>
+                </motion.section>
+
+                {/* CONTACT */}
+                <motion.section
+                    custom={9}
+                    variants={fadeUp}
+                    className="pt-6 border-t border-white/10 space-y-3"
+                >
+                    <h2 className="text-white text-xl font-semibold">Contact</h2>
+
+                    <p>
+                        Questions, feedback, or collaboration inquiries:
+                    </p>
+
+                    <a
+                        href="mailto:dhirajkarangale02@gmail.com"
+                        className="text-cyan-400 hover:text-cyan-300 underline w-fit"
+                    >
+                        dhirajkarangale02@gmail.com
+                    </a>
+
+                    <div className="flex gap-6 pt-2">
+                        <a
+                            href="https://dhirajkarangale.netlify.app/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hover:text-white transition"
+                        >
+                            Portfolio
+                        </a>
+
+                        <a
+                            href="https://www.linkedin.com/in/dhiraj-karangale-464ab91bb/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hover:text-white transition"
+                        >
+                            LinkedIn
+                        </a>
+                    </div>
+                </motion.section>
+            </motion.div>
         </div>
     );
 }

@@ -14,11 +14,12 @@ type ResultData = {
     urls?: string[] | null;
 };
 
-function ResultCard({ inputData }: { inputData: ResultData | null }) {
+function ResultCard() {
     const [, forceUpdate] = useState(0);
+    const hasPendingJobs = jobStore.hasJobs();
     const [showAlert, setShowAlert] = useState<boolean>(false);
-    const [data, setData] = useState<ResultData | null>(inputData);
-    const [receivedData, setReceivedData] = useState<ResultData | null>(inputData);
+    const [data, setData] = useState<ResultData | null>(null);
+    const [receivedData, setReceivedData] = useState<ResultData | null>(null);
 
     const cardVariants: Variants = {
         hidden: { opacity: 0, scale: 0.95 },
@@ -89,7 +90,7 @@ function ResultCard({ inputData }: { inputData: ResultData | null }) {
                 variants={cardVariants}
                 initial="hidden"
                 animate="visible"
-                whileHover={{ scale: 1.01, boxShadow: "0 0 20px rgba(64,255,170,0.25)" }}
+                whileHover={{ scale: 1, boxShadow: "0 0 20px rgba(64,255,170,0.25)" }}
                 className="w-full h-full border border-white/20 bg-transparent
                 backdrop-blur-sm rounded-xl p-4 flex items-center justify-center"
             >
@@ -121,7 +122,7 @@ function ResultCard({ inputData }: { inputData: ResultData | null }) {
                     scale: 1,
                     boxShadow: "0 0 25px rgba(0,200,255,0.25)"
                 }}
-                className="w-full h-full bg-white/5 border border-white/20 backdrop-blur-sm 
+                className="relative w-full h-full bg-white/5 border border-white/20 backdrop-blur-sm 
                 flex flex-col gap-4 overflow-y-auto custom-scroll rounded-xl p-4"
             >
                 {/* TOP ROW */}
@@ -184,6 +185,18 @@ function ResultCard({ inputData }: { inputData: ResultData | null }) {
                         </div>
                     </motion.div>
                 )}
+
+                {data && hasPendingJobs && (
+                    <div className="absolute bottom-4 right-4 flex items-center gap-2
+                  bg-black/40 backdrop-blur-md px-3 py-2 rounded-lg
+                  border border-white/20">
+                        <div className="w-4 h-4 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin" />
+                        <span className="text-xs text-cyan-300">
+                            Processing next…
+                        </span>
+                    </div>
+                )}
+
             </motion.div>
 
             <Alert

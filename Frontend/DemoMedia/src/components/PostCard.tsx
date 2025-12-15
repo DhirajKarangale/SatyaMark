@@ -34,11 +34,16 @@ export default function PostCard({ postData }: PostCardProps) {
 
             while (mounted && !id) {
                 attempt++;
-                id = await process(cardRef.current, postData.id);
+                try {
+                    id = await process(cardRef.current, postData.id);
 
-                if (id) {
-                    if (!mounted) return;
-                    setJobId(id);
+                    if (id) {
+                        if (!mounted) return;
+                        setJobId(id);
+                        break;
+                    }
+                } catch (error) {
+                    console.log(error);
                     break;
                 }
 

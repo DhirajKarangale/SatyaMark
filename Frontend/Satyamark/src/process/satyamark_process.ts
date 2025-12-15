@@ -17,16 +17,16 @@ const isValidImageUrl = (url: string): Promise<boolean> => {
 // };
 
 export async function process(text: string, images: string, dataId: string) {
-    if (images && !await isValidImageUrl(images)) {
-        throw new Error("Image URL Not valid");
-    }
-
-    if (text && text.length < 3) {
-        throw new Error("Text not valid");
-    }
-
     if (!text && !images) {
-        throw new Error("Text or images not valid");
+        throw new Error("Provide text or an image URL");
+    }
+
+    if (text && text.trim().length < 3) {
+        throw new Error("Text must be at least 3 characters long");
+    }
+
+    if (images && !(await isValidImageUrl(images))) {
+        throw new Error("Invalid image URL");
     }
 
     const jobId = sendData(text, images ?? "", dataId);

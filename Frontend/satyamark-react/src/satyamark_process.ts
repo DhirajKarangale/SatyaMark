@@ -34,10 +34,26 @@ const extractFromDiv = (root: HTMLDivElement) => {
 };
 
 export async function process(divRef: HTMLDivElement, dataId: string) {
+    if (!divRef) {
+        throw new Error("Invalid root element");
+    }
+
+    if (!dataId) {
+        throw new Error("dataId is required");
+    }
+
     const { text, images } = extractFromDiv(divRef);
 
     const mergedText = mergeText(text);
     const validImage = await getFirstValidImage(images);
+
+    if (!mergedText && !validImage) {
+        throw new Error("No valid text or image found in the element");
+    }
+
+    if (mergedText && mergedText.length < 3) {
+        throw new Error("Extracted text is too short");
+    }
 
     const jobId = sendData(mergedText, validImage ?? "", dataId);
 

@@ -20,7 +20,10 @@ export function onReceive(cb: ReceiveCallback) {
 }
 
 export function init(connectionData: SatyaMarkConnectionData) {
-    if (storedConnectionData == connectionData) return;
+    if (socket && socket.readyState == WebSocket.OPEN && storedConnectionData == connectionData) {
+        console.log("Already Connected: ", connectionData);
+        return;
+    }
 
     socket = new WebSocket(wsUrl);
 
@@ -43,6 +46,14 @@ export function init(connectionData: SatyaMarkConnectionData) {
     };
 
     storedConnectionData = connectionData;
+}
+
+function isSocketOpen() {
+    return socket && socket.readyState === WebSocket.OPEN;
+}
+
+function assert(condition: any, message: string): asserts condition {
+    if (!condition) throw new Error(message);
 }
 
 function safeSend(msg: any) {
@@ -76,7 +87,6 @@ function uniqueTimestamp() {
     return `${yyyy}${MM}${dd}${hh}${mm}${ss}${ms}${micro}`;
 }
 
-
 export function sendData(text: string, image_url: string, dataId: string) {
     if (!storedConnectionData) {
         console.log("No connectionData found. Call connect() first.");
@@ -87,6 +97,13 @@ export function sendData(text: string, image_url: string, dataId: string) {
         console.log("Socket not ready");
         return;
     }
+
+    assert(storedConnectionData, "Call init() before sendData()");
+    assert(isSocketOpen(), "WebSocket is not ready");
+    assert(dataId, "dataId is required");
+    assert(text || image_url, "Provide text or image_url");
+
+    if (text) assert(text.trim().length >= 3, "Text must be at least 3 characters");
 
     const { app_id, user_id } = storedConnectionData;
     const timestamp = uniqueTimestamp();

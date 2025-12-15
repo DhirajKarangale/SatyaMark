@@ -1,9 +1,4 @@
-import { useEffect } from "react";
-import { init } from "satyamark-react";
-import Home from "./components/Home";
-
-export default function App() {
-  function uniqueTimestamp() {
+export function uniqueTimestamp() {
     const now = new Date();
 
     const yyyy = now.getFullYear();
@@ -18,18 +13,19 @@ export default function App() {
     const micro = String(Math.floor(Math.random() * 1000)).padStart(3, "0");
 
     return `${yyyy}${MM}${dd}${hh}${mm}${ss}${ms}${micro}`;
-  }
+}
 
-  function getUserId() {
+export function getUserId() {
     const uuid = crypto.randomUUID();
     const time = uniqueTimestamp();
     const id = `${uuid}_${time}`;
     return id;
-  }
+}
 
-  useEffect(() => {
-    init({ app_id: "APP123", user_id: getUserId() })
-  }, []);
+export function getDataId() {
+    // const time = uniqueTimestamp();
+    const rand = Math.floor(Math.random() * 9999999) + 1;
+    const id = `${rand}`;
 
-  return <Home />;
+    return id;
 }

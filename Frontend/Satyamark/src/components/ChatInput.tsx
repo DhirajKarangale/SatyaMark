@@ -1,12 +1,10 @@
 import { memo, useState, useRef, useEffect } from "react";
 import { Send } from "lucide-react";
 import { motion } from "framer-motion";
+import { getDataId } from "../utils/GenerateIds";
+import { process_satyamark } from "satyamark-react";
 
-function ChatInput({
-    onSend,
-}: {
-    onSend: (message: string) => void;
-}) {
+function ChatInput() {
     const [text, setText] = useState("");
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -19,10 +17,11 @@ function ChatInput({
 
     const isValid = text.trim().length > 0;
 
-    const send = () => {
+    const send = async () => {
         if (!isValid) return;
-        onSend(text);
         setText("");
+        const jobId = await process_satyamark(text, "", getDataId());
+        console.log("Data sent successfully: ", jobId)
     };
 
     return (
@@ -43,7 +42,7 @@ function ChatInput({
                 className="w-full resize-none bg-transparent text-white outline-none
                     max-h-[120px] overflow-y-auto custom-scroll"
                 whileFocus={{
-                    scale: 1,    
+                    scale: 1,
                 }}
                 transition={{ duration: 0.2 }}
             />

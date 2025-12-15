@@ -1,17 +1,24 @@
-import { memo } from "react";
+import { memo, useState } from "react";
+import Alert from "./Alert";
 import { motion } from "framer-motion";
 import { type Variants } from "framer-motion";
+import { onReceive } from "satyamark-react";
 import GradientText from "../reactbits/GradientText/GradientText";
 
 type ResultData = {
-    id: string | number;
+    dataId: string | number;
     mark: string;
     confidence: number | string;
     reason: string;
     urls?: string[] | null;
 };
 
-function ResultCard({ data }: { data: ResultData | null }) {
+function ResultCard({ inputData }: { inputData: ResultData | null }) {
+    let satyamarkReceivedData: ResultData | null = null;
+    const [showAlert, setShowAlert] = useState<boolean>(false);
+    const [data, setData] = useState<ResultData | null>(inputData);
+    const [receivedData, setReceivedData] = useState<ResultData | null>(inputData);
+
     const cardVariants: Variants = {
         hidden: { opacity: 0, scale: 0.95 },
         visible: { opacity: 1, scale: 1, transition: { duration: 0.35, ease: "easeOut" } }
@@ -25,6 +32,21 @@ function ResultCard({ data }: { data: ResultData | null }) {
             transition: { delay: 0.1 + i * 0.05, duration: 0.35 }
         })
     };
+
+    onReceive((receivedData) => {
+        if (!receivedData?.jobId) return;
+        satyamarkReceivedData = receivedData;
+
+        console.log(receivedData);
+        
+        if (data != null) {
+            setShowAlert(true);
+            setReceivedData(receivedData);
+        }
+        else {
+            setData(receivedData);
+        }
+    });
 
     if (!data) {
         return (
@@ -55,78 +77,87 @@ function ResultCard({ data }: { data: ResultData | null }) {
     }
 
     return (
-        <motion.div
-            variants={cardVariants}
-            initial="hidden"
-            animate="visible"
-            whileHover={{
-                scale: 1,
-                boxShadow: "0 0 25px rgba(0,200,255,0.25)"
-            }}
-            className="w-full h-full bg-white/5 border border-white/20 backdrop-blur-sm 
-            flex flex-col gap-4 overflow-y-auto custom-scroll rounded-xl p-4"
-        >
-            {/* TOP ROW */}
+        <>
             <motion.div
-                custom={0}
-                variants={contentVariants}
+                variants={cardVariants}
                 initial="hidden"
                 animate="visible"
-                className="flex justify-between items-center w-full"
+                whileHover={{
+                    scale: 1,
+                    boxShadow: "0 0 25px rgba(0,200,255,0.25)"
+                }}
+                className="w-full h-full bg-white/5 border border-white/20 backdrop-blur-sm 
+                flex flex-col gap-4 overflow-y-auto custom-scroll rounded-xl p-4"
             >
-                <div className="text-white text-lg font-semibold">
-                    ID: {data.id}
-                </div>
-
-                <div className="flex items-center gap-4">
-                    <span className="text-cyan-400 font-medium">
-                        Mark: {data.mark}
-                    </span>
-                    <span className="text-green-400 font-medium">
-                        Confidence: {data.confidence}
-                    </span>
-                </div>
-            </motion.div>
-
-            {/* REASON */}
-            <motion.div
-                custom={1}
-                variants={contentVariants}
-                initial="hidden"
-                animate="visible"
-                className="text-gray-300 whitespace-pre-wrap leading-relaxed"
-            >
-                {data.reason}
-            </motion.div>
-
-            {/* URLS */}
-            {data.urls && data.urls.length > 0 && (
+                {/* TOP ROW */}
                 <motion.div
-                    custom={2}
+                    custom={0}
                     variants={contentVariants}
                     initial="hidden"
                     animate="visible"
-                    className="flex flex-col gap-2"
+                    className="flex justify-between items-center w-full"
                 >
-                    <div className="text-white font-semibold">Sources:</div>
+                    <div className="text-white text-lg font-semibold">
+                        ID: {data.dataId}
+                    </div>
 
-                    <div className="flex flex-col gap-1">
-                        {data.urls.map((url, index) => (
-                            <motion.a
-                                key={index}
-                                href={url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                whileHover={{ x: 4 }}
-                                className="text-cyan-400 hover:text-cyan-300 underline break-all"
-                            >
-                                {url}
-                            </motion.a>
-                        ))}
+                    <div className="flex items-center gap-4">
+                        <span className="text-cyan-400 font-medium">
+                            Mark: {data.mark}
+                        </span>
+                        <span className="text-green-400 font-medium">
+                            Confidence: {data.confidence}
+                        </span>
                     </div>
                 </motion.div>
-            )}
-        </motion.div>
+
+                {/* REASON */}
+                <motion.div
+                    custom={1}
+                    variants={contentVariants}
+                    initial="hidden"
+                    animate="visible"
+                    className="text-gray-300 whitespace-pre-wrap leading-relaxed"
+                >
+                    {data.reason}
+                </motion.div>
+
+                {/* URLS */}
+                {data.urls && data.urls.length > 0 && (
+                    <motion.div
+                        custom={2}
+                        variants={contentVariants}
+                        initial="hidden"
+                        animate="visible"
+                        className="flex flex-col gap-2"
+                    >
+                        <div className="text-white font-semibold">Sources:</div>
+
+                        <div className="flex flex-col gap-1">
+                            {data.urls.map((url, index) => (
+                                <motion.a
+                                    key={index}
+                                    href={url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    whileHover={{ x: 4 }}
+                                    className="text-cyan-400 hover:text-cyan-300 underline break-all"
+                                >
+                                    {url}
+                                </motion.a>
+                            ))}
+                        </div>
+                    </motion.div>
+                )}
+            </motion.div>
+
+            <Alert
+                isOpen={showAlert}
+                message="This will remove the current data from this page."
+                onClose={() => setShowAlert(false)}
+                onConfirm={() => setData(receivedData)}
+            />
+        </>
     );
 }
 

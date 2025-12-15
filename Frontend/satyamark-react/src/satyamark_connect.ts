@@ -20,12 +20,12 @@ export function onReceive(cb: ReceiveCallback) {
 }
 
 export function init(connectionData: SatyaMarkConnectionData) {
-    storedConnectionData = connectionData;
+    if (storedConnectionData == connectionData) return;
 
     socket = new WebSocket(wsUrl);
 
     socket.onopen = () => {
-        console.log("Connected to server");
+        console.log("Connected to server: ", connectionData.user_id);
 
         safeSend({
             type: "handshake",
@@ -41,6 +41,8 @@ export function init(connectionData: SatyaMarkConnectionData) {
     socket.onclose = () => {
         console.log("Server connection closed");
     };
+
+    storedConnectionData = connectionData;
 }
 
 function safeSend(msg: any) {
@@ -105,17 +107,9 @@ export function sendData(text: string, image_url: string, dataId: string) {
 export function receiveData(data: any) {
     if (!storedConnectionData || data.clientId != storedConnectionData.user_id) return;
 
-    console.log("Received Data: ", data);
-
-    const payload = {
-        jobId: data.jobId,
-        dataId: data.dataId,
-        mark: data.mark,
-    }
-
     for (const cb of Array.from(listeners)) {
         try {
-            cb(payload);
+            cb(data);
         } catch (err) {
             console.error("listener error", err);
         }

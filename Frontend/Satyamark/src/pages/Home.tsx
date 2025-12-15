@@ -19,6 +19,8 @@ function Home() {
 
             const [type, id] = parts;
 
+            if (jobStore.has(id)) return;
+
             jobStore.add(id);
             navigate("/", { replace: true });
 

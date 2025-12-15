@@ -20,6 +20,7 @@ function ResultCard() {
     const [currentData, setCurrentData] = useState<ResultData | null>(null);
     const [queue, setQueue] = useState<ResultData[]>([]);
     const [showAlert, setShowAlert] = useState(false);
+    const STORAGE_KEY = "satyamark_result_state";
 
     const cardVariants: Variants = {
         hidden: { opacity: 0, scale: 0.95 },
@@ -39,6 +40,41 @@ function ResultCard() {
         })
     };
 
+    const isSameResult = (a: ResultData, b: ResultData) => {
+        if (a.dataId !== b.dataId) return false;
+        if (a.mark !== b.mark) return false;
+        if (a.confidence !== b.confidence) return false;
+        if (a.reason !== b.reason) return false;
+
+        if (a.urls === null && b.urls === null) return true;
+        if (!a.urls || !b.urls) return false;
+        if (a.urls.length !== b.urls.length) return false;
+
+        for (let i = 0; i < a.urls.length; i++) {
+            if (a.urls[i] !== b.urls[i]) return false;
+        }
+
+        return true;
+    };
+
+    useEffect(() => {
+        const saved = sessionStorage.getItem(STORAGE_KEY);
+        if (!saved) return;
+
+        try {
+            const { currentData, queue } = JSON.parse(saved);
+            setCurrentData(currentData ?? null);
+            setQueue(queue ?? []);
+        } catch { }
+    }, []);
+
+    useEffect(() => {
+        sessionStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify({ currentData, queue })
+        );
+    }, [currentData, queue]);
+
     useEffect(() => {
         const unsubscribe = onReceive((received) => {
             if (!received?.jobId) return;
@@ -50,6 +86,12 @@ function ResultCard() {
                     setCurrentData(received);
                     return q;
                 }
+
+                const alreadyExists =
+                    isSameResult(currentData, received) ||
+                    q.some(item => isSameResult(item, received));
+
+                if (alreadyExists) return q;
 
                 setShowAlert(true);
                 return [...q, received];
@@ -72,6 +114,12 @@ function ResultCard() {
                     setCurrentData(parsedData);
                     return q;
                 }
+
+                const alreadyExists =
+                    isSameResult(currentData, parsedData) ||
+                    q.some(item => isSameResult(item, parsedData));
+
+                if (alreadyExists) return q;
 
                 setShowAlert(true);
 

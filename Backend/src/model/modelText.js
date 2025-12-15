@@ -7,6 +7,11 @@ async function GetText(text_hash, summary_hash) {
     return result.rows[0];
 }
 
+async function GetTextById(Id) {
+    const result = await db.query(`SELECT * FROM ${tableName} WHERE id = $1`, [Id]);
+    return result.rows[0];
+}
+
 async function PostText(data) {
     const { summary_hash, text_hash, mark, reason, confidence, urls } = data;
 
@@ -30,4 +35,4 @@ async function PostText(data) {
     return result.rows[0];
 }
 
-module.exports = { GetText, PostText };
+module.exports = { GetText, GetTextById, PostText };

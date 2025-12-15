@@ -11,6 +11,25 @@ app.use(helmet());
 app.use(express.json());
 app.use(bodyParser.json({ limit: "1mb" }));
 
+app.get("/getResult", async (req, res) => {
+    const id = req.params.id;
+
+    const textData = await modelText.GetTextById(id);
+    if (textData) {
+        res.json(textData);
+        return;
+    }
+
+    const imageData = await modelImage.GetImageById(id);
+
+    if (imageData) {
+        res.json(imageData);
+        return;
+    }
+
+    res.json("No Data found");
+});
+
 app.post("/ai-callback/text", async (req, res) => {
     try {
         const body = req.body;

@@ -17,7 +17,18 @@ const isValidImageUrl = (url: string): Promise<boolean> => {
 // };
 
 export async function process(text: string, images: string, dataId: string) {
-    if (!await isValidImageUrl(images)) return "Image URL Not valid";
+    if (images && !await isValidImageUrl(images)) {
+        throw new Error("Image URL Not valid");
+    }
+
+    if (text && text.length < 3) {
+        throw new Error("Text not valid");
+    }
+
+    if (!text && !images) {
+        throw new Error("Text or images not valid");
+    }
+
     const jobId = sendData(text, images ?? "", dataId);
     return jobId;
 }

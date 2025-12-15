@@ -20,7 +20,10 @@ export function onReceive(cb: ReceiveCallback) {
 }
 
 export function init(connectionData: SatyaMarkConnectionData) {
-    if (storedConnectionData == connectionData) return;
+    if (socket && socket.readyState == WebSocket.OPEN && storedConnectionData == connectionData) {
+        console.log("Already Connected: ", connectionData);
+        return;
+    }
 
     socket = new WebSocket(wsUrl);
 

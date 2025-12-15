@@ -1,7 +1,6 @@
 import { memo, useState, useEffect } from "react";
 import Alert from "./Alert";
-import { motion } from "framer-motion";
-import { type Variants } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { jobStore } from "../store/jobStore";
 import { onReceive } from "../process/satyamark_connect";
 import GradientText from "../reactbits/GradientText/GradientText";
@@ -16,14 +15,20 @@ type ResultData = {
 
 function ResultCard() {
     const [, forceUpdate] = useState(0);
-    const hasPendingJobs = jobStore.hasJobs();
-    const [showAlert, setShowAlert] = useState<boolean>(false);
-    const [data, setData] = useState<ResultData | null>(null);
-    const [receivedData, setReceivedData] = useState<ResultData | null>(null);
+
+    const [currentData, setCurrentData] = useState<ResultData | null>(null);
+    const [queue, setQueue] = useState<ResultData[]>([]);
+    const [showAlert, setShowAlert] = useState(false);
+
+    /* ---------------- animations ---------------- */
 
     const cardVariants: Variants = {
         hidden: { opacity: 0, scale: 0.95 },
-        visible: { opacity: 1, scale: 1, transition: { duration: 0.35, ease: "easeOut" } }
+        visible: {
+            opacity: 1,
+            scale: 1,
+            transition: { duration: 0.35, ease: "easeOut" }
+        }
     };
 
     const contentVariants = {
@@ -35,17 +40,7 @@ function ResultCard() {
         })
     };
 
-    onReceive((receivedData) => {
-        if (!receivedData?.jobId) return;
-
-        if (data != null) {
-            setShowAlert(true);
-            setReceivedData(receivedData);
-        }
-        else {
-            setData(receivedData);
-        }
-    });
+    /* ---------------- receive + queue ---------------- */
 
     useEffect(() => {
         const unsubscribe = onReceive((received) => {
@@ -53,23 +48,46 @@ function ResultCard() {
 
             jobStore.remove(received.jobId);
 
-            if (data) {
+            setQueue((q) => {
+                if (!currentData) {
+                    setCurrentData(received);
+                    return q;
+                }
+
                 setShowAlert(true);
-                setReceivedData(received);
-            } else {
-                setData(received);
-            }
+                return [...q, received];
+            });
         });
 
         return unsubscribe;
-    }, [data]);
+    }, [currentData]);
+
+    /* ---------------- job store rerender ---------------- */
 
     useEffect(() => {
         return jobStore.subscribe(() => forceUpdate(v => v + 1));
     }, []);
 
-    if (!data) {
-        if (jobStore.hasJobs()) {
+    /* ---------------- helpers ---------------- */
+
+    const loadNext = () => {
+        setQueue((q) => {
+            if (q.length === 0) return q;
+            setCurrentData(q[0]);
+            return q.slice(1);
+        });
+        setShowAlert(false);
+    };
+
+    const showLoader =
+        !currentData &&
+        queue.length === 0 &&
+        jobStore.hasJobs();
+
+    /* ---------------- empty / loader ---------------- */
+
+    if (!currentData) {
+        if (showLoader) {
             const jobs = jobStore.list();
 
             return (
@@ -90,27 +108,22 @@ function ResultCard() {
                 variants={cardVariants}
                 initial="hidden"
                 animate="visible"
-                whileHover={{ scale: 1, boxShadow: "0 0 20px rgba(64,255,170,0.25)" }}
                 className="w-full h-full border border-white/20 bg-transparent
                 backdrop-blur-sm rounded-xl p-4 flex items-center justify-center"
             >
-                <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4 }}
+                <GradientText
+                    colors={["#40ffaa", "#4079ff", "#40ffaa"]}
+                    animationSpeed={6}
+                    showBorder={false}
+                    className="text-3xl font-semibold"
                 >
-                    <GradientText
-                        colors={["#40ffaa", "#4079ff", "#40ffaa", "#4079ff", "#40ffaa"]}
-                        animationSpeed={6}
-                        showBorder={false}
-                        className="text-3xl font-semibold"
-                    >
-                        Welcome to Satyamark
-                    </GradientText>
-                </motion.div>
+                    Welcome to Satyamark
+                </GradientText>
             </motion.div>
         );
     }
+
+    /* ---------------- main card ---------------- */
 
     return (
         <>
@@ -118,31 +131,28 @@ function ResultCard() {
                 variants={cardVariants}
                 initial="hidden"
                 animate="visible"
-                whileHover={{
-                    scale: 1,
-                    boxShadow: "0 0 25px rgba(0,200,255,0.25)"
-                }}
-                className="relative w-full h-full bg-white/5 border border-white/20 backdrop-blur-sm 
-                flex flex-col gap-4 overflow-y-auto custom-scroll rounded-xl p-4"
+                className="relative w-full h-full bg-white/5 border border-white/20
+                backdrop-blur-sm flex flex-col gap-4 overflow-y-auto
+                custom-scroll rounded-xl p-4"
             >
-                {/* TOP ROW */}
+                {/* TOP */}
                 <motion.div
                     custom={0}
                     variants={contentVariants}
                     initial="hidden"
                     animate="visible"
-                    className="flex justify-between items-center w-full"
+                    className="flex justify-between items-center"
                 >
                     <div className="text-white text-lg font-semibold">
-                        ID: {data.dataId}
+                        ID: {currentData.dataId}
                     </div>
 
                     <div className="flex items-center gap-4">
                         <span className="text-cyan-400 font-medium">
-                            Mark: {data.mark}
+                            Mark: {currentData.mark}
                         </span>
                         <span className="text-green-400 font-medium">
-                            Confidence: {data.confidence}
+                            Confidence: {currentData.confidence}
                         </span>
                     </div>
                 </motion.div>
@@ -155,11 +165,11 @@ function ResultCard() {
                     animate="visible"
                     className="text-gray-300 whitespace-pre-wrap leading-relaxed"
                 >
-                    {data.reason}
+                    {currentData.reason}
                 </motion.div>
 
                 {/* URLS */}
-                {data.urls && data.urls.length > 0 && (
+                {currentData.urls?.length ? (
                     <motion.div
                         custom={2}
                         variants={contentVariants}
@@ -167,43 +177,53 @@ function ResultCard() {
                         animate="visible"
                         className="flex flex-col gap-2"
                     >
-                        <div className="text-white font-semibold">Sources:</div>
-
-                        <div className="flex flex-col gap-1">
-                            {data.urls.map((url, index) => (
-                                <motion.a
-                                    key={index}
-                                    href={url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    whileHover={{ x: 4 }}
-                                    className="text-cyan-400 hover:text-cyan-300 underline break-all"
-                                >
-                                    {url}
-                                </motion.a>
-                            ))}
-                        </div>
+                        <div className="text-white font-semibold">Sources</div>
+                        {currentData.urls.map((url, i) => (
+                            <a
+                                key={i}
+                                href={url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-cyan-400 underline break-all"
+                            >
+                                {url}
+                            </a>
+                        ))}
                     </motion.div>
+                ) : null}
+
+                {/* LOAD NEXT BUTTON */}
+                {queue.length > 0 && (
+                    <button
+                        onClick={loadNext}
+                        className="absolute bottom-4 right-4
+                        bg-cyan-500/20 border border-cyan-400
+                        text-cyan-300 text-xs px-3 py-2 rounded-lg
+                        hover:bg-cyan-500/30 transition"
+                    >
+                        Load next ({queue.length})
+                    </button>
                 )}
 
-                {data && hasPendingJobs && (
+                {/* PROCESSING INDICATOR */}
+                {queue.length === 0 && jobStore.hasJobs() && (
                     <div className="absolute bottom-4 right-4 flex items-center gap-2
-                  bg-black/40 backdrop-blur-md px-3 py-2 rounded-lg
-                  border border-white/20">
+                    bg-black/40 backdrop-blur-md px-3 py-2 rounded-lg
+                    border border-white/20">
                         <div className="w-4 h-4 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin" />
                         <span className="text-xs text-cyan-300">
-                            Processing next…
+                            Processing…
                         </span>
                     </div>
                 )}
-
             </motion.div>
 
+            {/* ALERT */}
             <Alert
                 isOpen={showAlert}
-                message="This will remove the current data from this page."
+                message="New result is ready. Load it now?"
                 onClose={() => setShowAlert(false)}
-                onConfirm={() => setData(receivedData)}
+                onConfirm={loadNext}
             />
         </>
     );

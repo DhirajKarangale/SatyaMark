@@ -7,6 +7,11 @@ async function GetImage(image_url, image_hash) {
     return result.rows[0];
 }
 
+async function GetImageById(Id) {
+    const result = await db.query(`SELECT * FROM ${tableName} WHERE id = $1`, [Id]);
+    return result.rows[0];
+}
+
 async function PostImage(data) {
     const { image_hash, image_url, mark, reason, confidence } = data;
 
@@ -29,4 +34,4 @@ async function PostImage(data) {
     return result.rows[0];
 }
 
-module.exports = { GetImage, PostImage };
+module.exports = { GetImage, GetImageById, PostImage };

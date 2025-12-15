@@ -17,7 +17,7 @@ function Home() {
 
     return (
         <div className="w-full h-full flex flex-col gap-2 justify-between items-center py-2 bg-red-5001">
-            <ResultCard inputData={result} />
+            <ResultCard inputData={null} />
             <ChatInput />
         </div>
     );

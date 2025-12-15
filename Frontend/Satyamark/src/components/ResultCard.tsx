@@ -1,7 +1,8 @@
-import { memo, useState } from "react";
+import { memo, useState, useEffect } from "react";
 import Alert from "./Alert";
 import { motion } from "framer-motion";
 import { type Variants } from "framer-motion";
+import { jobStore } from "../store/jobStore";
 import { onReceive } from "satyamark-react";
 import GradientText from "../reactbits/GradientText/GradientText";
 
@@ -14,7 +15,7 @@ type ResultData = {
 };
 
 function ResultCard({ inputData }: { inputData: ResultData | null }) {
-    let satyamarkReceivedData: ResultData | null = null;
+    const [, forceUpdate] = useState(0);
     const [showAlert, setShowAlert] = useState<boolean>(false);
     const [data, setData] = useState<ResultData | null>(inputData);
     const [receivedData, setReceivedData] = useState<ResultData | null>(inputData);
@@ -35,10 +36,7 @@ function ResultCard({ inputData }: { inputData: ResultData | null }) {
 
     onReceive((receivedData) => {
         if (!receivedData?.jobId) return;
-        satyamarkReceivedData = receivedData;
 
-        console.log(receivedData);
-        
         if (data != null) {
             setShowAlert(true);
             setReceivedData(receivedData);
@@ -48,7 +46,44 @@ function ResultCard({ inputData }: { inputData: ResultData | null }) {
         }
     });
 
+    useEffect(() => {
+        const unsubscribe = onReceive((received) => {
+            if (!received?.jobId) return;
+
+            jobStore.remove(received.jobId);
+
+            if (data) {
+                setShowAlert(true);
+                setReceivedData(received);
+            } else {
+                setData(received);
+            }
+        });
+
+        return unsubscribe;
+    }, [data]);
+
+    useEffect(() => {
+        return jobStore.subscribe(() => forceUpdate(v => v + 1));
+    }, []);
+
     if (!data) {
+        if (jobStore.hasJobs()) {
+            const jobs = jobStore.list();
+
+            return (
+                <div className="w-full h-full flex flex-col items-center justify-center gap-4">
+                    <div className="animate-spin w-12 h-12 rounded-full border-4 border-cyan-400 border-t-transparent" />
+                    <div className="text-gray-300 text-center">
+                        Processing your data<br />
+                        <span className="text-cyan-400 text-sm">
+                            Job ID: {jobs[jobs.length - 1]}
+                        </span>
+                    </div>
+                </div>
+            );
+        }
+
         return (
             <motion.div
                 variants={cardVariants}

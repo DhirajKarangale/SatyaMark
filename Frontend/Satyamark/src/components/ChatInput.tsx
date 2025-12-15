@@ -3,7 +3,7 @@ import { Send } from "lucide-react";
 import { motion } from "framer-motion";
 import { jobStore } from "../store/jobStore";
 import { getDataId } from "../utils/GenerateIds";
-import { process_satyamark } from "satyamark-react";
+import { process } from "../process/satyamark_process";
 
 function ChatInput() {
     const [text, setText] = useState("");
@@ -21,7 +21,7 @@ function ChatInput() {
     const send = async () => {
         if (!isValid) return;
         setText("");
-        const jobId = await process_satyamark(text, "", getDataId());
+        const jobId = await process(text, "", getDataId());
         if (!jobId) return;
         console.log("Data sent successfully: ", jobId)
         jobStore.add(jobId);

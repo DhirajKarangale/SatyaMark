@@ -3,7 +3,7 @@ import Alert from "./Alert";
 import { motion } from "framer-motion";
 import { type Variants } from "framer-motion";
 import { jobStore } from "../store/jobStore";
-import { onReceive } from "satyamark-react";
+import { onReceive } from "../process/satyamark_connect";
 import GradientText from "../reactbits/GradientText/GradientText";
 
 type ResultData = {

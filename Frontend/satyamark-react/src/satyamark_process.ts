@@ -43,8 +43,3 @@ export async function process(divRef: HTMLDivElement, dataId: string) {
 
     return jobId;
 }
-
-export async function process_satyamark(text: string, images: string, dataId: string) {
-    const jobId = sendData(text, images ?? "", dataId);
-    return jobId;
-}

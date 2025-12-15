@@ -107,15 +107,9 @@ export function sendData(text: string, image_url: string, dataId: string) {
 export function receiveData(data: any) {
     if (!storedConnectionData || data.clientId != storedConnectionData.user_id) return;
 
-    const payload = {
-        jobId: data.jobId,
-        dataId: data.dataId,
-        mark: data.mark,
-    }
-
     for (const cb of Array.from(listeners)) {
         try {
-            cb(payload);
+            cb(data);
         } catch (err) {
             console.error("listener error", err);
         }

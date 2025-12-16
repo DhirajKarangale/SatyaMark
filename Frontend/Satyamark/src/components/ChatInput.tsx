@@ -1,5 +1,5 @@
 import { memo, useState, useRef, useEffect } from "react";
-import { Send } from "lucide-react";
+import { Send, Paperclip, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { jobStore } from "../store/jobStore";
 import { getDataId } from "../utils/GenerateIds";
@@ -9,7 +9,16 @@ import Alert from "./Alert";
 function ChatInput() {
     const [text, setText] = useState("");
     const [msg, setMsg] = useState("");
+
+    const [localImage, setLocalImage] = useState<string | null>(null);
+    const [imageUrl, setImageUrl] = useState<string | null>(null);
+    const [uploading, setUploading] = useState(false);
+
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const CLOUD_NAME = import.meta.env.VITE_CLOUD_NAME;
+    const UPLOAD_PRESET = import.meta.env.VITE_UPLOAD_PRESET;
 
     useEffect(() => {
         if (!textareaRef.current) return;
@@ -18,31 +27,66 @@ function ChatInput() {
             Math.min(textareaRef.current.scrollHeight, 120) + "px";
     }, [text]);
 
-    const isValid = text.trim().length > 0;
+    const isValid = text.trim().length > 0 || imageUrl;
 
     function getErrorMessage(error: unknown): string {
         if (error instanceof Error) return error.message;
-
         if (typeof error === "string") return error;
-
-        if (typeof error === "object" && error !== null) {
-            // @ts-ignore
-            return error?.response?.data?.message
-                // @ts-ignore
-                || error?.message
-                || "Something went wrong. Please try again.";
-        }
-
         return "Something went wrong. Please try again.";
     }
 
-    const send = async () => {
-        if (!isValid) return;
-        setText("");
+    const uploadImage = async (file: File) => {
         try {
-            const jobId = await process(text, "", getDataId());
-            if (!jobId) return;
-            jobStore.add(jobId);
+            setUploading(true);
+
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("upload_preset", UPLOAD_PRESET);
+
+            const res = await fetch(
+                `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+                { method: "POST", body: formData }
+            );
+
+            const data = await res.json();
+            setImageUrl(data.secure_url);
+        } catch {
+            setMsg("Image upload failed");
+            setLocalImage(null);
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setLocalImage(URL.createObjectURL(file));
+        uploadImage(file);
+
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
+    };
+
+    const send = async () => {
+        if (!isValid || uploading) return;
+
+        const currentText = text;
+        const currentImage = imageUrl;
+
+        try {
+            const jobId = await process(
+                currentText,
+                currentImage ?? "",
+                getDataId()
+            );
+            if (jobId) jobStore.add(jobId);
+
+            setText("");
+            setLocalImage(null);
+            setImageUrl(null);
         } catch (error) {
             setMsg(getErrorMessage(error));
         }
@@ -55,56 +99,103 @@ function ChatInput() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, ease: "easeOut" }}
                 className="w-full bg-white/5 border border-white/20 
-                backdrop-blur-sm rounded-xl p-3 flex flex-col gap-2"
+                backdrop-blur-sm rounded-xl p-3 flex flex-col gap-1"
             >
-                {/* TEXTAREA — no focus glow anymore */}
-                <motion.textarea
-                    ref={textareaRef}
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
-                    onKeyDown={(e) => {
-                        if (e.key === "Enter" && !e.shiftKey) {
-                            e.preventDefault();
-                            if (isValid) send();
-                        }
-                    }}
-                    placeholder="Type a message..."
-                    rows={1}
-                    className="w-full resize-none bg-transparent text-white outline-none
-                    max-h-[120px] overflow-y-auto custom-scroll"
-                    whileFocus={{
-                        scale: 1,
-                    }}
-                    transition={{ duration: 0.2 }}
-                />
+                {/* IMAGE PREVIEW */}
+                {localImage && (
+                    <div className="relative w-fit mb-1">
+                        <img
+                            src={localImage}
+                            className="rounded-lg border border-white/20
+                            max-h-40 w-auto object-contain"
+                        />
 
-                {/* SEND BUTTON */}
-                <div className="flex justify-end">
-                    <motion.button
-                        onClick={send}
-                        disabled={!isValid}
-                        whileHover={isValid ? { scale: 1.05 } : {}}
-                        whileTap={isValid ? { scale: 0.9 } : {}}
-                        animate={{
-                            scale: isValid ? 1 : 0.95,
-                            opacity: isValid ? 1 : 0.4,
+                        {uploading && (
+                            <div className="absolute inset-0 rounded-lg
+                            bg-black/50 backdrop-blur-sm
+                            flex items-center justify-center">
+                                <div className="w-6 h-6
+                                border-2 border-white/30
+                                border-t-white
+                                rounded-full animate-spin" />
+                            </div>
+
+                        )}
+
+                        {!uploading && (
+                            <button
+                                onClick={() => {
+                                    setLocalImage(null);
+                                    setImageUrl(null);
+                                }}
+                                className="absolute -top-2 -right-2
+                            bg-black/70 backdrop-blur-sm
+                            rounded-full p-1.5
+                            border border-white/10
+                            shadow-md"
+                            >
+                                <X size={14} className="text-white" />
+                            </button>
+
+                        )}
+                    </div>
+                )}
+
+                {/* INPUT ROW */}
+                <div className="flex gap-2 items-start">
+                    {/* TEXTAREA */}
+                    <motion.textarea
+                        ref={textareaRef}
+                        value={text}
+                        onChange={(e) => setText(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter" && !e.shiftKey) {
+                                e.preventDefault();
+                                if (isValid && !uploading) send();
+                            }
                         }}
-                        transition={{ duration: 0.2 }}
-                        className={`
-                        w-12 h-10 py-2 rounded-lg flex justify-center items-center
-                        text-white
-                        ${isValid
-                                ? "bg-cyan-500 hover:bg-cyan-400"
-                                : "bg-zinc-700 cursor-not-allowed"}
-                    `}
-                    >
-                        <Send size={22} />
-                    </motion.button>
+                        placeholder="Type a message..."
+                        rows={1}
+                        className="flex-1 resize-none bg-transparent text-white outline-none
+                        max-h-[120px] overflow-y-auto custom-scroll"
+                    />
+
+                    {/* ACTIONS */}
+                    <div className="flex flex-col gap-2">
+                        <button
+                            onClick={() => fileInputRef.current?.click()}
+                            disabled={uploading}
+                            className="w-10 h-10 rounded-lg flex justify-center items-center
+                            bg-white/5 hover:bg-white/10 text-white/80"
+                        >
+                            <Paperclip size={18} />
+                        </button>
+
+                        <motion.button
+                            onClick={send}
+                            disabled={!isValid || uploading}
+                            whileTap={{ scale: 0.9 }}
+                            className={`w-10 h-10 rounded-lg flex justify-center items-center
+                            ${isValid && !uploading
+                                    ? "bg-cyan-500 hover:bg-cyan-400"
+                                    : "bg-zinc-700 cursor-not-allowed"}`}
+                        >
+                            <Send size={18} />
+                        </motion.button>
+                    </div>
                 </div>
+
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    hidden
+                    onChange={onFileChange}
+                />
             </motion.div>
 
             <Alert
-                isOpen={msg != ""}
+                isOpen={msg !== ""}
                 message={msg}
                 onClose={() => setMsg("")}
                 onConfirm={() => setMsg("")}

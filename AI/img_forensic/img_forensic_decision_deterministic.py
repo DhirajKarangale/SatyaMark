@@ -6,132 +6,100 @@ def decide_image(
     meta: dict,
     semantic: dict,
 ):
-    score = 0.0
     evidence = {}
+    ai_votes = 0
+    confidence = 0.0
 
     # -------------------------------------------------
-    # 1. SENSOR FINGERPRINT (STRONGEST)
+    # 1. WATERMARK (ABSOLUTE SIGNAL)
+    # -------------------------------------------------
+    wm = watermark.get("watermark_signature", {})
+    if wm.get("matched", False):
+        evidence["watermark_signature"] = (
+            "An embedded AI generation watermark or signature was detected."
+        )
+        return "AI", 0.95, evidence  # immediate decision
+
+    # -------------------------------------------------
+    # 2. SENSOR FINGERPRINT (ONLY IF STRONG)
     # -------------------------------------------------
     sensor_d = sensor.get("sensor_fingerprint", {}).get("details", {})
-    patch_corr = sensor_d.get("patch_correlation_avg", 0.0)
+    patch_corr = sensor_d.get("patch_correlation_avg", None)
 
-    if patch_corr < 0.02:
-        score += 0.35
-        evidence["sensor_fingerprint"] = (
-            f"Weak sensor fingerprint detected (patch correlation {patch_corr:.4f}), "
-            "which is uncommon in real camera images."
-        )
-    elif patch_corr > 0.08:
-        score -= 0.25
-        evidence["sensor_fingerprint"] = (
-            f"Strong sensor fingerprint detected (patch correlation {patch_corr:.4f}), "
-            "consistent with real camera noise."
-        )
-    else:
-        evidence["sensor_fingerprint"] = (
-            f"Sensor fingerprint is inconclusive (patch correlation {patch_corr:.4f})."
-        )
+    if patch_corr is not None:
+        if patch_corr < 0.01:
+            ai_votes += 1
+            confidence += 0.35
+            evidence["sensor_fingerprint"] = (
+                "The image lacks natural camera sensor noise patterns, "
+                "which strongly suggests it was not captured by a real camera."
+            )
+        elif patch_corr > 0.08:
+            confidence -= 0.20
+            evidence["sensor_fingerprint"] = (
+                "Strong camera sensor noise patterns were detected, "
+                "which is typical of real photographs."
+            )
+        else:
+            evidence["sensor_fingerprint"] = (
+                "Camera sensor patterns are inconclusive."
+            )
 
     # -------------------------------------------------
-    # 2. METADATA
+    # 3. METADATA (SUPPORTING ONLY)
     # -------------------------------------------------
     exif = meta.get("exif_analysis", {})
     has_exif = exif.get("has_exif", False)
 
-    if not has_exif:
-        score += 0.25
+    if has_exif:
+        confidence -= 0.10
         evidence["metadata"] = (
-            "No EXIF metadata found. AI-generated and reprocessed images "
-            "commonly lack camera metadata."
+            "Camera metadata is present, supporting that the image is a real photograph."
         )
     else:
-        cam = exif.get("details", {})
-        score -= 0.10
         evidence["metadata"] = (
-            f"Camera metadata present (Make: {cam.get('camera_make')}, "
-            f"Model: {cam.get('camera_model')}), which supports a real image."
+            "Camera metadata is missing, which is common for both AI-generated "
+            "and online-shared real images."
         )
 
     # -------------------------------------------------
-    # 3. SEMANTIC CONSISTENCY
+    # 4. SEMANTIC CONSISTENCY (VERY LIGHT)
     # -------------------------------------------------
-    sem = semantic.get("semantic_consistency", {})
-    sem_score = sem.get("consistency_score", 0.5)
+    sem_score = semantic.get("semantic_consistency", {}).get("consistency_score", None)
 
-    if sem_score < 0.45:
-        score += 0.20
-        evidence["semantic_consistency"] = (
-            f"Low semantic consistency score ({sem_score:.2f}), "
-            "indicating unrealistic lighting, depth, or object structure."
-        )
-    elif sem_score > 0.70:
-        score -= 0.10
-        evidence["semantic_consistency"] = (
-            f"High semantic consistency score ({sem_score:.2f}), "
-            "suggesting realistic scene structure."
-        )
-    else:
-        evidence["semantic_consistency"] = (
-            f"Semantic consistency score ({sem_score:.2f}) is inconclusive."
-        )
+    if sem_score is not None:
+        if sem_score < 0.35:
+            ai_votes += 1
+            confidence += 0.15
+            evidence["semantic_consistency"] = (
+                "The image shows subtle inconsistencies in lighting, depth, or structure."
+            )
+        else:
+            evidence["semantic_consistency"] = (
+                "The scene structure appears visually consistent."
+            )
 
     # -------------------------------------------------
-    # 4. LOCAL MANIPULATION
+    # 5. GAN ARTIFACTS (HINT ONLY)
     # -------------------------------------------------
-    lm = manip.get("local_manipulation", {})
-    lm_conf = lm.get("confidence", 0.0)
+    gan_score = gan.get("gan_artifacts", {}).get("artifact_score", None)
 
-    if lm_conf > 0.35:
-        score += 0.10
-        evidence["local_manipulation"] = (
-            f"Localized manipulation artifacts detected "
-            f"(confidence {lm_conf:.2f})."
-        )
-    else:
-        evidence["local_manipulation"] = (
-            "No strong localized manipulation patterns detected."
-        )
-
-    # -------------------------------------------------
-    # 5. WATERMARK / SIGNATURE
-    # -------------------------------------------------
-    wm = watermark.get("watermark_signature", {})
-    if wm.get("matched", False):
-        score += 0.40
-        evidence["watermark_signature"] = (
-            "Embedded AI generation watermark or signature detected."
-        )
-    else:
-        evidence["watermark_signature"] = (
-            "No embedded AI watermark or generation signature detected."
-        )
-
-    # -------------------------------------------------
-    # 6. GAN ARTIFACTS (WEAK SIGNAL)
-    # -------------------------------------------------
-    gan_score = gan.get("gan_artifacts", {}).get("artifact_score", 0.0)
-
-    if gan_score > 0.5:
-        score += 0.05
+    if gan_score is not None and gan_score > 0.7:
+        ai_votes += 1
+        confidence += 0.10
         evidence["gan_artifacts"] = (
-            f"Weak GAN-style texture artifacts detected "
-            f"(score {gan_score:.2f})."
-        )
-    else:
-        evidence["gan_artifacts"] = (
-            "No strong GAN artifact patterns detected."
+            "Subtle texture patterns commonly associated with AI image generation were detected."
         )
 
     # -------------------------------------------------
-    # FINAL DECISION
+    # FINAL DECISION (VOTING + CONFIDENCE)
     # -------------------------------------------------
-    score = min(max(score, 0.0), 1.0)
+    confidence = min(max(confidence, 0.0), 1.0)
 
-    if score >= 0.60:
-        mark = "AI"
-    elif score <= 0.35:
-        mark = "NONAI"
-    else:
-        mark = "INSUFFICIENT"
+    if ai_votes >= 2 and confidence >= 0.45:
+        return "AI", round(confidence, 2), evidence
 
-    return mark, score, evidence
+    if confidence <= 0.20:
+        return "NONAI", round(1 - confidence, 2), evidence
+
+    return "INSUFFICIENT", round(0.5, 2), evidence

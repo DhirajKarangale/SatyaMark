@@ -42,8 +42,8 @@ image_url = "https://res.cloudinary.com/dfamljkyo/image/upload/v1765866848/v4fh8
 # print(verify_text(statement))
 
 # Image Forensic
-# print(verify_img_forensic(path_real_2))
-print(evaluate_img_forensic(TEST_AI_PATH, TEST_REAL_PATH))
+print(verify_img_forensic(path_real_2))
+# print(evaluate_img_forensic(TEST_AI_PATH, TEST_REAL_PATH))
 # print(verify_img_forensic_url(image_url))
 
 # Image ML

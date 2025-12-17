@@ -95,7 +95,7 @@ def safe_json_load(text: str):
 # -----------------------------------------------------------
 # LLM CONFIG
 # -----------------------------------------------------------
-llm = get_llm("deepseek_r1_distill_llama_8b")
+llm = get_llm("qwen2_5") #qwen2_5, deepseek_r1_distill_llama_8b
 
 prompt_template = """
 You classify images as AI or NONAI using weighted forensic signals.

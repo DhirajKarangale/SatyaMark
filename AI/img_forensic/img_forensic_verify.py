@@ -16,6 +16,10 @@ from img_forensic_semantic_consistency import (
 from img_forensic.img_forensic_forensic_decision_ml import classify_image_ml
 from img_forensic_decision_deterministic import decide_image
 from img_forensic_explanation import build_final_result
+from img_forensic_decision_rules import rule_based_decision
+from llm_forensic_judge import llm_judge
+from img_forensic_reason_builder import build_reason
+from hybrid_llm_forensic_classifier import classify_image_hybrid
 
 
 def verify_img_forensic(image_path: str):
@@ -29,11 +33,39 @@ def verify_img_forensic(image_path: str):
         sc = semantic_consistency_analyze(image_path)
 
         mark, score, evidence = decide_image(w, s, g, l, m, sc)
-        return build_final_result(mark, score, evidence)
+        # return build_final_result(mark, score, evidence)
+        return classify_image_hybrid(w, s, g, l, m, sc)
         # return classify_image_ml(w, s, g, l, m, sc)
+        
+        # ---------- RULE-BASED DECISION ----------
+        result = rule_based_decision(w, s, g, l, m, sc)
+
+        # ---------- DEFINITIVE RESULT ----------
+        if result["status"] != "UNCERTAIN":
+            return {
+                "mark": result["status"],
+                "confidence": result["confidence"],
+                "reason": build_reason(result["status"], result["evidence"]),
+            }
+
+        # ---------- LLM FALLBACK (UNCERTAIN ONLY) ----------
+        llm_result = llm_judge(result["signals"])
+
+        return {
+            "mark": llm_result.get("mark", "UNCERTAIN"),
+            "confidence": llm_result.get("confidence", 0.5),
+            "reason": llm_result.get(
+                "reason",
+                "The available evidence is mixed and inconclusive.",
+            ),
+        }
 
     except Exception as e:
-        return {"error": str(e)}
+        return {
+        "mark": "ERROR",
+        "confidence": 0.0,
+        "reason": f"Processing error: {str(e)}",
+        }
 
 
 def verify_img_forensic_url(url: str, timeout: int = 10, max_bytes: int = 5 * 1024 * 1024):
@@ -84,45 +116,66 @@ def evaluate_img_forensic(ai_folder: str, real_folder: str):
     """Evaluate AI and NON-AI datasets and return stats"""
 
     def evaluate_folder(path, expected):
-        total, correct = 0, 0
+        evaluated = 0
+        correct = 0
+    
         for file in os.listdir(path):
             if not file.lower().endswith((".jpg", ".jpeg", ".png", ".webp")):
                 continue
-
+            
             img_path = os.path.join(path, file)
-            total += 1
-
             result = verify_img_forensic(img_path)
             predicted = result.get("mark", "").upper()
-
+    
+            if predicted == "UNCERTAIN":
+                continue  # do NOT count
+            
+            evaluated += 1
             if predicted == expected.upper():
                 correct += 1
-
-        incorrect = total - correct
-        accuracy = (correct / total * 100) if total else 0
-
+    
+        accuracy = (correct / evaluated * 100) if evaluated else 0
+    
         return {
-            "total": total,
+            "evaluated": evaluated,
             "correct": correct,
-            "incorrect": incorrect,
             "accuracy": accuracy,
         }
-
+   
     ai_stats = evaluate_folder(ai_folder, "AI")
     real_stats = evaluate_folder(real_folder, "NONAI")
 
-    total = ai_stats["total"] + real_stats["total"]
-    correct = ai_stats["correct"] + real_stats["correct"]
-    incorrect = ai_stats["incorrect"] + real_stats["incorrect"]
-    accuracy = (correct / total * 100) if total else 0
+    # total = ai_stats["total"] + real_stats["total"]
+    # correct = ai_stats["correct"] + real_stats["correct"]
+    # incorrect = ai_stats["incorrect"] + real_stats["incorrect"]
+    # accuracy = (correct / total * 100) if total else 0
+
+    # return {
+    #     "ai": ai_stats,
+    #     "real": real_stats,
+    #     "overall": {
+    #         "total": total,
+    #         "correct": correct,
+    #         "incorrect": incorrect,
+    #         "accuracy": accuracy,
+    #     },
+    # }
+
+    overall_evaluated = ai_stats["evaluated"] + real_stats["evaluated"]
+    overall_correct = ai_stats["correct"] + real_stats["correct"]
+
+    overall_accuracy = (
+        (overall_correct / overall_evaluated * 100)
+        if overall_evaluated
+        else 0
+    )
 
     return {
         "ai": ai_stats,
         "real": real_stats,
         "overall": {
-            "total": total,
-            "correct": correct,
-            "incorrect": incorrect,
-            "accuracy": accuracy,
+            "evaluated": overall_evaluated,
+            "correct": overall_correct,
+            "accuracy": overall_accuracy,
         },
     }

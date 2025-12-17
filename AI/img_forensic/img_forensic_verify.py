@@ -19,7 +19,7 @@ from img_forensic_explanation import build_final_result
 from img_forensic_decision_rules import rule_based_decision
 from llm_forensic_judge import llm_judge
 from img_forensic_reason_builder import build_reason
-from hybrid_llm_forensic_classifier import classify_image_hybrid
+from img_forensic_hybrid_llm_forensic_classifier import classify_image_hybrid
 
 
 def verify_img_forensic(image_path: str):
@@ -32,33 +32,32 @@ def verify_img_forensic(image_path: str):
         m = metadata_analysis(image_path)
         sc = semantic_consistency_analyze(image_path)
 
-        mark, score, evidence = decide_image(w, s, g, l, m, sc)
-        # return build_final_result(mark, score, evidence)
         return classify_image_hybrid(w, s, g, l, m, sc)
         # return classify_image_ml(w, s, g, l, m, sc)
+        # return build_final_result(mark, score, evidence)
         
-        # ---------- RULE-BASED DECISION ----------
-        result = rule_based_decision(w, s, g, l, m, sc)
+        # mark, score, evidence = decide_image(w, s, g, l, m, sc)
+        # result = rule_based_decision(w, s, g, l, m, sc)
 
         # ---------- DEFINITIVE RESULT ----------
-        if result["status"] != "UNCERTAIN":
-            return {
-                "mark": result["status"],
-                "confidence": result["confidence"],
-                "reason": build_reason(result["status"], result["evidence"]),
-            }
+        # if result["status"] != "UNCERTAIN":
+        #     return {
+        #         "mark": result["status"],
+        #         "confidence": result["confidence"],
+        #         "reason": build_reason(result["status"], result["evidence"]),
+        #     }
 
-        # ---------- LLM FALLBACK (UNCERTAIN ONLY) ----------
-        llm_result = llm_judge(result["signals"])
+        # # ---------- LLM FALLBACK (UNCERTAIN ONLY) ----------
+        # llm_result = llm_judge(result["signals"])
 
-        return {
-            "mark": llm_result.get("mark", "UNCERTAIN"),
-            "confidence": llm_result.get("confidence", 0.5),
-            "reason": llm_result.get(
-                "reason",
-                "The available evidence is mixed and inconclusive.",
-            ),
-        }
+        # return {
+        #     "mark": llm_result.get("mark", "UNCERTAIN"),
+        #     "confidence": llm_result.get("confidence", 0.5),
+        #     "reason": llm_result.get(
+        #         "reason",
+        #         "The available evidence is mixed and inconclusive.",
+        #     ),
+        # }
 
     except Exception as e:
         return {

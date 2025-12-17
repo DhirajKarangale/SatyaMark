@@ -1,3 +1,5 @@
+import time
+from huggingface_hub.utils import HfHubHTTPError
 import re
 from typing import Any, List
 from html import unescape
@@ -10,6 +12,10 @@ except Exception:
 from connect import get_llm
 
 
+# ------------------------------------------------------------------
+# Helpers
+# ------------------------------------------------------------------
+
 def _extract_text(output: Any) -> str:
     if hasattr(output, "content"):
         return (output.content or "").strip()
@@ -19,7 +25,7 @@ def _extract_text(output: Any) -> str:
 
 
 def _split_sentences(text: str) -> List[str]:
-    sents = re.split(r"(?<=[\.\!\?])\s+", text.strip())
+    sents = re.split(r"(?<=[.!?])\s+", text.strip())
     return [s.strip() for s in sents if s.strip()]
 
 
@@ -36,88 +42,128 @@ def _looks_english(text: str) -> bool:
     return (len(ascii_letters) / max(1, len(letters))) > 0.92
 
 
+# ------------------------------------------------------------------
+# Low-level text cleaning (NO LLM)
+# ------------------------------------------------------------------
+
 def _clean_input_text(text: str) -> str:
-    """
-    Clean all formatting (HTML, markdown, bullets, links, emojis).
-    Keep only readable text.
-    """
     if not text:
         return ""
 
     text = unescape(text)
     text = re.sub(r"<[^>]+>", " ", text)
     text = re.sub(r"[*_`~]+", " ", text)
-    text = re.sub(r"\b\/i\b", " ", text)
-    text = re.sub(r"^[\-\*\•\·]\s*", " ", text, flags=re.MULTILINE)
     text = re.sub(r"http\S+", " ", text)
     text = re.sub(r"[@#]\w+", " ", text)
     text = re.sub(r"\s+", " ", text).strip()
-
     return text
 
 
-def normalize_meaning(text: str) -> str:
-    """
-    Convert noisy, broken, or tag-contaminated text into clean,
-    meaning-preserving English. Ensures stable semantic input.
-    """
-    cleaned = _clean_input_text(text)
-    llm = get_llm("llama3")
+# ------------------------------------------------------------------
+# Rule-based noise detection
+# ------------------------------------------------------------------
+
+DATE_PATTERNS = [
+    r"\b\d{4}-\d{2}-\d{2}\b",
+    r"\b\d{1,2}/\d{1,2}/\d{2,4}\b",
+    r"\bInvalid Date\b",
+]
+
+USERNAME_PATTERN = r"^[a-zA-Z0-9_]{2,20}$"
+
+
+def _is_noise_segment(seg: str) -> bool:
+    s = seg.strip()
+    if not s:
+        return True
+
+    for p in DATE_PATTERNS:
+        if re.search(p, s):
+            return True
+
+    if re.fullmatch(USERNAME_PATTERN, s):
+        return True
+
+    # Tag lists (comma-separated, short)
+    if "," in s and len(s.split()) <= 6:
+        return True
+
+    # Too short → usually title / label
+    if len(s) < 40:
+        return True
+
+    return False
+
+
+def extract_core_content(raw: str) -> str:
+    parts = [p.strip() for p in raw.split("||satyamark seperator||")]
+    meaningful = [p for p in parts if not _is_noise_segment(p)]
+    return " ".join(meaningful)
+
+
+# ------------------------------------------------------------------
+# LLM-assisted semantic pruning (NO summarization)
+# ------------------------------------------------------------------
+
+def semantic_prune(text: str) -> str:
+    llm = get_llm("qwen2_5")
 
     prompt = (
-        "Rewrite the following text into clean, correct, plain English WITHOUT changing "
-        "any facts, meaning, numbers, names, or implications. Fix broken formatting tags, "
-        "correct partial markup, and repair awkward or incomplete wording. "
-        "Do NOT summarize. Maintain full meaning.\n\n"
+        "Extract ONLY the sentences that contain the main informational or opinion content.\n"
+        "DO NOT add, infer, expand, or rewrite anything.\n"
+        "DO NOT introduce titles, examples, or background knowledge.\n"
+        "Return ONLY text that appears verbatim or near-verbatim in the input.\n\n"
+        f"Text:\n{text}\n\n"
+        "Extracted content:"
+    )
+
+    out = llm.invoke(prompt)
+    return _extract_text(out)
+
+# ------------------------------------------------------------------
+# Meaning normalization (stable semantic input)
+# ------------------------------------------------------------------
+
+def normalize_meaning(text: str) -> str:
+    cleaned = _clean_input_text(text)
+
+    llm = get_llm("qwen2_5")
+
+    prompt = (
+        "Rewrite the following text into clean, correct English without changing "
+        "any facts, names, numbers, or meaning.\n"
+        "Fix grammar and broken formatting.\n"
+        "Do NOT summarize.\n\n"
         f"Text:\n{cleaned}\n\n"
         "Clean rewrite:"
     )
 
     out = llm.invoke(prompt)
-    normalized = _extract_text(out).strip()
-    return normalized
+    return _extract_text(out)
 
 
-def summarize_text(text: str, *, enforce_english: bool = True) -> str:
-    """
-    Summarize input text into a short, meaning-based gist (up to 2 sentences).
+def summarize_text(text: str) -> str:
+    llm = get_llm("qwen2_5")
 
-    - First, normalize meaning so different wording gives same summary.
-    - Then produce a stable semantic summary.
-    - No new facts.
-    """
-
-    normalized = normalize_meaning(text)
-
-    llm = get_llm("llama3")
-
-    system_msg = (
-        "You are a professional factual summarizer.\n"
-        "Summarize the meaning only — not the wording.\n"
-        "If two texts mean the same, your summary must be identical.\n"
-        "Do NOT add new facts. Keep a neutral tone.\n"
-        "Max 2 sentences. No bullets or headings."
+    prompt = (
+        "Compress the following text to at most 2 sentences.\n"
+        "Use ONLY words and facts present in the input.\n"
+        "Do NOT add new details, examples, names, or assumptions.\n"
+        "If something is not explicitly stated, do not include it.\n\n"
+        f"Text:\n{text}\n\n"
+        "Compressed summary:"
     )
 
-    human_msg = f"Text to summarize:\n{normalized}"
-
-    prompt = "\n\n".join(
-        [f"SYSTEM:\n{system_msg}", f"User:\n{human_msg}", "Assistant:"]
-    )
-
-    raw = llm.invoke(prompt)
-    summary = _extract_text(raw).strip()
-
-    if enforce_english and not _looks_english(summary):
-        force_prompt = (
-            "Rewrite the following summary in plain, simple English (max 2 sentences):\n\n"
-            f"{summary}"
-        )
-        forced = llm.invoke(force_prompt)
-        summary = _extract_text(forced).strip()
-
-    sents = _split_sentences(summary)
-    return " ".join(sents[:2]).strip()
+    out = llm.invoke(prompt)
+    return _extract_text(out)
 
 
-__all__ = ["summarize_text", "normalize_meaning"]
+
+def clean_and_summarize(raw_input: str) -> str:
+    core = extract_core_content(raw_input)
+    pruned = semantic_prune(core)
+    normalized = normalize_meaning(pruned)
+    return summarize_text(normalized)
+
+
+__all__ = ["clean_and_summarize"]

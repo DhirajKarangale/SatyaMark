@@ -21,7 +21,9 @@ statement3 = "In the grand tapestry of human innovation, renewable energy stands
 statement4 = "NASA will announce evidence of alien life in 2030."
 statement5 = "Chocolate ice cream is the best flavor ever."
 statement6 = "The committee approved the proposal yesterday."
-statement = statement1
+statement7 = "db_pro ||satyamark seperator|| Recent Apple Store Theft ||satyamark seperator|| A group of thieves raided an Apple <p>Store in California, stealing</p> devices worth <i>thousands within minutes</i>. ||satyamark seperator|| Invalid Date ||satyamark seperator|| tech, it, commerce, business"
+statement8 = "Wrestling Fan Moment ||satyamark seperator|| <h1>realtime_guy</h1> ||satyamark seperator|| 2025-08-15 ||satyamark seperator|| \nI <b>have always admired</b> Roman Reigns; his persona and dominance in the ring are unmatched."
+statement = statement7
 
 # Image Data
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__)))
@@ -39,10 +41,10 @@ image_url = "https://res.cloudinary.com/dfamljkyo/image/upload/v1765866848/v4fh8
 
 
 # Text
-# print(verify_text(statement))
+print(verify_text(statement))
 
 # Image Forensic
-print(verify_img_forensic(path_real_2))
+# print(verify_img_forensic(path_real_2))
 # print(evaluate_img_forensic(TEST_AI_PATH, TEST_REAL_PATH))
 # print(verify_img_forensic_url(image_url))
 

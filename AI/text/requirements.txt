@@ -1,6 +1,7 @@
 redis
 dotenv
 requests
+langdetect
 trafilatura
 lxml_html_clean
 langchain_huggingface 

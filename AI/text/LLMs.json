@@ -110,16 +110,6 @@
         "repetition_penalty": 1.05
     },
     {
-        "name": "pegasus_cnn",
-        "model_id": "google/pegasus-cnn_dailymail",
-        "task": "summarization",
-        "provider": "auto",
-        "do_sample": false,
-        "temperature": 0.2,
-        "max_new_tokens": 256,
-        "repetition_penalty": 1.05
-    },
-    {
         "name": "bart_large_cnn",
         "model_id": "facebook/bart-large-cnn",
         "task": "summarization",

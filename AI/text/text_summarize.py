@@ -96,7 +96,7 @@ def _is_noise_segment(seg: str) -> bool:
 
 
 def extract_core_content(raw: str) -> str:
-    parts = [p.strip() for p in raw.split("||satyamark seperator||")]
+    parts = [p.strip() for p in raw.split("||satyamark_seperator||")]
     meaningful = [p for p in parts if not _is_noise_segment(p)]
     return " ".join(meaningful)
 

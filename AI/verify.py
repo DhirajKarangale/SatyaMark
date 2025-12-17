@@ -21,8 +21,8 @@ statement3 = "In the grand tapestry of human innovation, renewable energy stands
 statement4 = "NASA will announce evidence of alien life in 2030."
 statement5 = "Chocolate ice cream is the best flavor ever."
 statement6 = "The committee approved the proposal yesterday."
-statement7 = "db_pro ||satyamark seperator|| Recent Apple Store Theft ||satyamark seperator|| A group of thieves raided an Apple <p>Store in California, stealing</p> devices worth <i>thousands within minutes</i>. ||satyamark seperator|| Invalid Date ||satyamark seperator|| tech, it, commerce, business"
-statement8 = "Wrestling Fan Moment ||satyamark seperator|| <h1>realtime_guy</h1> ||satyamark seperator|| 2025-08-15 ||satyamark seperator|| \nI <b>have always admired</b> Roman Reigns; his persona and dominance in the ring are unmatched."
+statement7 = "India's digital payments crossed 130 billion transactions this year, making it the highest globally. ||satyamark_seperator|| facts_daily ||satyamark_seperator|| Tech fact ||satyamark_seperator|| Invalid Date ||satyamark_seperator|| tech, it, commerce, business ||satyamark_seperator|| 2025-12-07"
+statement8 = "Wrestling Fan Moment ||satyamark_seperator|| <h1>realtime_guy</h1> ||satyamark_seperator|| 2025-08-15 ||satyamark_seperator|| \nI <b>have always admired</b> Roman Reigns; his persona and dominance in the ring are unmatched."
 statement = statement7
 
 # Image Data

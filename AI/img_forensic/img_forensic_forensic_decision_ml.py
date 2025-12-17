@@ -139,7 +139,7 @@ output_parser = StrOutputParser()
 # -----------------------------------------------------------
 # MAIN CLASSIFIER
 # -----------------------------------------------------------
-def classify_image(
+def classify_image_ml(
     watermark: dict,
     sensor: dict,
     gan: dict,

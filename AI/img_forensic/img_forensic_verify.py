@@ -13,7 +13,9 @@ from img_forensic_metadata import metadata_analysis
 from img_forensic_semantic_consistency import (
     semantic_consistency_analyze,
 )
-from img_forensic_forensic_decision import classify_image
+from img_forensic.img_forensic_forensic_decision_ml import classify_image_ml
+from img_forensic_decision_deterministic import decide_image
+from img_forensic_explanation import build_final_result
 
 
 def verify_img_forensic(image_path: str):
@@ -26,7 +28,9 @@ def verify_img_forensic(image_path: str):
         m = metadata_analysis(image_path)
         sc = semantic_consistency_analyze(image_path)
 
-        return classify_image(w, s, g, l, m, sc)
+        mark, score, evidence = decide_image(w, s, g, l, m, sc)
+        return build_final_result(mark, score, evidence)
+        # return classify_image_ml(w, s, g, l, m, sc)
 
     except Exception as e:
         return {"error": str(e)}

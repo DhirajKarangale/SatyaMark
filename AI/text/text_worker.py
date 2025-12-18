@@ -59,6 +59,7 @@ def process_loop():
                 "reason": result.get("reason"),
                 "confidence": result.get("confidence"),
                 "urls": result.get("urls"),
+                "summary":"summary",
             }
 
             requests.post(callback_url, json=payload)

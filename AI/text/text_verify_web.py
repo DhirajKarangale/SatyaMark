@@ -74,6 +74,29 @@ def _sanitize_reason(reason: str) -> str:
     return r.strip()
 
 
+def _normalize_geography(reason: str) -> str:
+    """
+    Fix common geographic phrasing issues for clarity.
+    This is linguistic normalization only, not fact inference.
+    """
+    replacements = {
+        "india or kashmir": "India, specifically the Jammu and Kashmir region",
+        "india and kashmir": "India, specifically the Jammu and Kashmir region",
+        "within india or kashmir": "within India, specifically the Jammu and Kashmir region",
+        "regions within india or kashmir": "regions within India, specifically the Jammu and Kashmir region",
+    }
+
+    lower = reason.lower()
+    for bad, good in replacements.items():
+        if bad in lower:
+            start = lower.find(bad)
+            end = start + len(bad)
+            reason = reason[:start] + good + reason[end:]
+            break
+
+    return reason.strip()
+
+
 def _confidence_for_insufficient(num_sources: int) -> int:
     if num_sources <= 0:
         return 20
@@ -163,7 +186,6 @@ OUTPUT MUST BE STRICT JSON IN THIS EXACT FORMAT:
         final = parsed.get("final", {})
 
         relationship = analysis.get("relationship")
-        mark = final.get("mark")
         reason = final.get("reason")
         confidence = final.get("confidence")
         urls = final.get("urls", [])
@@ -171,26 +193,19 @@ OUTPUT MUST BE STRICT JSON IN THIS EXACT FORMAT:
         if relationship not in ("supports", "contradicts", "unclear"):
             raise ValueError("Invalid relationship")
 
-        if mark not in ("Correct", "Incorrect", "Insufficient"):
-            raise ValueError("Invalid mark")
-
         if not isinstance(reason, str) or not reason.strip():
             raise ValueError("Invalid reason")
 
         if not isinstance(urls, list):
             urls = []
 
-        # -----------------------------
-        # ENFORCE LOGICAL CONSISTENCY
-        # -----------------------------
+        # Enforce verdict strictly from relationship
         if relationship == "supports":
-            enforced_mark = "Correct"
+            mark = "Correct"
         elif relationship == "contradicts":
-            enforced_mark = "Incorrect"
+            mark = "Incorrect"
         else:
-            enforced_mark = "Insufficient"
-
-        mark = enforced_mark
+            mark = "Insufficient"
 
         if mark == "Insufficient":
             confidence = _confidence_for_insufficient(len(cleaned_web))
@@ -200,6 +215,7 @@ OUTPUT MUST BE STRICT JSON IN THIS EXACT FORMAT:
             confidence = max(0, min(100, int(confidence)))
 
         reason = _sanitize_reason(reason)
+        reason = _normalize_geography(reason)
         urls = [u for u in dict.fromkeys(urls) if isinstance(u, str) and u.strip()]
 
         return {

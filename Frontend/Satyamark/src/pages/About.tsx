@@ -124,10 +124,10 @@ function About() {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.05 * i }}
                                 className="
-          flex items-center gap-3
-          bg-white/5 border border-white/15 backdrop-blur-sm
-          rounded-xl px-4 py-3
-        "
+                                flex items-center gap-3
+                                bg-white/5 border border-white/15 backdrop-blur-sm
+                                rounded-xl px-4 py-3
+                                "
                             >
                                 <img
                                     src={mark.icon}

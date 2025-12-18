@@ -1,12 +1,13 @@
 import { onReceive } from "./satyamark_connect";
 
+import verifyableIcon from "../icons-mark/verifyable.png";
+import unverifyableIcon from "../icons-mark/unverifyable.png";
+import insufficientIcon from "../icons-mark/insufficient.png";
 import correctIcon from "../icons-mark/correct.png";
 import incorrectIcon from "../icons-mark/incorrect.png";
-import insufficientIcon from "../icons-mark/insufficient.png";
-import aiIcon from "../icons-mark/ai.png";
-import realIcon from "../icons-mark/real.png";
-import subjectiveIcon from "../icons-mark/subjective.png";
 import pendingIcon from "../icons-mark/pending.png";
+import aiIcon from "../icons-mark/ai.png";
+import nonaiIcon from "../icons-mark/nonai.png";
 
 type StatusOptions = {
     iconSize?: number;
@@ -23,13 +24,14 @@ const DEFAULT_ICON_SIZE = 20;
 const satyamark_url = "http://localhost:5173";
 
 const iconMap: Record<string, string> = {
+    verifyable: verifyableIcon,
+    unverifyable: unverifyableIcon,
+    insufficient: insufficientIcon,
     correct: correctIcon,
     incorrect: incorrectIcon,
-    insufficient: insufficientIcon,
-    ai: aiIcon,
-    real: realIcon,
-    subjective: subjectiveIcon,
     pending: pendingIcon,
+    ai: aiIcon,
+    nonai: nonaiIcon,
 };
 
 export function registerStatus(

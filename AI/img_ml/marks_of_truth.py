@@ -1,12 +1,14 @@
 from enum import Enum
 
 class Marks(Enum):
-    CORRECT = "Correct"
-    INCORRECT = "Incorrect"
-    AI_GENERATED = "AI-Generated"
-    PENDING = "Pending"
-    SUBJECTIVE = "subjective"
-    INSUFFICIENT = "Insufficient"
+    VERIFYABLE = "verifyable"
+    UNVERIFYABLE = "unverifyable"
+    INSUFFICIENT = "insufficient"
+    CORRECT = "correct"
+    INCORRECT = "incorrect"
+    PENDING = "pending"
+    AI = "ai"
+    NONAI = "nonai"
 
     def __str__(self):
         return self.value

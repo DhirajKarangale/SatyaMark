@@ -33,32 +33,7 @@ def verify_img_forensic(image_path: str):
         sc = semantic_consistency_analyze(image_path)
 
         return classify_image_hybrid(w, s, g, l, m, sc)
-        # return classify_image_ml(w, s, g, l, m, sc)
-        # return build_final_result(mark, score, evidence)
-        
-        # mark, score, evidence = decide_image(w, s, g, l, m, sc)
-        # result = rule_based_decision(w, s, g, l, m, sc)
-
-        # ---------- DEFINITIVE RESULT ----------
-        # if result["status"] != "UNCERTAIN":
-        #     return {
-        #         "mark": result["status"],
-        #         "confidence": result["confidence"],
-        #         "reason": build_reason(result["status"], result["evidence"]),
-        #     }
-
-        # # ---------- LLM FALLBACK (UNCERTAIN ONLY) ----------
-        # llm_result = llm_judge(result["signals"])
-
-        # return {
-        #     "mark": llm_result.get("mark", "UNCERTAIN"),
-        #     "confidence": llm_result.get("confidence", 0.5),
-        #     "reason": llm_result.get(
-        #         "reason",
-        #         "The available evidence is mixed and inconclusive.",
-        #     ),
-        # }
-
+       
     except Exception as e:
         return {
         "mark": "ERROR",

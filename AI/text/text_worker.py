@@ -4,7 +4,7 @@ import json
 import redis
 import requests
 from dotenv import load_dotenv
-from text_verify import verify_text
+from text_verify import verify_text_summary
 from connect import connect_llms
 
 load_dotenv()
@@ -48,7 +48,9 @@ def process_loop():
         print(f"[{CONSUMER}] Processing: {jobId}")
 
         try:
-            result = verify_text(text)
+            output = verify_text_summary(text)
+            summary = output.get("summary")
+            result = output.get("result")
 
             payload = {
                 "jobId": jobId,
@@ -59,7 +61,7 @@ def process_loop():
                 "reason": result.get("reason"),
                 "confidence": result.get("confidence"),
                 "urls": result.get("urls"),
-                "summary":"summary",
+                "summary": summary,
             }
 
             requests.post(callback_url, json=payload)

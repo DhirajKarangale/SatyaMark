@@ -20,3 +20,20 @@ def verify_text(statement):
         return webverify
 
     return fact
+
+
+def verify_text_summary(statement):
+    summary = summarize_text(statement)
+
+    verifyability = check_verifyability(summary)
+    if verifyability and verifyability["mark"] == "UNVERIFYABLE":
+        return {"summary": summary, "result": verifyability}
+
+    fact = fact_check(summary)
+
+    if fact and fact["mark"] == "Insufficient":
+        webcontent = get_content(summary)
+        webverify = fact_check_with_web(summary, webcontent)
+        return {"summary": summary, "result": webverify}
+
+    return {"summary": summary, "result": fact}

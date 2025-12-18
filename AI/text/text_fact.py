@@ -52,15 +52,17 @@ def _invoke(text: str) -> str:
     except Exception:
         return ""
 
-
 def _parse(raw: str) -> Dict[str, Any]:
-    # Remove reasoning noise
+    # 1. Remove DeepSeek reasoning
     raw = re.sub(r"<think>.*?</think>", "", raw, flags=re.DOTALL).strip()
 
-    # DEBUG (temporarily enable if needed)
-    # print("RAW LLM OUTPUT:\n", raw)
+    # 2. Remove markdown code fences
+    raw = re.sub(r"```(?:json)?", "", raw, flags=re.IGNORECASE).strip()
 
-    # Extract JSON
+    # DEBUG (keep while testing)
+    # print("CLEANED OUTPUT:\n", raw)
+
+    # 3. Extract JSON object
     match = re.search(r"\{[\s\S]*?\}", raw)
     if not match:
         raise ValueError("No JSON found")
@@ -72,7 +74,7 @@ def _parse(raw: str) -> Dict[str, Any]:
     reason = data.get("reason", "").strip()
 
     if mark not in {"Correct", "Incorrect", "Insufficient"}:
-        raise ValueError("Bad mark")
+        raise ValueError("Invalid mark")
 
     confidence = max(0, min(confidence, 100))
 
@@ -85,7 +87,6 @@ def _parse(raw: str) -> Dict[str, Any]:
         "reason": reason,
     }
 
-
 def fact_check(text: str) -> dict:
     if not text or not text.strip():
         return {
@@ -96,6 +97,7 @@ def fact_check(text: str) -> dict:
 
     try:
         raw = _invoke(text)
+        # return raw
         return _parse(raw)
 
     except Exception:

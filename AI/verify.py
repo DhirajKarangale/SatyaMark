@@ -23,7 +23,7 @@ statement7 = "India's digital payments crossed 130 billion transactions this yea
 statement8 = "Wrestling Fan Moment ||satyamark_seperator|| <h1>realtime_guy</h1> ||satyamark_seperator|| 2025-08-15 ||satyamark_seperator|| \nI <b>have always admired</b> Roman Reigns; his persona and dominance in the ring are unmatched."
 statement9 = "Aliens are involved in delhi bomb blast that happened last month"
 statement10 = "earth is 3rd planet from sun"
-statement = statement7
+statement = statement1
 
 # Image Data
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__)))

@@ -43,7 +43,7 @@ export default function PostCard({ postData }: PostCardProps) {
                         break;
                     }
                 } catch (error) {
-                    console.log(error);
+                    console.log("------------ ", error);
                     break;
                 }
 

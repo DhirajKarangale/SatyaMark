@@ -16,13 +16,19 @@ app.use(bodyParser.json({ limit: "1mb" }));
 app.get("/getTextResult", async (req, res) => {
     const id = req.query.id;
     const textData = await modelText.GetTextById(id);
-    res.json(textData);
+    res.json({
+        ...textData,
+        type: "text",
+    });
 });
 
 app.get("/getImageResult", async (req, res) => {
     const id = req.query.id;
     const imageData = await modelImage.GetImageById(id);
-    res.json(imageData);
+    res.json({
+        ...imageData,
+        type: "image",
+    });
 });
 
 app.post("/ai-callback/text", async (req, res) => {

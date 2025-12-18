@@ -15,58 +15,9 @@
     },
     {
         "id": "3",
-        "title": "Global Population Numbers",
-        "description": "The world population has crossed 8.1 billion according to the latest UN report.",
+        "title": "Delhi Bomb Blast",
+        "description": "africans are involved in delhi bomb blast that happened last month",
         "userName": "frontend_dev",
         "date": "2025-10-12"
-    },
-    {
-        "id": "4",
-        "title": "Indigo Flight Turbulence",
-        "description": "A recent Indigo flight experienced heavy turbulence, leading to temporary delays and safety inspections.",
-        "userName": "news_update",
-        "date": "2025-12-05"
-    },
-    {
-        "id": "5",
-        "title": "Image Post",
-        "imageURL": "https://picsum.photos/600/400?21",
-        "userName": "admin",
-        "date": "2025-12-01"
-    },
-    {
-        "id": "6",
-        "title": "Wrestling Fan Moment",
-        "description": "I have always admired Roman Reigns; his persona and dominance in the ring are unmatched.",
-        "userName": "realtime_guy",
-        "date": "2025-08-15"
-    },
-    {
-        "id": "7",
-        "title": "Tech Layoffs Report",
-        "description": "More than 250 tech companies have conducted layoffs this year, affecting over 85,000 employees globally.",
-        "userName": "cleanCoder",
-        "date": "2025-07-04"
-    },
-    {
-        "id": "8",
-        "title": "Recent Apple Store Theft",
-        "description": "A group of thieves raided an Apple Store in California, stealing devices worth thousands within minutes.",
-        "userName": "db_pro",
-        "date": "2025-06-21"
-    },
-    {
-        "id": "9",
-        "title": "Image Post",
-        "imageURL": "https://picsum.photos/600/400?99",
-        "userName": "devops",
-        "date": "2025-05-02"
-    },
-    {
-        "id": "10",
-        "title": "Image Post",
-        "imageURL": "https://picsum.photos/600/400?55",
-        "userName": "ts_ninja",
-        "date": "2025-04-11"
     }
 ]

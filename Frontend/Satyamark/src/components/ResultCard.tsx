@@ -12,6 +12,10 @@ type ResultData = {
     confidence: number | string;
     reason: string;
     urls?: string[] | null;
+
+    type?: "text" | "image";
+    summary?: string;
+    image_url?: string;
 };
 
 function ResultCard() {
@@ -57,6 +61,55 @@ function ResultCard() {
         return true;
     };
 
+    function LazyImage({ src }: { src: string }) {
+        const [loaded, setLoaded] = useState(false);
+
+        return (
+            <div className="relative w-full flex justify-center rounded-xl">
+
+                {!loaded && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+                    </div>
+                )}
+
+                <img
+                    src={src}
+                    loading="lazy"
+                    onLoad={() => setLoaded(true)}
+                    className={`
+                        max-h-[200px]
+                        w-auto
+                        max-w-full
+                        object-contain
+                        transition-opacity duration-300
+                        ${loaded ? "opacity-100" : "opacity-0"}
+                    `}
+                />
+            </div>
+        );
+    }
+
+    function Section({
+        title,
+        children
+    }: {
+        title: string;
+        children: React.ReactNode;
+    }) {
+        return (
+            <div className="flex flex-col gap-2">
+                <div className="text-xs uppercase tracking-wider text-cyan-400 font-semibold">
+                    {title}
+                </div>
+                <div className="bg-white/5 border border-white/10
+                    rounded-lg p-3 text-gray-200 leading-relaxed">
+                    {children}
+                </div>
+            </div>
+        );
+    }
+
     useEffect(() => {
         const saved = sessionStorage.getItem(STORAGE_KEY);
         if (!saved) return;
@@ -94,6 +147,7 @@ function ResultCard() {
                 if (alreadyExists) return q;
 
                 setShowAlert(true);
+                console.log("received: ", received);
                 return [...q, received];
             });
         });
@@ -123,6 +177,7 @@ function ResultCard() {
 
                 setShowAlert(true);
 
+                console.log("parsedData: ", parsedData);
                 return [parsedData, ...q];
             });
         });
@@ -143,10 +198,9 @@ function ResultCard() {
         setShowAlert(false);
     };
 
-    const showLoader =
-        !currentData &&
-        queue.length === 0 &&
-        jobStore.hasJobs();
+    console.log("currentData: ", currentData);
+
+    const showLoader = !currentData && queue.length === 0 && jobStore.hasJobs();
 
     if (!currentData) {
         if (showLoader) {
@@ -216,36 +270,69 @@ function ResultCard() {
                     </div>
                 </motion.div>
 
+                {currentData.type === "text" && currentData.summary && (
+                    <motion.div
+                        custom={1}
+                        variants={contentVariants}
+                        initial="hidden"
+                        animate="visible"
+                    >
+                        <Section title="Summary">
+                            <div className="whitespace-pre-wrap">
+                                {currentData.summary}
+                            </div>
+                        </Section>
+                    </motion.div>
+                )}
+
+                {currentData.type === "image" && currentData.image_url && (
+                    <motion.div
+                        custom={1}
+                        variants={contentVariants}
+                        initial="hidden"
+                        animate="visible"
+                    >
+                        <Section title="Image">
+                            <LazyImage src={currentData.image_url} />
+                        </Section>
+                    </motion.div>
+                )}
+
                 <motion.div
-                    custom={1}
+                    custom={2}
                     variants={contentVariants}
                     initial="hidden"
                     animate="visible"
-                    className="text-gray-300 whitespace-pre-wrap leading-relaxed"
                 >
-                    {currentData.reason}
+                    <Section title="Reason">
+                        <div className="whitespace-pre-wrap">
+                            {currentData.reason}
+                        </div>
+                    </Section>
                 </motion.div>
 
                 {currentData.urls?.length ? (
                     <motion.div
-                        custom={2}
+                        custom={3}
                         variants={contentVariants}
                         initial="hidden"
                         animate="visible"
-                        className="flex flex-col gap-2"
                     >
-                        <div className="text-white font-semibold">Sources</div>
-                        {currentData.urls.map((url, i) => (
-                            <a
-                                key={i}
-                                href={url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-cyan-400 underline break-all"
-                            >
-                                {url}
-                            </a>
-                        ))}
+                        <Section title="Sources">
+                            <div className="flex flex-col gap-2">
+                                {currentData.urls.map((url, i) => (
+                                    <a
+                                        key={i}
+                                        href={url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-cyan-400 underline break-all hover:text-cyan-300"
+                                    >
+                                        {url}
+                                    </a>
+                                ))}
+                            </div>
+                        </Section>
                     </motion.div>
                 ) : null}
 

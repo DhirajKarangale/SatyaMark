@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { init } from "satyamark-react";
+import { init, onConnected } from "satyamark-react";
 import Home from "./components/Home";
 
 export default function App() {
@@ -26,6 +26,10 @@ export default function App() {
     const id = `${uuid}_${time}`;
     return id;
   }
+
+  onConnected((data: any) => {
+    console.log("Connected:", data);
+  });
 
   useEffect(() => {
     init({ app_id: "APP123", user_id: getUserId() })

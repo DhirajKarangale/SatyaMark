@@ -8,8 +8,11 @@ export type SatyaMarkConnectionData = {
     user_id: string;
 };
 
+type ConnectedCallback = (data: SatyaMarkConnectionData) => void;
 type ReceiveCallback = (data: any) => void;
+
 const listeners: ReceiveCallback[] = [];
+let onConnectedCb: ConnectedCallback | null = null;
 
 export function onReceive(cb: ReceiveCallback) {
     listeners.push(cb);
@@ -19,13 +22,18 @@ export function onReceive(cb: ReceiveCallback) {
     };
 }
 
-export function init(connectionData: SatyaMarkConnectionData) {
+export function onConnected(cb: ConnectedCallback) {
+    onConnectedCb = cb;
+}
+
+export function init(connectionData: SatyaMarkConnectionData, options?: { onConnected?: ConnectedCallback }) {
     if (socket && socket.readyState == WebSocket.OPEN && storedConnectionData == connectionData) {
         console.log("Already Connected: ", connectionData);
         return;
     }
 
     socket = new WebSocket(wsUrl);
+    onConnectedCb = options?.onConnected ?? onConnectedCb;
 
     socket.onopen = () => {
         console.log("Connected to server: ", connectionData.user_id);
@@ -35,6 +43,8 @@ export function init(connectionData: SatyaMarkConnectionData) {
             clientId: connectionData.user_id,
             appId: connectionData.app_id
         });
+
+        onConnectedCb?.(connectionData);
     };
 
     socket.onmessage = (event) => {
@@ -124,11 +134,7 @@ export function sendData(text: string, image_url: string, dataId: string) {
 export function receiveData(data: any) {
     if (!storedConnectionData || data.clientId != storedConnectionData.user_id) return;
 
-    const payload = {
-        jobId: data.jobId,
-        dataId: data.dataId,
-        mark: data.mark,
-    }
+    console.log("receiveData: ", data);
 
     for (const cb of Array.from(listeners)) {
         try {

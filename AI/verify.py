@@ -12,8 +12,6 @@ from img_forensic_verify import (
     verify_img_forensic_url,
 )
 
-print("\n")
-
 # Text Data
 statement1 = "The Great Wall of China is located in China."
 statement2 = "The Eiffel Tower is located in Germany."
@@ -24,7 +22,8 @@ statement6 = "The committee approved the proposal yesterday."
 statement7 = "India's digital payments crossed 130 billion transactions this year, making it the highest globally. ||satyamark_seperator|| facts_daily ||satyamark_seperator|| Tech fact ||satyamark_seperator|| Invalid Date ||satyamark_seperator|| tech, it, commerce, business ||satyamark_seperator|| 2025-12-07"
 statement8 = "Wrestling Fan Moment ||satyamark_seperator|| <h1>realtime_guy</h1> ||satyamark_seperator|| 2025-08-15 ||satyamark_seperator|| \nI <b>have always admired</b> Roman Reigns; his persona and dominance in the ring are unmatched."
 statement9 = "Aliens are involved in delhi bomb blast that happened last month"
-statement = statement9
+statement10 = "earth is 3rd planet from sun"
+statement = statement7
 
 # Image Data
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__)))
@@ -40,6 +39,7 @@ path_real_2 = os.path.join(TEST_REAL_PATH, "2.jpg")
 
 image_url = "https://res.cloudinary.com/dfamljkyo/image/upload/v1765866848/v4fh8c9xhegyx2havzar.png"
 
+print("\n")
 
 # Text
 print(verify_text(statement))

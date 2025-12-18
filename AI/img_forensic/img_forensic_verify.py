@@ -13,7 +13,7 @@ from img_forensic_metadata import metadata_analysis
 from img_forensic_semantic_consistency import (
     semantic_consistency_analyze,
 )
-from img_forensic.img_forensic_forensic_decision_ml import classify_image_ml
+from img_forensic_forensic_decision_ml import classify_image_ml
 from img_forensic_decision_deterministic import decide_image
 from img_forensic_explanation import build_final_result
 from img_forensic_decision_rules import rule_based_decision

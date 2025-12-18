@@ -39,6 +39,7 @@ app.post("/ai-callback/text", async (req, res) => {
             confidence: savedData.confidence,
             reason: savedData.reason,
             urls: savedData.urls,
+            summary: savedData.summary,
             type: "text",
         };
 
@@ -64,6 +65,7 @@ app.post("/ai-callback/image", async (req, res) => {
             mark: savedData.mark,
             confidence: savedData.confidence,
             reason: savedData.reason,
+            image_url: savedData.image_url,
             type: "image",
         };
 

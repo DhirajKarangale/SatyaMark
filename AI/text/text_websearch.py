@@ -12,7 +12,7 @@ load_dotenv()
 SERPER_API_KEY = os.getenv("SERPER_API_KEY")
 llm = get_llm("deepseek_r1")
 
-URLS_COUNT = 2
+URLS_COUNT = 10
 
 prompt_template = """
 You are an expert at converting any claim or statement into a **strong, precise, factual web search query**.

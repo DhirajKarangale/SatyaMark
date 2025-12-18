@@ -57,6 +57,7 @@ async function process_text(clientId, jobId, text) {
             confidence: textData.confidence ?? null,
             reason: textData.reason ?? null,
             urls: textData.urls ?? null,
+            summary: textData.summary ?? null,
             type: "text",
         };
 
@@ -93,6 +94,7 @@ async function process_image(clientId, jobId, image_url) {
             mark: imageData.mark ?? null,
             confidence: imageData.confidence ?? null,
             reason: imageData.reason ?? null,
+            image_url: imageData.image_url ?? null,
             type: "image",
         };
 

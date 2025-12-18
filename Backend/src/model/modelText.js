@@ -13,12 +13,12 @@ async function GetTextById(Id) {
 }
 
 async function PostText(data) {
-    const { summary_hash, text_hash, mark, reason, confidence, urls } = data;
+    const { summary_hash, text_hash, mark, reason, confidence, summary, urls } = data;
 
     const query = `
         INSERT INTO ${tableName}
-        (text_hash, summary_hash, mark, reason, confidence, urls)
-        VALUES ($1, $2, $3, $4, $5, $6)
+        (text_hash, summary_hash, mark, reason, summary, confidence, urls)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
         RETURNING *;
     `;
 
@@ -27,6 +27,7 @@ async function PostText(data) {
         summary_hash,
         mark,
         reason,
+        summary,
         confidence,
         urls || null
     ];

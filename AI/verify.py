@@ -21,9 +21,11 @@ statement5 = "Chocolate ice cream is the best flavor ever."
 statement6 = "The committee approved the proposal yesterday."
 statement7 = "India's digital payments crossed 130 billion transactions this year, making it the highest globally. ||satyamark_seperator|| facts_daily ||satyamark_seperator|| Tech fact ||satyamark_seperator|| Invalid Date ||satyamark_seperator|| tech, it, commerce, business ||satyamark_seperator|| 2025-12-07"
 statement8 = "Wrestling Fan Moment ||satyamark_seperator|| <h1>realtime_guy</h1> ||satyamark_seperator|| 2025-08-15 ||satyamark_seperator|| \nI <b>have always admired</b> Roman Reigns; his persona and dominance in the ring are unmatched."
-statement9 = "Aliens are involved in delhi bomb blast that happened last month"
+statement9 = "africans are involved in delhi bomb blast that happened last month"
 statement10 = "earth is 3rd planet from sun"
-statement = statement1
+statement11 = "there is accident between car and bus in pune on 15 dec 2025 causing death of 8 people"
+statement12 = "there is match sheduled between roman reigns and cm punk in next wwe paperview"
+statement = statement9
 
 # Image Data
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__)))

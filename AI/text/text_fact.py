@@ -27,6 +27,20 @@ Rules:
 - If unsure, choose Insufficient.
 - Insufficient is valid.
 
+TEMPORAL SAFETY RULE (MANDATORY):
+
+If the statement involves:
+- Future events
+- Scheduled matches, announcements, or bookings
+- Current status of titles, leadership, rosters, or organizations
+- Anything that could change after your knowledge cutoff
+
+You MUST treat the claim as "Insufficient" unless the fact is
+historically fixed and universally known.
+
+DO NOT assume your internal knowledge is current.
+DO NOT use outdated status as evidence of incorrectness.
+
 Return a JSON object with:
 mark, confidence (0-100), and a VERY DETAILED reason.
 

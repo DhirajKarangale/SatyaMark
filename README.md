@@ -122,4 +122,5 @@ git submodule add https://github.com/DhirajKarangale/ai-image-hf-verify-worker.g
 Zeabur, 
 Vercel,
 render,
-neon
+neon,
+cloudinary

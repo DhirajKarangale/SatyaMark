@@ -139,6 +139,6 @@ def classify_image_hybrid(w, s, g, l, m, sc):
 
     return {
         "mark": parsed["mark"].upper(),
-        "confidence": float(parsed.get("confidence", 0.5)),
+        "confidence": float(parsed.get("confidence", 0.5)) * 100,
         "reason": parsed.get("reason", "")
     }

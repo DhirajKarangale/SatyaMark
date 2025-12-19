@@ -1,17 +1,10 @@
 [
     {
-        "id": "1",
-        "title": "Tech fact",
-        "description": "India's digital payments crossed 130 billion transactions this year, making it the highest globally.",
-        "userName": "facts_daily",
-        "date": "2025-12-07"
-    },
-    {
-        "id": "2",
-        "title": "I Love MS Dhoni",
-        "description": "I have been a huge fan of MS Dhoni since childhood. His calm attitude inspires me every day.",
-        "userName": "dkcodes",
-        "date": "2025-11-28"
+        "id": "5",
+        "title": "Image Post",
+        "imageURL": "https://res.cloudinary.com/dfamljkyo/image/upload/v1754751870/fuse/m2jrqr3a2fteuc4zkxal.jpg",
+        "userName": "admin",
+        "date": "2025-12-01"
     },
     {
         "id": "3",

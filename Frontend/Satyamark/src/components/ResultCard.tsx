@@ -277,7 +277,7 @@ function ResultCard() {
                         initial="hidden"
                         animate="visible"
                     >
-                        <Section title="Summary">
+                        <Section title="Input">
                             <div className="whitespace-pre-wrap">
                                 {currentData.summary}
                             </div>

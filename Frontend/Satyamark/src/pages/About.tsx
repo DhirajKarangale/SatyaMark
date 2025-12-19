@@ -124,20 +124,26 @@ function About() {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.05 * i }}
                                 className="
-                                flex items-center gap-3
-                                bg-white/5 border border-white/15 backdrop-blur-sm
-                                rounded-xl px-4 py-3
-                                "
+        flex flex-col gap-2
+        bg-white/5 border border-white/15 backdrop-blur-sm
+        rounded-xl px-4 py-3
+      "
                             >
-                                <img
-                                    src={mark.icon}
-                                    alt={mark.label}
-                                    className="w-6 h-6 object-contain"
-                                />
+                                <div className="flex items-center gap-3">
+                                    <img
+                                        src={mark.icon}
+                                        alt={mark.label}
+                                        className="w-6 h-6 object-contain"
+                                    />
 
-                                <span className={`font-medium ${mark.color}`}>
-                                    {mark.label}
-                                </span>
+                                    <span className={`font-medium ${mark.color}`}>
+                                        {mark.label}
+                                    </span>
+                                </div>
+
+                                <p className="text-sm text-gray-400 leading-snug">
+                                    {mark.description}
+                                </p>
                             </motion.div>
                         ))}
                     </div>

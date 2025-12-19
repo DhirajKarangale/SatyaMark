@@ -91,7 +91,7 @@ function About() {
                     </h2>
 
                     <ul className="list-disc pl-5 space-y-1">
-                        <li>Ingests multi-modal content (text, links, images, video)</li>
+                        <li>Ingests multi-modal content (text, images)</li>
                         <li>Extracts factual claims using NLP and vision models</li>
                         <li>
                             Cross-verifies claims using trusted sources, RAG, and vector search
@@ -143,6 +143,31 @@ function About() {
                     </div>
                 </motion.section>
 
+                {/* CURRENT STATUS & ROADMAP */}
+                <motion.section custom={5} variants={fadeUp} className="space-y-3">
+                    <h2 className="text-white text-xl font-semibold">
+                        Current Capabilities & Roadmap
+                    </h2>
+
+                    <p className="leading-relaxed text-gray-400">
+                        SatyaMark currently focuses on verification of text and images.
+                        Text-based verification is the most mature and reliable, while
+                        image verification is in an early stage and may have lower accuracy.
+                    </p>
+
+                    <p className="leading-relaxed text-gray-400">
+                        We are continuously improving both text and image analysis pipelines,
+                        including better claim extraction, reasoning quality, and forensic
+                        detection. Over time, SatyaMark will introduce hybrid verification
+                        techniques that combine multiple signals for higher confidence results.
+                    </p>
+
+                    <p className="leading-relaxed text-gray-400">
+                        Support for video and audio verification is planned for future releases
+                        as the platform evolves.
+                    </p>
+                </motion.section>
+
                 {/* PRIVACY */}
                 <motion.section custom={5} variants={fadeUp} className="space-y-3">
                     <h2 className="text-white text-xl font-semibold">
@@ -151,15 +176,22 @@ function About() {
 
                     <p className="leading-relaxed">
                         SatyaMark does <span className="text-white font-medium">not</span>{" "}
-                        collect, store, or sell user data. Submitted content is processed
-                        ephemerally and discarded after analysis.
+                        use submitted content for advertising, profiling, or resale.
                     </p>
 
                     <p className="leading-relaxed text-gray-400">
-                        To perform verification, SatyaMark may route content through
-                        third-party or self-hosted Large Language Models (LLMs). These models
-                        process data transiently for analysis purposes only and are not used
-                        to build user profiles.
+                        For transparency and user reference, SatyaMark may store a short
+                        AI-generated summary of submitted text rather than the full original
+                        content. Images may be temporarily retained only to display verification
+                        results on the SatyaMark platform.
+                    </p>
+
+                    <p className="leading-relaxed text-gray-400">
+                        Verification is performed using a combination of self-hosted systems
+                        and third-party Large Language Models (LLMs) accessed via Hugging Face.
+                        These models process content solely to generate verification results.
+                        Data handling by third-party providers is subject to their respective
+                        privacy policies.
                     </p>
                 </motion.section>
 

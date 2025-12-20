@@ -68,7 +68,7 @@ export const MARK_META: Record<
 
   uncertain: {
     label: "Uncertain",
-    icon: "/uncertain.jpg",
+    icon: "/uncertain.png",
     color: "text-orange-400",
     description:
       "Based on the current analysis, there is not enough reliable evidence to confidently classify the media as AI-generated or human-created."

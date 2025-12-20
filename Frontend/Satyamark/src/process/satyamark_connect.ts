@@ -50,12 +50,12 @@ export function init(connectionData: SatyaMarkConnectionData) {
 
 function safeSend(msg: any) {
     if (!storedConnectionData) {
-        console.warn("No connectionData found. Call connect() first.");
+        console.log("No connectionData found. Call connect() first.");
         return;
     }
 
     if (!socket || socket.readyState !== WebSocket.OPEN) {
-        console.warn("Socket not ready");
+        console.log("Socket not ready");
         return;
     }
 
@@ -114,7 +114,7 @@ export function receiveData(data: any) {
         try {
             cb(data);
         } catch (err) {
-            console.error("listener error", err);
+            console.log("listener error", err);
         }
     }
 }

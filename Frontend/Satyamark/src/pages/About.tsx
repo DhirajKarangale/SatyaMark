@@ -123,11 +123,9 @@ function About() {
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.05 * i }}
-                                className="
-        flex flex-col gap-2
-        bg-white/5 border border-white/15 backdrop-blur-sm
-        rounded-xl px-4 py-3
-      "
+                                className="flex flex-col gap-2
+                                bg-white/5 border border-white/15 backdrop-blur-sm
+                                rounded-xl px-4 py-3"
                             >
                                 <div className="flex items-center gap-3">
                                     <img

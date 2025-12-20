@@ -51,6 +51,8 @@ function Home() {
                 onClose={() => setShowAlert(false)}
                 onConfirm={() => setShowAlert(false)}
             />
+
+            <div className="w-full h-10 text-transparent text-center">-DK-</div>
         </div>
     );
 }

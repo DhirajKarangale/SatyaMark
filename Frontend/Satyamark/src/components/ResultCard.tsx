@@ -155,7 +155,7 @@ function ResultCard() {
                 setQueue((q) => {
                     if (q.length === 0) {
                         setCurrentData(null);
-                        return q; 
+                        return q;
                     }
 
                     const [next, ...rest] = q;
@@ -211,7 +211,6 @@ function ResultCard() {
                 if (alreadyExists) return q;
 
                 setShowAlert(true);
-                console.log("received: ", received);
                 return [...q, received];
             });
         });
@@ -240,8 +239,6 @@ function ResultCard() {
                 if (alreadyExists) return q;
 
                 setShowAlert(true);
-
-                console.log("parsedData: ", parsedData);
                 return [parsedData, ...q];
             });
         });
@@ -307,129 +304,134 @@ function ResultCard() {
                 variants={cardVariants}
                 initial="hidden"
                 animate="visible"
-                className="relative w-full h-full bg-white/5 border border-white/20
-                backdrop-blur-sm flex flex-col gap-4 overflow-y-auto
-                custom-scroll rounded-xl p-4"
+                className="w-full h-full bg-white/5 border border-white/20
+                backdrop-blur-sm flex flex-col gap-1 rounded-xl p-4"
             >
-                <motion.div
-                    custom={0}
-                    variants={contentVariants}
-                    initial="hidden"
-                    animate="visible"
-                    className="flex justify-between items-center"
-                >
-                    <div className="text-white text-lg font-semibold">
-                        ID: {currentData.dataId}
-                    </div>
-
-                    <div className="flex items-center gap-4">
-                        <span className="text-cyan-400 font-medium">
-                            Mark: {currentData.mark}
-                        </span>
-                        <span className="text-green-400 font-medium">
-                            Confidence: {currentData.confidence}
-                        </span>
-                    </div>
-                </motion.div>
-
-                {currentData.type === "text" && currentData.summary && (
+                <div className="relative w-full h-full flex flex-col gap-4 overflow-y-auto custom-scroll">
                     <motion.div
-                        custom={1}
+                        custom={0}
                         variants={contentVariants}
                         initial="hidden"
                         animate="visible"
+                        className="flex justify-between items-center"
                     >
-                        <Section title="Input">
-                            <div className="whitespace-pre-wrap">
-                                {currentData.summary}
-                            </div>
-                        </Section>
-                    </motion.div>
-                )}
-
-                {currentData.type === "image" && currentData.image_url && (
-                    <motion.div
-                        custom={1}
-                        variants={contentVariants}
-                        initial="hidden"
-                        animate="visible"
-                    >
-                        <Section title="Image">
-                            <LazyImage src={currentData.image_url} />
-                        </Section>
-                    </motion.div>
-                )}
-
-                <motion.div
-                    custom={2}
-                    variants={contentVariants}
-                    initial="hidden"
-                    animate="visible"
-                >
-                    <Section title="Reason">
-                        <div className="whitespace-pre-wrap">
-                            {currentData.reason}
+                        <div className="text-white text-lg font-semibold">
+                            ID: {currentData.dataId}
                         </div>
-                    </Section>
-                </motion.div>
 
-                {currentData.urls?.length ? (
+                        <div className="flex items-center gap-4">
+                            <span className="text-cyan-400 font-medium">
+                                Mark: {currentData.mark}
+                            </span>
+                            <span className="text-green-400 font-medium">
+                                Confidence: {currentData.confidence}
+                            </span>
+                        </div>
+                    </motion.div>
+
+                    {currentData.type === "text" && currentData.summary && (
+                        <motion.div
+                            custom={1}
+                            variants={contentVariants}
+                            initial="hidden"
+                            animate="visible"
+                        >
+                            <Section title="Input">
+                                <div className="whitespace-pre-wrap">
+                                    {currentData.summary}
+                                </div>
+                            </Section>
+                        </motion.div>
+                    )}
+
+                    {currentData.type === "image" && currentData.image_url && (
+                        <motion.div
+                            custom={1}
+                            variants={contentVariants}
+                            initial="hidden"
+                            animate="visible"
+                        >
+                            <Section title="Image">
+                                <LazyImage src={currentData.image_url} />
+                            </Section>
+                        </motion.div>
+                    )}
+
                     <motion.div
-                        custom={3}
+                        custom={2}
                         variants={contentVariants}
                         initial="hidden"
                         animate="visible"
                     >
-                        <Section title="Sources">
-                            <div className="flex flex-col gap-2">
-                                {currentData.urls.map((url, i) => (
-                                    <a
-                                        key={i}
-                                        href={url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-cyan-400 underline break-all hover:text-cyan-300"
-                                    >
-                                        {url}
-                                    </a>
-                                ))}
+                        <Section title="Reason">
+                            <div className="whitespace-pre-wrap">
+                                {currentData.reason}
                             </div>
                         </Section>
                     </motion.div>
-                ) : null}
 
-                <button
-                    onClick={() => setShowRecheckPopup(true)}
-                    className="absolute bottom-4 left-4
-                    bg-orange-500/20 border border-orange-400
-                    text-orange-300 text-xs px-3 py-2 rounded-lg
-                    hover:bg-orange-500/30 transition"
-                >
-                    Recheck
-                </button>
+                    {currentData.urls?.length ? (
+                        <motion.div
+                            custom={3}
+                            variants={contentVariants}
+                            initial="hidden"
+                            animate="visible"
+                        >
+                            <Section title="Sources">
+                                <div className="flex flex-col gap-2">
+                                    {currentData.urls.map((url, i) => (
+                                        <a
+                                            key={i}
+                                            href={url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-cyan-400 underline break-all hover:text-cyan-300"
+                                        >
+                                            {url}
+                                        </a>
+                                    ))}
+                                </div>
+                            </Section>
+                        </motion.div>
+                    ) : null}
+                </div>
 
-                {queue.length > 0 && (
+
+                <div className="w-full h-11">
                     <button
-                        onClick={loadNext}
-                        className="absolute bottom-4 right-4
-                        bg-cyan-500/20 border border-cyan-400
-                        text-cyan-300 text-xs px-3 py-2 rounded-lg
-                        hover:bg-cyan-500/30 transition"
+                        onClick={() => setShowRecheckPopup(true)}
+                        className="absolute bottom-4 left-4
+                        bg-orange-500/20 border border-orange-400
+                        text-orange-300 text-xs px-3 py-2 rounded-lg
+                        hover:bg-orange-500/30 transition"
                     >
-                        Load next ({queue.length})
+                        Recheck
                     </button>
-                )}
 
-                {queue.length === 0 && jobStore.hasJobs() && (
-                    <div className="absolute bottom-4 right-4 flex items-center gap-2
-                    bg-black/40 backdrop-blur-md px-3 py-2 rounded-lg
-                    border border-white/20">
-                        <div className="w-4 h-4 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin" />
-                        <span className="text-xs text-cyan-300">
-                            Processing…
-                        </span>
-                    </div>
-                )}
+                    {queue.length > 0 && (
+                        <button
+                            onClick={loadNext}
+                            className="absolute bottom-4 right-4
+                            bg-cyan-500/20 border border-cyan-400
+                            text-cyan-300 text-xs px-3 py-2 rounded-lg
+                            hover:bg-cyan-500/30 transition"
+                        >
+                            Load next ({queue.length})
+                        </button>
+                    )}
+
+                    {queue.length === 0 && jobStore.hasJobs() && (
+                        <div className="absolute bottom-4 right-4 flex items-center gap-2
+                            bg-black/40 backdrop-blur-md px-3 py-2 rounded-lg
+                            border border-white/20">
+                            <div className="w-4 h-4 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin" />
+                            <span className="text-xs text-cyan-300">
+                                Processing…
+                            </span>
+                        </div>
+                    )}
+                </div>
+
             </motion.div>
 
             <Alert

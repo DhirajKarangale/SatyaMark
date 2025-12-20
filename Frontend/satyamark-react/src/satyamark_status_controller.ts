@@ -21,7 +21,7 @@ type JobEntry = {
 const jobMap: Record<string, JobEntry> = {};
 
 const DEFAULT_ICON_SIZE = 20;
-const satyamark_url = "http://localhost:5173";
+const satyamark_url = "https://satyamark.vercel.app/";
 
 const iconMap: Record<string, string> = {
     verifyable: verifyableIcon,

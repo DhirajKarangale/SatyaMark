@@ -219,6 +219,6 @@ onConnected((connection) => {
 
 ---
 
-## One-Line Summary
+## Summary
 
 **satyamark-react lets React apps surface real-time, evidence-backed credibility signals directly inside the UI.**

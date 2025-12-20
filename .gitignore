@@ -23,6 +23,9 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 
+# npm / React package tarballs
+*.tgz
+
 # Node / Frontend
 node_modules/
 dist/

@@ -1,73 +1,92 @@
-# React + TypeScript + Vite
+# SatyaMark Demo – Social Media Use Case
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A demo social media application showcasing how **SatyaMark** can be integrated into real-world platforms using the **`satyamark-react`** library to verify text and image content in real time.
 
-Currently, two official plugins are available:
+This project demonstrates how credibility signals (trust marks, confidence, explanations) can be embedded directly into user-generated content feeds.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## 🧪 About This Demo Project
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+This project is a **demo application** created to showcase the **use case of the `satyamark-react` library** in a social media–style environment.
 
-## Expanding the ESLint configuration
+It simulates how platforms can integrate SatyaMark to:
+- Automatically verify user-generated content
+- Display real-time verification marks
+- Surface confidence and explanations directly in the UI
+- Handle pending, insufficient, or uncertain cases transparently
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+The goal of this demo is **integration clarity**, not accuracy guarantees.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 🧩 Verification Marks You’ll See
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Correct  
+- Incorrect  
+- Verifiable  
+- Unverifiable  
+- Insufficient  
+- Pending  
+- AI-Generated  
+- Non-AI / Human-Generated  
+
+---
+
+## 🛠 Tech Stack
+
+- React + TypeScript  
+- Vite  
+- Tailwind CSS  
+- `satyamark-react`
+
+---
+
+## ▶️ How the Integration Works (Basic)
+
+### Initialize
+```tsx
+init({
+  app_id: "APP123",
+  user_id: "user123"
+});
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Process content
+```tsx
+const jobId = await process(domElement, uniqueContentId);
 ```
+
+### Show status
+```tsx
+registerStatus(jobId, domElement);
+```
+
+```html
+<div satyamark-status-container></div>
+```
+
+---
+
+## 🚀 Run Locally
+
+```bash
+git clone <your-repo-url>
+cd Frontend/DemoMedia
+npm install
+npm run dev
+```
+
+Open: http://localhost:5173
+
+---
+
+## ⚠️ Notes
+
+- Image verification is experimental
+- Video/audio not supported yet
+- Results are best-effort, not guarantees
+
+---
+
+**Demo project showing real-world usage of `satyamark-react`**

@@ -43,7 +43,7 @@ export default function PostCard({ postData }: PostCardProps) {
                         break;
                     }
                 } catch (error) {
-                    console.log("------------ ", error);
+                    console.log(error);
                     break;
                 }
 
@@ -102,7 +102,7 @@ export default function PostCard({ postData }: PostCardProps) {
                     paddingTop: "12px",
                     borderTop: "1px solid #2a2d33",
                 }}
-                data-status-container
+                satyamark-status-container
             ></div>
 
         </div>

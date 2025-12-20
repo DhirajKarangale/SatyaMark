@@ -13,8 +13,7 @@ function NotFound() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
                 className="
-                    max-w-xl w-full
-                    bg-white/5 border border-white/15 backdrop-blur-sm
+                    max-w-xl w-full border border-white/15 backdrop-blur-sm
                     rounded-2xl p-8
                     text-center flex flex-col gap-6
                 "
@@ -23,7 +22,7 @@ function NotFound() {
                     colors={["#40ffaa", "#4079ff", "#40ffaa"]}
                     animationSpeed={6}
                     showBorder={false}
-                    className="text-6xl font-bold"
+                    className="text-6xl font-bold bg-transparent"
                 >
                     404
                 </GradientText>

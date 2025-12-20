@@ -6,6 +6,16 @@ SatyaMark is built as trust infrastructure, not a fact-checking authority.
 
 ---
 
+## Live Deployment
+
+SatyaMark is live and publicly accessible:
+
+- **Live URL:** https://satyamark.onrender.com
+
+Users can manually verify content, inspect verification results, and view detailed reasoning by opening verification links shared from external platforms.
+
+---
+
 ## Project Scope & Purpose
 
 SatyaMark provides a centralized verification layer where digital content can be verified, inspected, and explained in a transparent and consistent manner.

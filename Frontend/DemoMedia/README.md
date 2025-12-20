@@ -6,6 +6,14 @@ This project demonstrates how credibility signals (trust marks, confidence, expl
 
 ---
 
+## 🌐 Live Demo
+
+👉 **Live URL:** https://your-live-demo-url.com
+
+> This live deployment demonstrates how SatyaMark verification works in a real social media–style feed.
+
+---
+
 ## 🧪 About This Demo Project
 
 This project is a **demo application** created to showcase the **use case of the `satyamark-react` library** in a social media–style environment.

@@ -1,126 +1,179 @@
-# SatyaMark AI
+<!-- Logo / Banner -->
+<p align="center">
+  <img src="Assets/GitHub/GitHub_2.png" alt="SatyaMark Logo" width="720" />
+</p>
 
-SatyaMark is an AI-powered, centralized verification service designed to provide a universal “mark of truth” for digital content. It helps detect misinformation and AI-generated content, providing transparent, evidence-backed verdicts across platforms.
+# SatyaMark
 
-## Setup
+SatyaMark is an open-source, AI-powered **content verification infrastructure** that helps platforms and users assess the credibility of digital content in real time.
 
-- Create a `.env` file in the root folder.
+Instead of claiming absolute truth, SatyaMark surfaces **transparent trust signals** — verification marks, confidence levels, and explanations — enabling informed judgment.
 
-1. **AI:** Contains AI modules and data
+---
 
-   - Add your Hugging Face token in `.env`:
-   ```env
-   HF_TOKEN=your_hugging_face_token
-   ```
+## Live
 
-   - Navigate to the AI folder:
-   ```bash
-   cd "E:\Full Stack\SatyaMark\AI"
-   ```
+> Live instances.
 
-   - Create and activate a virtual environment:
-   ```bash
-   python -m venv venv
-   .\AI\venv\Scripts\activate  # Windows
-   source venv/bin/activate   # Linux/macOS
-   ```
+1. **SatyaMark App (Main Verification UI)**  
+   https://satyamark.live.com
 
-   - Install dependencies:
-   ```bash
-   ca AI
-   pip install -r requirements.txt
-   ```
+2. **Demo Social Media / Media Verification**  
+   https://your-live-demo-url.com
 
-   ### Usage
+3. **React Library (SDK)**  
+   https://www.npmjs.com/package/satyamark-react
 
-   - Add new LLMs in `LLMs.json` (basic structure shown below):
-   ```json
-   [
-     {
-       "name": "model_name",
-       "model_id": "huggingface_model_id",
-       "task": "conversational or text-generation",
-       "max_new_tokens": 256,
-       "temperature": 0.2
-     }
-   ]
-   ```
+---
 
-   - Access LLMs using the `get_llm` function from `connect.py`:
-   ```python
-   from connect import get_llm
+## The Problem
 
-   # Get any LLM from LLMs.json
-   llm = get_llm("model_name")
-   response = llm("Your input text here")
-   print(response)
-   ```
+Misinformation spreads faster than verified facts across social platforms, messaging apps, and digital media.
 
-   - `main.py` is the main file to run for testing AI modules.
+Current approaches suffer from:
+- Fragmented, platform-specific solutions
+- Binary verdicts with false certainty
+- Poor handling of AI-generated or manipulated media
+- Lack of transparency and confidence
+- No shared or recognizable trust signal across platforms
 
-   - Notes:
-     - Only include essential dependencies in `requirements.txt`.
-     - Activate the virtual environment before running scripts.
-     - LLMs in `LLMs.json` can be freely added or modified.
+There is **no unified, real-time verification layer or universal trust mark for the internet**.
 
-     run
-     python -m AI.text.text_verify
-     python -m AI.img_forensic.img_forensic_evaluate
+---
 
-     python -m AI.img_ml.fusion.train_fusion
-     python -m AI.img_ml.scripts.make_dataset_csv
+## The Solution
 
-     pip install --index-url https://download.pytorch.org/whl/cu121 -- install to this to check GPU
-     python -c "import torch;print(torch.cuda.is_available(), torch.cuda.get_device_name(0))" -- check GPU
+SatyaMark acts as a **neutral verification layer** that can be embedded into any platform.
 
-2. **Frontend:** Currently empty
-3. **Backend:** Currently empty
+It provides a **universal mark of truth** that appears consistently across platforms, allowing users to recognize and interpret verification signals regardless of where the content is seen.
 
+SatyaMark:
+- Verifies content incrementally using multiple signals
+- Surfaces a standardized, cross-platform trust mark
+- Clearly communicates confidence and uncertainty
+- Provides explainable, human-readable results
+- Improves accuracy over time through feedback
 
+SatyaMark is **trust infrastructure**, not a final authority.
 
+---
 
+## High-Level Architecture
 
+```
+Client Platforms
+        │
+        ▼
+SDK / API Layer
+        │
+        ▼
+Backend (Orchestration & Storage)
+        │
+        ▼
+AI Workers (Text / Image)
+        │
+        ▼
+Verdicts + Confidence + Explanation
+```
 
+<p align="center">
+  <img src="Assets/GitHub/GitHub_3.png" alt="SatyaMark Architecture Overview" />
+</p>
 
+---
 
+## Project Components
 
+SatyaMark is split into focused components.  
+Each component is independently maintained and documented in detail.
 
+### 🧠 AI — Verification Engine
+Handles all AI-driven verification logic such as text fact-checking and image forensic analysis.
 
+- Repo: https://github.com/DhirajKarangale/SatyaMark/tree/main/AI  
+- Docs: https://github.com/DhirajKarangale/SatyaMark/blob/main/AI/README.md  
 
+---
 
+### ⚙️ Backend — API & Orchestration
+Coordinates verification jobs, communicates with AI workers, and aggregates results.
 
+- Repo: https://github.com/DhirajKarangale/SatyaMark/tree/main/Backend  
+- Docs: https://github.com/DhirajKarangale/SatyaMark/blob/main/Backend/README.md  
 
+---
 
+### 🎨 Frontend — UI, Demos & SDK
+Provides user-facing interfaces, demos, and a reusable React SDK.
 
+- **SatyaMark Web App**  
+  Repo: https://github.com/DhirajKarangale/SatyaMark/tree/main/Frontend/Satyamark  
+  Docs: https://github.com/DhirajKarangale/SatyaMark/blob/main/Frontend/Satyamark/README.md  
 
+- **Demo Social Media / Media Verification**  
+  Repo: https://github.com/DhirajKarangale/SatyaMark/tree/main/Frontend/DemoMedia  
+  Docs: https://github.com/DhirajKarangale/SatyaMark/blob/main/Frontend/DemoMedia/README.md  
 
+- **React SDK (`satyamark-react`)**  
+  Repo: https://github.com/DhirajKarangale/SatyaMark/tree/main/Frontend/satyamark-react  
+  Docs: https://github.com/DhirajKarangale/SatyaMark/blob/main/Frontend/satyamark-react/README.md  
+  npm: https://www.npmjs.com/package/satyamark-react  
 
+---
 
+## Local Setup
 
+Clone the repository:
 
+```bash
+git clone https://github.com/DhirajKarangale/SatyaMark.git
+cd SatyaMark
+```
 
+Follow the setup instructions for each component you want to run:
 
+- **AI setup**  
+  https://github.com/DhirajKarangale/SatyaMark/blob/main/AI/README.md  
 
+- **Backend setup**  
+  https://github.com/DhirajKarangale/SatyaMark/blob/main/Backend/README.md  
 
+- **Frontend – Demo Social Media**  
+  https://github.com/DhirajKarangale/SatyaMark/blob/main/Frontend/DemoMedia/README.md  
 
+- **Frontend – SatyaMark Website**  
+  https://github.com/DhirajKarangale/SatyaMark/blob/main/Frontend/Satyamark/README.md  
 
+- **React Library (`satyamark-react`)**  
+  https://github.com/DhirajKarangale/SatyaMark/tree/main/Frontend/satyamark-react  
 
+---
 
+## Open Source Principles
 
-Add Submodule 
-git submodule add https://github.com/DhirajKarangale/ai-text-verify-worker AI/ai-text-verify-worker
+- Transparency over certainty
+- Privacy-first by default
+- Honest capability disclosure
+- Incremental improvement
+- No overpromising
 
-git submodule add https://github.com/DhirajKarangale/ai-image-forensic-verify-worker AI/ai-image-forensic-verify-worker
+---
 
-git submodule add https://github.com/DhirajKarangale/ai-image-hf-verify-worker.git AI/ai-image-hf-verify-worker.git
+## Limitations & Scope
 
+- Video and audio verification are not yet supported
+- Image verification is experimental
+- Results should not be treated as absolute truth
+- Some components are research-grade
 
+---
 
+<p align="center">
+  <img src="Assets/GitHub/GitHub_1.png" alt="SatyaMark Overview" />
+</p>
 
+---
 
+## One-Line Positioning
 
-Zeabur, 
-Vercel,
-render,
-neon,
-cloudinary
+**SatyaMark is an open trust infrastructure layer that verifies digital content and surfaces clear, evidence-backed credibility signals in real time.**

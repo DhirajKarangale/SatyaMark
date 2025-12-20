@@ -11,7 +11,7 @@ It extracts text and images from rendered DOM elements, submits them for verific
 SatyaMark is built as **trust infrastructure**, not a fact-checking oracle.
 
 <p align="center">
-  <a href="https://github.com/DhirajKarangale/SatyaMark/tree/dev/Frontend/satyamark-react">GitHub Repository</a>
+  <a href="https://github.com/DhirajKarangale/SatyaMark/tree/main/Frontend/satyamark-react">GitHub Repository</a>
   ·
   <a href="https://www.npmjs.com/package/satyamark-react">npm Package</a>
 </p>

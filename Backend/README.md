@@ -128,7 +128,7 @@ Server runs on `http://localhost:1000`.
 
 ---
 
-## Philosophy
+## Design Principles
 
 - Transparency over certainty
 - Cache before compute

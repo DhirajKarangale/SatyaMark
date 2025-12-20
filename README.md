@@ -19,7 +19,7 @@ Instead of claiming absolute truth, SatyaMark surfaces **transparent trust signa
    https://satyamark.vercel.app/
 
 2. **Demo Social Media / Media Verification**  
-   https://your-live-demo-url.com
+   https://satyamark-demo-socialmedia.vercel.app/
 
 3. **React Library (SDK)**  
    https://www.npmjs.com/package/satyamark-react

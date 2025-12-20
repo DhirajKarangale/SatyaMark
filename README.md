@@ -16,7 +16,7 @@ Instead of claiming absolute truth, SatyaMark surfaces **transparent trust signa
 > Live instances.
 
 1. **SatyaMark App (Main Verification UI)**  
-   https://satyamark.live.com
+   https://satyamark.vercel.app/
 
 2. **Demo Social Media / Media Verification**  
    https://your-live-demo-url.com

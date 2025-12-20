@@ -10,7 +10,7 @@ SatyaMark is built as trust infrastructure, not a fact-checking authority.
 
 SatyaMark is live and publicly accessible:
 
-- **Live URL:** https://satyamark.live.com
+- **Live URL:** https://satyamark.vercel.app/
 
 Users can manually verify content, inspect verification results, and view detailed reasoning by opening verification links shared from external platforms.
 

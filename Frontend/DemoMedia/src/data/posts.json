@@ -30,7 +30,7 @@
     {
         "id": "5",
         "title": "Image Post",
-        "imageURL": "https://picsum.photos/600/400?21",
+        "imageURL": "https://res.cloudinary.com/dfamljkyo/image/upload/v1766069146/mwqjj0fds0rqpvky555g.png",
         "userName": "admin",
         "date": "2025-12-01"
     },
@@ -58,14 +58,14 @@
     {
         "id": "9",
         "title": "Image Post",
-        "imageURL": "https://picsum.photos/600/400?99",
+        "imageURL": "https://res.cloudinary.com/dfamljkyo/image/upload/v1754751870/fuse/m2jrqr3a2fteuc4zkxal.jpg",
         "userName": "devops",
         "date": "2025-05-02"
     },
     {
         "id": "10",
         "title": "Image Post",
-        "imageURL": "https://picsum.photos/600/400?55",
+        "imageURL": "https://res.cloudinary.com/dfamljkyo/image/upload/v1765866684/jnosohvjltegdoufkvef.png",
         "userName": "ts_ninja",
         "date": "2025-04-11"
     }

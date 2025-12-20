@@ -12,6 +12,11 @@ async function GetImageById(Id) {
     return result.rows[0];
 }
 
+async function DeleteImageById(Id) {
+    const result = await db.query(`DELETE FROM ${tableName} WHERE id = $1 RETURNING *`, [Id]);
+    return result.rows[0];
+}
+
 async function PostImage(data) {
     const { image_hash, image_url, mark, reason, confidence } = data;
 
@@ -34,4 +39,4 @@ async function PostImage(data) {
     return result.rows[0];
 }
 
-module.exports = { GetImage, GetImageById, PostImage };
+module.exports = { GetImage, GetImageById, DeleteImageById, PostImage };

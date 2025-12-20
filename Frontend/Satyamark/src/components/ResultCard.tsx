@@ -4,6 +4,8 @@ import { resultBus } from "../store/resultBus";
 import { memo, useState, useEffect } from "react";
 import { motion, type Variants } from "framer-motion";
 import { onReceive } from "../process/satyamark_connect";
+import { process } from "../process/satyamark_process";
+import { getDataId } from "../utils/GenerateIds";
 import GradientText from "../reactbits/GradientText/GradientText";
 
 type ResultData = {
@@ -20,11 +22,16 @@ type ResultData = {
 
 function ResultCard() {
     const [, forceUpdate] = useState(0);
+    const urlBase = import.meta.env.VITE_URL_BASE;
 
     const [currentData, setCurrentData] = useState<ResultData | null>(null);
     const [queue, setQueue] = useState<ResultData[]>([]);
     const [showAlert, setShowAlert] = useState(false);
     const STORAGE_KEY = "satyamark_result_state";
+
+    const [recheckMsg, setRecheckMsg] = useState("");
+    const [recheckLoading, setRecheckLoading] = useState(false);
+    const [showRecheckPopup, setShowRecheckPopup] = useState(false);
 
     const cardVariants: Variants = {
         hidden: { opacity: 0, scale: 0.95 },
@@ -109,6 +116,61 @@ function ResultCard() {
             </div>
         );
     }
+
+    const handleRecheckConfirm = async () => {
+        if (!currentData) return;
+
+        try {
+            setRecheckLoading(true);
+            setRecheckMsg("");
+
+            const endpoint = currentData.type === "image" ? "/image/remove" : "/text/remove";
+            const api = `${urlBase}${endpoint}`
+
+            const res = await fetch(api, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id: currentData.dataId })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok || !data.success) {
+                throw new Error(data.message || "Recheck failed");
+            }
+
+            const jobId = await process(
+                currentData.summary ?? "",
+                currentData.image_url ?? "",
+                getDataId()
+            );
+
+            if (jobId) jobStore.add(jobId);
+
+            setRecheckMsg("Recheck request submitted successfully");
+
+            setTimeout(() => {
+                setShowRecheckPopup(false);
+
+                setQueue((q) => {
+                    if (q.length > 0) {
+                        setCurrentData(q[0]);
+                        return q.slice(1);
+                    }
+                    setCurrentData(null);
+                    return [];
+                });
+
+                setRecheckLoading(false);
+            }, 800);
+
+        } catch (err) {
+            setRecheckMsg(
+                err instanceof Error ? err.message : "Something went wrong"
+            );
+            setRecheckLoading(false);
+        }
+    };
 
     useEffect(() => {
         const saved = sessionStorage.getItem(STORAGE_KEY);
@@ -197,8 +259,6 @@ function ResultCard() {
         });
         setShowAlert(false);
     };
-
-    console.log("currentData: ", currentData);
 
     const showLoader = !currentData && queue.length === 0 && jobStore.hasJobs();
 
@@ -336,6 +396,16 @@ function ResultCard() {
                     </motion.div>
                 ) : null}
 
+                <button
+                    onClick={() => setShowRecheckPopup(true)}
+                    className="absolute bottom-4 left-4
+                    bg-orange-500/20 border border-orange-400
+                    text-orange-300 text-xs px-3 py-2 rounded-lg
+                    hover:bg-orange-500/30 transition"
+                >
+                    Recheck
+                </button>
+
                 {queue.length > 0 && (
                     <button
                         onClick={loadNext}
@@ -365,6 +435,15 @@ function ResultCard() {
                 message="New result is ready. Load it now?"
                 onClose={() => setShowAlert(false)}
                 onConfirm={loadNext}
+            />
+
+            <Alert
+                isOpen={showRecheckPopup}
+                message={recheckMsg || "Are you sure you want to recheck this result?"}
+                onClose={() => setShowRecheckPopup(false)}
+                onConfirm={handleRecheckConfirm}
+                disableClose={recheckLoading}
+                disableConfirm={recheckLoading}
             />
         </>
     );

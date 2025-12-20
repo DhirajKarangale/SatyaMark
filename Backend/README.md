@@ -103,7 +103,7 @@ CREATE TABLE image_results (
 git clone <repo-url>
 cd Backend
 npm install
-node app.js
+npm start
 ```
 
 Server runs on `http://localhost:1000`.

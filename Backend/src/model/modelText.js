@@ -12,6 +12,11 @@ async function GetTextById(Id) {
     return result.rows[0];
 }
 
+async function DeleteTextById(Id) {
+    const result = await db.query(`DELETE FROM ${tableName} WHERE id = $1 RETURNING *`, [Id]);
+    return result.rows[0];
+}
+
 async function PostText(data) {
     const { summary_hash, text_hash, mark, reason, confidence, summary, urls } = data;
 
@@ -36,4 +41,4 @@ async function PostText(data) {
     return result.rows[0];
 }
 
-module.exports = { GetText, GetTextById, PostText };
+module.exports = { GetText, GetTextById, DeleteTextById, PostText };

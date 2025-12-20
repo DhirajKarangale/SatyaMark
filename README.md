@@ -174,6 +174,6 @@ Follow the setup instructions for each component you want to run:
 
 ---
 
-## One-Line Positioning
+## Summary
 
 **SatyaMark is an open trust infrastructure layer that verifies digital content and surfaces clear, evidence-backed credibility signals in real time.**

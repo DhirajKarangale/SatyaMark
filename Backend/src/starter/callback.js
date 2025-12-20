@@ -31,6 +31,73 @@ app.get("/getImageResult", async (req, res) => {
     });
 });
 
+app.post("/text/remove", async (req, res) => {
+    console.log("========= Text =========");
+    
+    try {
+        const { id } = req.body;
+        console.log("========= ID: ", id);
+
+        if (!id) {
+            return res.status(400).json({
+                success: false,
+                message: "Text id is required"
+            });
+        }
+
+        const deleted = await modelText.DeleteTextById(id);
+
+        if (!deleted) {
+            return res.status(404).json({
+                success: false,
+                message: "Text not found"
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Successful"
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Error occurred while performing operation"
+        });
+    }
+});
+
+app.post("/image/remove", async (req, res) => {
+    try {
+        const { id } = req.body;
+
+        if (!id) {
+            return res.status(400).json({
+                success: false,
+                message: "Image id is required"
+            });
+        }
+
+        const deleted = await modelImage.DeleteImageById(id);
+
+        if (!deleted) {
+            return res.status(404).json({
+                success: false,
+                message: "Image not found"
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Successful"
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Error occurred while performing operation"
+        });
+    }
+});
+
 app.post("/ai-callback/text", async (req, res) => {
     try {
         const body = req.body;

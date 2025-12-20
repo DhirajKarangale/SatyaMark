@@ -153,12 +153,14 @@ function ResultCard() {
                 setShowRecheckPopup(false);
 
                 setQueue((q) => {
-                    if (q.length > 0) {
-                        setCurrentData(q[0]);
-                        return q.slice(1);
+                    if (q.length === 0) {
+                        setCurrentData(null);
+                        return q; 
                     }
-                    setCurrentData(null);
-                    return [];
+
+                    const [next, ...rest] = q;
+                    setCurrentData(next);
+                    return rest;
                 });
 
                 setRecheckLoading(false);

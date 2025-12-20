@@ -1,38 +1,100 @@
 ---
+
 name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
+about: Report a bug or unexpected behavior in SatyaMark
+title: ""
+labels: bug
+assignees: ""
+-------------
+
+## Summary
+
+Provide a clear and concise description of the bug.
 
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+## Affected Component
 
-**To Reproduce**
+Which part of SatyaMark is affected?
+
+* [ ] Backend API
+* [ ] Text verification
+* [ ] Image verification
+* [ ] Audio verification
+* [ ] Video verification
+* [ ] Hybrid / multi-modal
+* [ ] SDK / Frontend
+* [ ] Demo application
+
+---
+
+## Steps to Reproduce
+
 Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+1.
+2.
+3.
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+---
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+## Expected Behavior
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+Describe what you expected to happen.
 
-**Additional context**
-Add any other context about the problem here.
+---
+
+## Actual Behavior
+
+Describe what actually happened.
+Include error messages or incorrect output if any.
+
+---
+
+## Logs / Error Output
+
+If applicable, paste logs or stack traces here:
+
+```text
+```
+
+---
+
+## Environment
+
+Please complete the following information:
+
+* OS:
+* Browser (if applicable):
+* Node.js version (if applicable):
+* Package / SDK version:
+* Deployment:
+
+  * [ ] Local
+  * [ ] Production
+
+---
+
+## Screenshots / Media
+
+Add screenshots, images, or videos if they help explain the issue.
+
+---
+
+## Additional Context
+
+Add any other context that may help us debug the issue.
+
+---
+
+## Checklist
+
+Please confirm:
+
+* [ ] I have searched existing issues to avoid duplicates
+* [ ] I can reproduce this issue consistently
+* [ ] This is not a security-related issue (see SECURITY.md)
+
+---
+
+By submitting this bug report, you agree to follow the project’s **Code of Conduct**.

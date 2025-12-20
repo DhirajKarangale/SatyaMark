@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "target": "ES2019",
+    "target": "ES2018",
     "module": "ESNext",
-    "lib": ["DOM", "ES2019"],
+    "lib": ["DOM", "ES2018"],
     "declaration": true,
     "outDir": "dist",
     "rootDir": "src",
@@ -12,7 +12,8 @@
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "Node",
     "resolveJsonModule": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "emitDeclarationOnly": false,
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist", "example"]

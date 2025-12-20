@@ -134,8 +134,6 @@ export function sendData(text: string, image_url: string, dataId: string) {
 export function receiveData(data: any) {
     if (!storedConnectionData || data.clientId != storedConnectionData.user_id) return;
 
-    console.log("receiveData: ", data);
-
     for (const cb of Array.from(listeners)) {
         try {
             cb(data);

@@ -53,7 +53,7 @@ function updateIcon(jobId: string, mark: string, data: any) {
 
     const { root, iconSize } = entry;
 
-    const container = root.querySelector("[satyamark-status-container]") as HTMLElement;
+    const container = root.querySelector("[data-satyamark-status-container]") as HTMLElement;
     if (!container) return;
 
     container.style.position = "relative";

@@ -1,7 +1,29 @@
 {
   "name": "satyamark-react",
-  "version": "1.0.0",
-  "description": "Satyamark UI/status library (wrapped from your project).",
+  "version": "0.0.1",
+  "description": "Official React SDK for SatyaMark — a lightweight UI library to embed transparent content verification marks, confidence indicators, and trust signals into React applications.",
+  "license": "MIT",
+  "author": "DK",
+  "homepage": "https://satyamark.vercel.app/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DhirajKarangale/SatyaMark.git"
+  },
+  "bugs": {
+    "url": "https://github.com/DhirajKarangale/SatyaMark/issues"
+  },
+  "keywords": [
+    "react",
+    "verification",
+    "trust",
+    "fact-checking",
+    "ai-detection",
+    "misinformation",
+    "sdk",
+    "ui-library",
+    "open-source",
+    "satyamark"
+  ],
   "main": "dist/index.cjs.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -16,6 +38,7 @@
       "types": "./dist/index.d.ts"
     }
   },
+  "sideEffects": false,
   "scripts": {
     "clean": "rimraf dist",
     "build": "tsup",

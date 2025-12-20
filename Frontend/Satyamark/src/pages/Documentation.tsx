@@ -189,7 +189,7 @@ onConnected((data) => {
                     </h2>
 
                     <pre className="bg-white/5 border border-white/15 rounded-xl p-4 text-sm overflow-x-auto">
-                        <code>{`<div satyamark-status-container />`}</code>
+                        <code>{`<div data-satyamark-status-container />`}</code>
                     </pre>
 
                     <pre className="bg-white/5 border border-white/15 rounded-xl p-4 text-sm overflow-x-auto">

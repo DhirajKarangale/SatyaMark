@@ -102,7 +102,7 @@ export default function PostCard({ postData }: PostCardProps) {
                     paddingTop: "12px",
                     borderTop: "1px solid #2a2d33",
                 }}
-                satyamark-status-container
+                data-satyamark-status-container
             ></div>
 
         </div>

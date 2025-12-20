@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/CoverImage_1.png" alt="SatyaMark React" width="100%" />
+  <img src="https://raw.githubusercontent.com/DhirajKarangale/SatyaMark/main/Assets/NpmCover/NpmCover_2.png" alt="SatyaMark React" width="100%" />
 </p>
 
 # satyamark-react
@@ -88,7 +88,7 @@ useEffect(() => {
 Add a container where the status icon should appear:
 
 ```tsx
-<div satyamark-status-container />
+<div data-satyamark-status-container />
 ```
 
 Register the status handler:
@@ -106,7 +106,7 @@ useEffect(() => {
 ## How It Works
 
 <p align="center">
-  <img src="./assets/CoverImage_2.png" alt="SatyaMark Architecture" width="90%" />
+  <img src="https://raw.githubusercontent.com/DhirajKarangale/SatyaMark/main/Assets/NpmCover/NpmCover_1.png" alt="SatyaMark Architecture" width="90%" />
 </p>
 
 1. Extracts visible text + first valid image  

@@ -71,7 +71,7 @@ registerStatus(jobId, domElement);
 ```
 
 ```html
-<div satyamark-status-container></div>
+<div data-satyamark-status-container></div>
 ```
 
 ---

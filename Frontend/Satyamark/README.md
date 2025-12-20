@@ -1,73 +1,213 @@
-# React + TypeScript + Vite
+# SatyaMark
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+SatyaMark is a centralized, AI-powered content verification platform that helps users and platforms understand the credibility of digital content through transparent, evidence-backed verification results.
 
-Currently, two official plugins are available:
+SatyaMark is built as trust infrastructure, not a fact-checking authority.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## Project Scope & Purpose
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+SatyaMark provides a centralized verification layer where digital content can be verified, inspected, and explained in a transparent and consistent manner.
 
-## Expanding the ESLint configuration
+The project enables:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Manual verification of text and images
+- Deep inspection of verification results using a shared verification ID
+- Clear explanations showing why a specific verification mark was assigned
+- Confidence scores that communicate uncertainty honestly
+- Source references when available
+- Re-verification requests when users disagree with a result
+- A single, neutral place to view verification context across different platforms
+- Built-in documentation explaining how SatyaMark works and how to use it
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+This allows SatyaMark to function as a common credibility reference point for the internet.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Core Capabilities
+
+### Manual Verification
+
+Users can submit:
+- Text
+- Images
+
+Each verification produces:
+- A verification mark
+- A confidence score
+- A human-readable explanation
+- Sources, when available
+
+---
+
+### Centralized Verification Viewing
+
+SatyaMark is designed for cross-platform usage.
+
+External platforms (such as social media or messaging apps) can display a verification mark.  
+When a user clicks that mark, they are routed using a verification ID and can inspect:
+
+- Full reasoning behind the verdict
+- How the decision was reached
+- Confidence and uncertainty details
+- Supporting sources
+
+---
+
+### Re-Verification & Feedback
+
+If users believe a verification is incorrect or incomplete, they can request re-verification.
+
+This feedback loop helps improve accuracy and system behavior over time.
+
+---
+
+## Supported Verification Types
+
+### Active
+
+- Text verification – most reliable
+- Image verification – experimental, lower confidence
+
+### Planned
+
+- Video verification
+- Audio verification
+- Hybrid multi-signal verification
+
+SatyaMark follows an incremental rollout strategy and avoids overpromising accuracy.
+
+---
+
+## Verification Marks
+
+SatyaMark assigns clear, visual trust indicators:
+
+- Correct
+- Incorrect
+- Verifiable
+- Unverifiable
+- Insufficient
+- Pending
+- AI-Generated
+- Non-AI / Human-Generated
+
+These marks are designed to be instantly understandable and consistent across platforms.
+
+---
+
+## Verification Flow
+
+1. Content is submitted (text or image)
+2. Claims or signals are extracted
+3. Cross-verification is performed using:
+   - Retrieval-augmented generation (RAG)
+   - Trusted external sources
+   - Internal knowledge bases
+   - AI-generation detection signals
+4. A verification mark, confidence score, and explanation are generated
+5. Users can inspect results and request re-verification
+
+Transparency is prioritized over false certainty.
+
+---
+
+## Documentation
+
+SatyaMark includes built-in documentation explaining:
+
+- How verification works internally
+- How users can submit content
+- How to interpret verification marks and confidence scores
+- How platforms should integrate and display SatyaMark responsibly
+- Best practices for handling uncertainty
+
+The documentation is intended for both developers and general users.
+
+---
+
+## Running SatyaMark Locally
+
+### 1. Clone the Project
+
+```bash
+git clone <your-repo-url>
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 2. Navigate to the Frontend
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cd .\Frontend\Satyamark\
 ```
+
+### 3. Create Environment File
+
+Create a `.env` file in `Frontend/Satyamark` with the following values:
+
+```env
+VITE_URL_BASE=<backend_base_url>
+VITE_URL_WS=<backend_websocket_url>
+
+VITE_CLOUD_NAME=<cloudinary_cloud_name>
+VITE_UPLOAD_PRESET=<cloudinary_upload_preset>
+```
+
+### 4. Install Dependencies
+
+```bash
+npm install
+```
+
+### 5. Run in Development Mode
+
+```bash
+npm run dev
+```
+
+---
+
+## Privacy & Data Handling
+
+SatyaMark is privacy-first by design.
+
+- No advertising, profiling, or data resale
+- Original text is not permanently stored
+- A short AI-generated summary may be stored for transparency
+- Images may be temporarily stored only to display verification results
+- Data is processed ephemerally wherever possible
+
+---
+
+## Platform Architecture
+
+- Central verification backend
+- Real-time job processing and updates
+- ID-based verification retrieval
+- SDK and API–friendly integration model
+- Modular and extensible design
+
+---
+
+## Important Constraints
+
+- SatyaMark is not infallible
+- Image verification accuracy is currently limited
+- Video and audio verification are not yet supported
+- Confidence scores reflect uncertainty, not absolute truth
+
+---
+
+## Design Principles
+
+- Transparency over certainty
+- Trust before speed
+- Privacy-first by default
+- Honest accuracy disclosure
+- Incremental and scalable rollout
+
+---
+
+## Summary
+
+SatyaMark provides a centralized, transparent mechanism for verifying digital content and exposing the reasoning, confidence, and sources behind each verification outcome.

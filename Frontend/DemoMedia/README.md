@@ -8,7 +8,10 @@ This project demonstrates how credibility signals (trust marks, confidence, expl
 
 ## 🌐 Live Demo
 
-👉 **Live URL:** https://satyamark-demo-socialmedia.vercel.app/
+👉 **Live URL:**  
+<a href="https://satyamark-demo-socialmedia.vercel.app/" target="_blank" rel="noopener noreferrer">
+  https://satyamark-demo-socialmedia.vercel.app/
+</a>
 
 > This live deployment demonstrates how SatyaMark verification works in a real social media–style feed.
 

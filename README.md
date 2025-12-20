@@ -16,13 +16,19 @@ Instead of claiming absolute truth, SatyaMark surfaces **transparent trust signa
 > Live instances.
 
 1. **SatyaMark App (Main Verification UI)**  
-   https://satyamark.vercel.app/
+   <a href="https://satyamark.vercel.app/" target="_blank" rel="noopener noreferrer">
+     https://satyamark.vercel.app/
+   </a>
 
 2. **Demo Social Media / Media Verification**  
-   https://satyamark-demo-socialmedia.vercel.app/
+   <a href="https://satyamark-demo-socialmedia.vercel.app/" target="_blank" rel="noopener noreferrer">
+     https://satyamark-demo-socialmedia.vercel.app/
+   </a>
 
 3. **React Library (SDK)**  
-   https://www.npmjs.com/package/satyamark-react
+   <a href="https://www.npmjs.com/package/satyamark-react" target="_blank" rel="noopener noreferrer">
+     https://www.npmjs.com/package/satyamark-react
+   </a>
 
 ---
 
@@ -90,16 +96,30 @@ Each component is independently maintained and documented in detail.
 ### 🧠 AI — Verification Engine
 Handles all AI-driven verification logic such as text fact-checking and image forensic analysis.
 
-- Repo: https://github.com/DhirajKarangale/SatyaMark/tree/main/AI  
-- Docs: https://github.com/DhirajKarangale/SatyaMark/blob/main/AI/README.md  
+- Repo:  
+  <a href="https://github.com/DhirajKarangale/SatyaMark/tree/main/AI" target="_blank" rel="noopener noreferrer">
+    https://github.com/DhirajKarangale/SatyaMark/tree/main/AI
+  </a>
+
+- Docs:  
+  <a href="https://github.com/DhirajKarangale/SatyaMark/blob/main/AI/README.md" target="_blank" rel="noopener noreferrer">
+    https://github.com/DhirajKarangale/SatyaMark/blob/main/AI/README.md
+  </a>
 
 ---
 
 ### ⚙️ Backend — API & Orchestration
 Coordinates verification jobs, communicates with AI workers, and aggregates results.
 
-- Repo: https://github.com/DhirajKarangale/SatyaMark/tree/main/Backend  
-- Docs: https://github.com/DhirajKarangale/SatyaMark/blob/main/Backend/README.md  
+- Repo:  
+  <a href="https://github.com/DhirajKarangale/SatyaMark/tree/main/Backend" target="_blank" rel="noopener noreferrer">
+    https://github.com/DhirajKarangale/SatyaMark/tree/main/Backend
+  </a>
+
+- Docs:  
+  <a href="https://github.com/DhirajKarangale/SatyaMark/blob/main/Backend/README.md" target="_blank" rel="noopener noreferrer">
+    https://github.com/DhirajKarangale/SatyaMark/blob/main/Backend/README.md
+  </a>
 
 ---
 
@@ -107,17 +127,38 @@ Coordinates verification jobs, communicates with AI workers, and aggregates resu
 Provides user-facing interfaces, demos, and a reusable React SDK.
 
 - **SatyaMark Web App**  
-  Repo: https://github.com/DhirajKarangale/SatyaMark/tree/main/Frontend/Satyamark  
-  Docs: https://github.com/DhirajKarangale/SatyaMark/blob/main/Frontend/Satyamark/README.md  
+  Repo:  
+  <a href="https://github.com/DhirajKarangale/SatyaMark/tree/main/Frontend/Satyamark" target="_blank" rel="noopener noreferrer">
+    https://github.com/DhirajKarangale/SatyaMark/tree/main/Frontend/Satyamark
+  </a>  
+  Docs:  
+  <a href="https://github.com/DhirajKarangale/SatyaMark/blob/main/Frontend/Satyamark/README.md" target="_blank" rel="noopener noreferrer">
+    https://github.com/DhirajKarangale/SatyaMark/blob/main/Frontend/Satyamark/README.md
+  </a>
 
 - **Demo Social Media / Media Verification**  
-  Repo: https://github.com/DhirajKarangale/SatyaMark/tree/main/Frontend/DemoMedia  
-  Docs: https://github.com/DhirajKarangale/SatyaMark/blob/main/Frontend/DemoMedia/README.md  
+  Repo:  
+  <a href="https://github.com/DhirajKarangale/SatyaMark/tree/main/Frontend/DemoMedia" target="_blank" rel="noopener noreferrer">
+    https://github.com/DhirajKarangale/SatyaMark/tree/main/Frontend/DemoMedia
+  </a>  
+  Docs:  
+  <a href="https://github.com/DhirajKarangale/SatyaMark/blob/main/Frontend/DemoMedia/README.md" target="_blank" rel="noopener noreferrer">
+    https://github.com/DhirajKarangale/SatyaMark/blob/main/Frontend/DemoMedia/README.md
+  </a>
 
 - **React SDK (`satyamark-react`)**  
-  Repo: https://github.com/DhirajKarangale/SatyaMark/tree/main/Frontend/satyamark-react  
-  Docs: https://github.com/DhirajKarangale/SatyaMark/blob/main/Frontend/satyamark-react/README.md  
-  npm: https://www.npmjs.com/package/satyamark-react  
+  Repo:  
+  <a href="https://github.com/DhirajKarangale/SatyaMark/tree/main/Frontend/satyamark-react" target="_blank" rel="noopener noreferrer">
+    https://github.com/DhirajKarangale/SatyaMark/tree/main/Frontend/satyamark-react
+  </a>  
+  Docs:  
+  <a href="https://github.com/DhirajKarangale/SatyaMark/blob/main/Frontend/satyamark-react/README.md" target="_blank" rel="noopener noreferrer">
+    https://github.com/DhirajKarangale/SatyaMark/blob/main/Frontend/satyamark-react/README.md
+  </a>  
+  npm:  
+  <a href="https://www.npmjs.com/package/satyamark-react" target="_blank" rel="noopener noreferrer">
+    https://www.npmjs.com/package/satyamark-react
+  </a>
 
 ---
 
@@ -133,19 +174,29 @@ cd SatyaMark
 Follow the setup instructions for each component you want to run:
 
 - **AI setup**  
-  https://github.com/DhirajKarangale/SatyaMark/blob/main/AI/README.md  
+  <a href="https://github.com/DhirajKarangale/SatyaMark/blob/main/AI/README.md" target="_blank" rel="noopener noreferrer">
+    https://github.com/DhirajKarangale/SatyaMark/blob/main/AI/README.md
+  </a>
 
 - **Backend setup**  
-  https://github.com/DhirajKarangale/SatyaMark/blob/main/Backend/README.md  
+  <a href="https://github.com/DhirajKarangale/SatyaMark/blob/main/Backend/README.md" target="_blank" rel="noopener noreferrer">
+    https://github.com/DhirajKarangale/SatyaMark/blob/main/Backend/README.md
+  </a>
 
 - **Frontend – Demo Social Media**  
-  https://github.com/DhirajKarangale/SatyaMark/blob/main/Frontend/DemoMedia/README.md  
+  <a href="https://github.com/DhirajKarangale/SatyaMark/blob/main/Frontend/DemoMedia/README.md" target="_blank" rel="noopener noreferrer">
+    https://github.com/DhirajKarangale/SatyaMark/blob/main/Frontend/DemoMedia/README.md
+  </a>
 
 - **Frontend – SatyaMark Website**  
-  https://github.com/DhirajKarangale/SatyaMark/blob/main/Frontend/Satyamark/README.md  
+  <a href="https://github.com/DhirajKarangale/SatyaMark/blob/main/Frontend/Satyamark/README.md" target="_blank" rel="noopener noreferrer">
+    https://github.com/DhirajKarangale/SatyaMark/blob/main/Frontend/Satyamark/README.md
+  </a>
 
 - **React Library (`satyamark-react`)**  
-  https://github.com/DhirajKarangale/SatyaMark/tree/main/Frontend/satyamark-react  
+  <a href="https://github.com/DhirajKarangale/SatyaMark/tree/main/Frontend/satyamark-react" target="_blank" rel="noopener noreferrer">
+    https://github.com/DhirajKarangale/SatyaMark/tree/main/Frontend/satyamark-react
+  </a>
 
 ---
 

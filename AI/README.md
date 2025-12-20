@@ -11,7 +11,11 @@ Below are the three major verification systems included in SatyaMark, each with 
 
 ---
 
-## [📝 **Text Verification System (LLM-Driven Fact Checking)**](https://github.com/DhirajKarangale/SatyaMark/blob/main/AI/text/README.md)
+## 📝 **Text Verification System (LLM-Driven Fact Checking)**
+
+<a href="https://github.com/DhirajKarangale/SatyaMark/blob/main/AI/text/README.md" target="_blank" rel="noopener noreferrer">
+https://github.com/DhirajKarangale/SatyaMark/blob/main/AI/text/README.md
+</a>
 
 This pipeline evaluates statements for:
 - **Correct**
@@ -28,7 +32,11 @@ Uses an LLM-driven multi-stage pipeline:
 
 ---
 
-## [🖼️ **Image Verification Using HuggingFace Models (ML-Based Ensemble)**](https://github.com/DhirajKarangale/SatyaMark/blob/main/AI/img_ml/README.md)
+## 🖼️ **Image Verification Using HuggingFace Models (ML-Based Ensemble)**
+
+<a href="https://github.com/DhirajKarangale/SatyaMark/blob/main/AI/img_ml/README.md" target="_blank" rel="noopener noreferrer">
+https://github.com/DhirajKarangale/SatyaMark/blob/main/AI/img_ml/README.md
+</a>
 
 This module detects whether an image is **AI-generated or real** using:
 - CLIP/Transformers semantic similarity  
@@ -39,7 +47,11 @@ This module detects whether an image is **AI-generated or real** using:
 
 ---
 
-## [🔍 **Image Verification Using Forensic Signals (Advanced Forensics)**](https://github.com/DhirajKarangale/SatyaMark/blob/main/AI/img_forensic/README.md)
+## 🔍 **Image Verification Using Forensic Signals (Advanced Forensics)**
+
+<a href="https://github.com/DhirajKarangale/SatyaMark/blob/main/AI/img_forensic/README.md" target="_blank" rel="noopener noreferrer">
+https://github.com/DhirajKarangale/SatyaMark/blob/main/AI/img_forensic/README.md
+</a>
 
 Performs deep forensic analysis using:
 - **ELA (Error Level Analysis)**  

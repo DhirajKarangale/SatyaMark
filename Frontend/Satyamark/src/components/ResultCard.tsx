@@ -33,6 +33,9 @@ function ResultCard() {
     const [recheckLoading, setRecheckLoading] = useState(false);
     const [showRecheckPopup, setShowRecheckPopup] = useState(false);
 
+    const RECHECK_GENERIC_ERROR = "We can't process the recheck right now. Please try again later.";
+
+
     const cardVariants: Variants = {
         hidden: { opacity: 0, scale: 0.95 },
         visible: {
@@ -167,9 +170,8 @@ function ResultCard() {
             }, 800);
 
         } catch (err) {
-            setRecheckMsg(
-                err instanceof Error ? err.message : "Something went wrong"
-            );
+            console.log("[Recheck failed]", err);
+            setRecheckMsg(RECHECK_GENERIC_ERROR);
             setRecheckLoading(false);
         }
     };

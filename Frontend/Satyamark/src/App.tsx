@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import Home from './pages/Home';
 import About from './pages/About';
+import NotFound from "./pages/NotFound";
 import Documentation from './pages/Documentation';
 
 import SetBG from './backgrounds/SetBG';
@@ -28,6 +29,7 @@ function App() {
           <Route path={routeHomeWithId} element={<Home />} />
           <Route path={routeAbout} element={<About />} />
           <Route path={routeDoccu} element={<Documentation />} />
+          <Route path="*" element={<NotFound />} />
         </Route>
 
       </Routes>

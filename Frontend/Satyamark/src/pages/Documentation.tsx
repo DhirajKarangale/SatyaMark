@@ -13,18 +13,13 @@ const fadeUp: Variants = {
 };
 
 function Doccumentation() {
-    // const url_live_demo = "https://demo.vercel.app/";
-    // const url_git_main = "https://github.com/DhirajKarangale/SatyaMark";
-    // const url_git_demo = "https://github.com/DhirajKarangale/SatyaMark/tree/main/Frontend/DemoMedia";
-    // const url_npm_library = "https://www.npmjs.com/package/satyamark-react";
-
     const url_git_main = import.meta.env.VITE_URL_GIT_MAIN;
     const url_git_demo = import.meta.env.VITE_URL_GIT_DEMO;
     const url_live_demo = import.meta.env.VITE_URL_LIVE_DEMO;
     const url_npm_library = import.meta.env.VITE_URL_NPM_LIBRARY;
 
     return (
-        <div className="min-h-screen w-full bg-transparent px-4 md:px-8 py-10">
+        <div className="w-full bg-transparent px-4 md:px-8 py-10">
             <motion.div
                 initial="hidden"
                 animate="visible"

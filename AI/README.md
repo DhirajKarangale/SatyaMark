@@ -210,6 +210,38 @@ Uncomment the test you want to run inside the file.
 
 ---
 
+## 8️⃣ Run Verification Workers (Streaming / Production Mode)
+
+Each worker runs independently and listens to Redis streams.
+Run each worker in a separate terminal.
+
+### 📝 Text Verification Worker
+```bash
+python text/text_worker.py
+```
+
+Processes text fact-checking jobs.
+
+---
+
+### 🔍 Image Forensic Verification Worker
+```bash
+python img_forensic/img_forensic_worker.py
+```
+
+Performs deep forensic analysis on images.
+
+---
+
+### 🖼️ Image ML Verification Worker
+```bash
+python img_ml/img_ml_worker.py
+```
+
+Runs ML-based AI image detection using trained models.
+
+---
+
 # 🧩 Final Note
 SatyaMark is built to be:
 - Modular  

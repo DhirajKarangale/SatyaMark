@@ -41,7 +41,7 @@ function Home() {
     }, []);
 
     return (
-        <div className="w-full h-full flex flex-col gap-2 justify-between items-center py-2">
+        <div className="w-full h-full flex flex-col gap-2 justify-between items-center p-2">
             <ResultCard />
             <ChatInput />
 
@@ -52,7 +52,7 @@ function Home() {
                 onConfirm={() => setShowAlert(false)}
             />
 
-            <div className="w-full h-10 text-transparent text-center">-DK-</div>
+            <div className="w-full h-1 text-transparent text-center">-DK-</div>
         </div>
     );
 }

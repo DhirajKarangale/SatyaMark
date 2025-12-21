@@ -16,9 +16,9 @@ GROUP = "workers"
 CONSUMER = "text-worker-1"
 
 READ_COUNT = 5
-BLOCK_TIME_MS = 60000
+BLOCK_TIME_MS = 120000
 MAX_IDLE_SLEEP = 60
-PENDING_IDLE_MS = 60000
+PENDING_IDLE_MS = 120000
 
 r = redis.from_url(REDIS_URL, decode_responses=True)
 

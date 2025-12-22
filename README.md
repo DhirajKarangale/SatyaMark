@@ -1,230 +1,203 @@
-<!-- Logo / Banner -->
+<h1 align="center">SatyaMark</h1>
+
 <p align="center">
-  <img src="Assets/GitHub/GitHub_2.png" alt="SatyaMark Logo" width="720" />
+  Open‑source <strong>multi‑modal content verification infrastructure</strong> with an official React SDK for platform integration.
 </p>
 
-# SatyaMark
-
-SatyaMark is an open-source, AI-powered **content verification infrastructure** that helps platforms and users assess the credibility of digital content in real time.
-
-Instead of claiming absolute truth, SatyaMark surfaces **transparent trust signals** — verification marks, confidence levels, and explanations — enabling informed judgment.
-
----
-
-## Live
-
-> Live instances.
-
-1. **SatyaMark App (Main Verification UI)**  
-   <a href="https://satyamark.vercel.app/" target="_blank" rel="noopener noreferrer">
-     https://satyamark.vercel.app/
-   </a>
-
-2. **Demo Social Media / Media Verification**  
-   <a href="https://satyamark-demo-socialmedia.vercel.app/" target="_blank" rel="noopener noreferrer">
-     https://satyamark-demo-socialmedia.vercel.app/
-   </a>
-
-3. **React Library (SDK)**  
-   <a href="https://www.npmjs.com/package/satyamark-react" target="_blank" rel="noopener noreferrer">
-     https://www.npmjs.com/package/satyamark-react
-   </a>
+<p align="center">
+  <a href="https://www.npmjs.com/package/satyamark-react">
+    <img src="https://img.shields.io/npm/v/satyamark-react.svg" />
+  </a>
+  <a href="https://opensource.org/licenses/MIT">
+    <img src="https://img.shields.io/badge/license-MIT-blue.svg" />
+  </a>
+</p>
 
 ---
 
-## The Problem
+## ⚠️ Project Status
 
-Misinformation spreads faster than verified facts across social platforms, messaging apps, and digital media.
+> **This project is active and evolving.**
 
-Current approaches suffer from:
-- Fragmented, platform-specific solutions
-- Binary verdicts with false certainty
-- Poor handling of AI-generated or manipulated media
-- Lack of transparency and confidence
-- No shared or recognizable trust signal across platforms
+Text verification is stable.  
+Image ML + forensics are experimental and improving.  
+SDK and backend APIs may be enhanced iteratively.
 
-There is **no unified, real-time verification layer or universal trust mark for the internet**.
+Community feedback and contributions are welcome.
 
 ---
 
-## The Solution
+## ✨ What Is SatyaMark?
 
-SatyaMark acts as a **neutral verification layer** that can be embedded into any platform.
+SatyaMark is an open‑source project that includes:
 
-It provides a **universal mark of truth** that appears consistently across platforms, allowing users to recognize and interpret verification signals regardless of where the content is seen.
+- 🧠 **AI verification workers** — Text fact‑checking, AI‑image detection, forensics  
+- ⚙️ **Backend orchestrator** — Redis Streams + WebSockets + PostgreSQL  
+- 🎨 **Frontend web app** — Result viewer & manual verification  
+- 📦 **Published React SDK** — `satyamark-react` for platform embedding
 
-SatyaMark:
-- Verifies content incrementally using multiple signals
-- Surfaces a standardized, cross-platform trust mark
-- Clearly communicates confidence and uncertainty
-- Provides explainable, human-readable results
-- Improves accuracy over time through feedback
-
-SatyaMark is **trust infrastructure**, not a final authority.
+It acts as a **neutral verification layer** — surfacing trust signals, not absolute truth.
 
 ---
 
-## High-Level Architecture
+## 🚀 Live Projects & SDK
+
+| Component | Link |
+|----------|------|
+| 🖥️ Main Verification App | https://satyamark.vercel.app/ |
+| 📱 Demo Social Media App | https://satyamark-demo-socialmedia.vercel.app/ |
+| 📦 React SDK (npm) | https://www.npmjs.com/package/satyamark-react |
+
+---
+
+## 🧠 The Problem
+
+Modern platforms struggle with:
+
+- fragmented verification systems  
+- binary & opaque verdicts  
+- AI‑generated and manipulated media  
+- lack of transparency  
+- no universal trust mark  
+
+There is **no shared, real‑time verification infrastructure for the internet.**
+
+---
+
+## 🟢 The SatyaMark Solution
+
+SatyaMark introduces a **universal trust signal** powered by:
+
+- incremental verification
+- confidence scoring
+- explainable reasoning
+- cross‑platform consistent marks
+- integration via SDK
+
+It is **trust infrastructure**, not a fact‑checking authority.
+
+---
+
+## 🏗 High‑Level Architecture
 
 ```
-Client Platforms
+Client Platforms (via satyamark-react)
         │
         ▼
-SDK / API Layer
+Backend (Orchestration + Storage + Streams)
         │
         ▼
-Backend (Orchestration & Storage)
-        │
-        ▼
-AI Workers (Text / Image)
+AI Workers (Text / ML / Forensics)
         │
         ▼
 Verdicts + Confidence + Explanation
 ```
 
 <p align="center">
-  <img src="Assets/GitHub/GitHub_3.png" alt="SatyaMark Architecture Overview" />
+  <img src="Assets/GitHub/GitHub_3.png" alt="SatyaMark Architecture Overview" width="850" />
 </p>
 
 ---
 
-## Project Components
+## 🧩 Repository Structure
 
-SatyaMark is split into focused components.  
-Each component is independently maintained and documented in detail.
+```
+SatyaMark/
+├── AI/                     # Verification workers
+├── Backend/                # Redis + WS + DB orchestrator
+├── Frontend/
+│   ├── Satyamark/          # Main web app
+│   ├── DemoMedia/          # Social media demo
+│   └── satyamark-react/    # React SDK (npm)
+├── Assets/
+├── LICENSE
+├── CONTRIBUTING.md
+├── SECURITY.md
+└── README.md
+```
 
-### 🧠 AI — Verification Engine
-Handles all AI-driven verification logic such as text fact-checking and image forensic analysis.
-
-- Repo:  
-  <a href="https://github.com/DhirajKarangale/SatyaMark/tree/main/AI" target="_blank" rel="noopener noreferrer">
-    https://github.com/DhirajKarangale/SatyaMark/tree/main/AI
-  </a>
-
-- Docs:  
-  <a href="https://github.com/DhirajKarangale/SatyaMark/blob/main/AI/README.md" target="_blank" rel="noopener noreferrer">
-    https://github.com/DhirajKarangale/SatyaMark/blob/main/AI/README.md
-  </a>
-
----
-
-### ⚙️ Backend — API & Orchestration
-Coordinates verification jobs, communicates with AI workers, and aggregates results.
-
-- Repo:  
-  <a href="https://github.com/DhirajKarangale/SatyaMark/tree/main/Backend" target="_blank" rel="noopener noreferrer">
-    https://github.com/DhirajKarangale/SatyaMark/tree/main/Backend
-  </a>
-
-- Docs:  
-  <a href="https://github.com/DhirajKarangale/SatyaMark/blob/main/Backend/README.md" target="_blank" rel="noopener noreferrer">
-    https://github.com/DhirajKarangale/SatyaMark/blob/main/Backend/README.md
-  </a>
+👉 This is a framework — not a single application.
 
 ---
 
-### 🎨 Frontend — UI, Demos & SDK
-Provides user-facing interfaces, demos, and a reusable React SDK.
+## 📦 React SDK (satyamark-react)
 
-- **SatyaMark Web App**  
-  Repo:  
-  <a href="https://github.com/DhirajKarangale/SatyaMark/tree/main/Frontend/Satyamark" target="_blank" rel="noopener noreferrer">
-    https://github.com/DhirajKarangale/SatyaMark/tree/main/Frontend/Satyamark
-  </a>  
-  Docs:  
-  <a href="https://github.com/DhirajKarangale/SatyaMark/blob/main/Frontend/Satyamark/README.md" target="_blank" rel="noopener noreferrer">
-    https://github.com/DhirajKarangale/SatyaMark/blob/main/Frontend/Satyamark/README.md
-  </a>
+Install:
 
-- **Demo Social Media / Media Verification**  
-  Repo:  
-  <a href="https://github.com/DhirajKarangale/SatyaMark/tree/main/Frontend/DemoMedia" target="_blank" rel="noopener noreferrer">
-    https://github.com/DhirajKarangale/SatyaMark/tree/main/Frontend/DemoMedia
-  </a>  
-  Docs:  
-  <a href="https://github.com/DhirajKarangale/SatyaMark/blob/main/Frontend/DemoMedia/README.md" target="_blank" rel="noopener noreferrer">
-    https://github.com/DhirajKarangale/SatyaMark/blob/main/Frontend/DemoMedia/README.md
-  </a>
+```bash
+npm install satyamark-react
+```
 
-- **React SDK (`satyamark-react`)**  
-  Repo:  
-  <a href="https://github.com/DhirajKarangale/SatyaMark/tree/main/Frontend/satyamark-react" target="_blank" rel="noopener noreferrer">
-    https://github.com/DhirajKarangale/SatyaMark/tree/main/Frontend/satyamark-react
-  </a>  
-  Docs:  
-  <a href="https://github.com/DhirajKarangale/SatyaMark/blob/main/Frontend/satyamark-react/README.md" target="_blank" rel="noopener noreferrer">
-    https://github.com/DhirajKarangale/SatyaMark/blob/main/Frontend/satyamark-react/README.md
-  </a>  
-  npm:  
-  <a href="https://www.npmjs.com/package/satyamark-react" target="_blank" rel="noopener noreferrer">
-    https://www.npmjs.com/package/satyamark-react
-  </a>
+Minimal usage:
+
+```tsx
+process(ref.current, post.id);
+registerStatus(jobId, ref.current);
+```
+
+The SDK enables any React platform to embed SatyaMark trust marks in real time.
 
 ---
 
-## Local Setup
-
-Clone the repository:
+## 🧪 Run Locally
 
 ```bash
 git clone https://github.com/DhirajKarangale/SatyaMark.git
 cd SatyaMark
 ```
 
-Follow the setup instructions for each component you want to run:
+Run components:
 
-- **AI setup**  
-  <a href="https://github.com/DhirajKarangale/SatyaMark/blob/main/AI/README.md" target="_blank" rel="noopener noreferrer">
-    https://github.com/DhirajKarangale/SatyaMark/blob/main/AI/README.md
-  </a>
+- AI → `cd AI && python verify.py`
+- Backend → `cd Backend && npm install && npm start`
+- Frontend → `cd Frontend/Satyamark && npm install && npm run dev`
 
-- **Backend setup**  
-  <a href="https://github.com/DhirajKarangale/SatyaMark/blob/main/Backend/README.md" target="_blank" rel="noopener noreferrer">
-    https://github.com/DhirajKarangale/SatyaMark/blob/main/Backend/README.md
-  </a>
-
-- **Frontend – Demo Social Media**  
-  <a href="https://github.com/DhirajKarangale/SatyaMark/blob/main/Frontend/DemoMedia/README.md" target="_blank" rel="noopener noreferrer">
-    https://github.com/DhirajKarangale/SatyaMark/blob/main/Frontend/DemoMedia/README.md
-  </a>
-
-- **Frontend – SatyaMark Website**  
-  <a href="https://github.com/DhirajKarangale/SatyaMark/blob/main/Frontend/Satyamark/README.md" target="_blank" rel="noopener noreferrer">
-    https://github.com/DhirajKarangale/SatyaMark/blob/main/Frontend/Satyamark/README.md
-  </a>
-
-- **React Library (`satyamark-react`)**  
-  <a href="https://github.com/DhirajKarangale/SatyaMark/tree/main/Frontend/satyamark-react" target="_blank" rel="noopener noreferrer">
-    https://github.com/DhirajKarangale/SatyaMark/tree/main/Frontend/satyamark-react
-  </a>
+See sub‑README for environment variables.
 
 ---
 
-## Open Source Principles
+## 🧭 Open Source Principles
 
-- Transparency over certainty
-- Privacy-first by default
-- Honest capability disclosure
-- Incremental improvement
-- No overpromising
+- Transparency over certainty  
+- Privacy‑first  
+- Evidence > opinion  
+- Honest limitations  
+- Incremental improvement  
+- Built for extensibility  
 
 ---
 
 ## Limitations & Scope
 
-- Video and audio verification are not yet supported
-- Image verification is experimental
-- Results should not be treated as absolute truth
-- Some components are research-grade
+- Image verification experimental  
+- No video / audio yet  
+- Confidence ≠ absolute truth  
+- Some components research‑grade  
 
 ---
 
 <p align="center">
-  <img src="Assets/GitHub/GitHub_1.png" alt="SatyaMark Overview" />
+  <img src="Assets/GitHub/GitHub_1.png" alt="SatyaMark Overview" width="850" />
 </p>
 
 ---
 
-## Summary
+## 🤝 Contributing & Collaboration
 
-**SatyaMark is an open trust infrastructure layer that verifies digital content and surfaces clear, evidence-backed credibility signals in real time.**
+You can help by:
+
+- adding new detectors / models  
+- improving orchestration  
+- enhancing SDK & UI  
+- testing edge cases  
+- improving documentation  
+
+No contribution is too small.
+
+PRs and issues welcome.
+
+---
+
+<p align="center">
+  <strong>Building trust infrastructure — openly, transparently, and with community.</strong>
+</p>

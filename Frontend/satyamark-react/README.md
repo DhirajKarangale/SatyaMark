@@ -108,10 +108,6 @@ That's it! The verification mark will automatically appear and update.
 
 ## Core Concepts
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/DhirajKarangale/SatyaMark/main/Assets/NpmCover/NpmCover_1.png" alt="SatyaMark Architecture" width="90%" />
-</p>
-
 SatyaMark consists of three core modules that work together:
 
 ### 1. Connection Layer (`satyamark_connect`)
@@ -150,6 +146,10 @@ Manages visual display of verification status.
 4. registerStatus() → Attach status display
 5. Auto-update     → Marks appear and update automatically
 ```
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/DhirajKarangale/SatyaMark/main/Assets/NpmCover/NpmCover_1.png" alt="SatyaMark Architecture" width="100%" />
+</p>
 
 ## API Reference
 

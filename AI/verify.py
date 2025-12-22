@@ -25,7 +25,8 @@ statement9 = "africans are involved in delhi bomb blast that happened last month
 statement10 = "earth is 3rd planet from sun"
 statement11 = "there is accident between car and bus in pune on 15 dec 2025 causing death of 8 people"
 statement12 = "there is match sheduled between roman reigns and cm punk in next wwe paperview"
-statement = statement11
+statement13 = "Apples taste same like mangoes"
+statement = statement1
 
 # Image Data
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__)))

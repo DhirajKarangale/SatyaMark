@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { jobStore } from "../store/jobStore";
 import { getDataId } from "../utils/GenerateIds";
 import { process } from "../process/satyamark_process";
+import { isSocketConnected, onConnectionChange } from "../process/satyamark_connect";
 import Alert from "./Alert";
 
 function ChatInput() {
@@ -13,6 +14,7 @@ function ChatInput() {
     const [localImage, setLocalImage] = useState<string | null>(null);
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
+    const [connected, setConnected] = useState(isSocketConnected());
 
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -27,7 +29,11 @@ function ChatInput() {
             Math.min(textareaRef.current.scrollHeight, 120) + "px";
     }, [text]);
 
-    const isValid = text.trim().length > 0 || imageUrl;
+    useEffect(() => {
+        return onConnectionChange(setConnected);
+    }, []);
+
+    const isValid = connected && (text.trim().length > 0 || imageUrl);
 
     function getErrorMessage(error: unknown): string {
         if (error instanceof Error) return error.message;

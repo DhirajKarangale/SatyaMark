@@ -6,6 +6,7 @@ import { motion, type Variants } from "framer-motion";
 import { onReceive } from "../process/satyamark_connect";
 import { process } from "../process/satyamark_process";
 import { getDataId } from "../utils/GenerateIds";
+import { isSocketConnected, onConnectionChange } from "../process/satyamark_connect";
 import GradientText from "../reactbits/GradientText/GradientText";
 
 type ResultData = {
@@ -27,6 +28,7 @@ function ResultCard() {
     const [currentData, setCurrentData] = useState<ResultData | null>(null);
     const [queue, setQueue] = useState<ResultData[]>([]);
     const [showAlert, setShowAlert] = useState(false);
+    const [connected, setConnected] = useState(isSocketConnected());
     const STORAGE_KEY = "satyamark_result_state";
 
     const [recheckMsg, setRecheckMsg] = useState("");
@@ -177,6 +179,10 @@ function ResultCard() {
     };
 
     useEffect(() => {
+        return onConnectionChange(setConnected);
+    }, []);
+
+    useEffect(() => {
         const saved = sessionStorage.getItem(STORAGE_KEY);
         if (!saved) return;
 
@@ -261,7 +267,19 @@ function ResultCard() {
         setShowAlert(false);
     };
 
+    const showConnecting = !connected && !currentData && queue.length === 0;
     const showLoader = !currentData && queue.length === 0 && jobStore.hasJobs();
+
+    if (showConnecting) {
+        return (
+            <div className="w-full h-full flex flex-col items-center justify-center gap-3">
+                <div className="w-8 h-8 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin" />
+                <div className="text-cyan-300 text-sm">
+                    Connecting to backend…
+                </div>
+            </div>
+        );
+    }
 
     if (!currentData) {
         if (showLoader) {

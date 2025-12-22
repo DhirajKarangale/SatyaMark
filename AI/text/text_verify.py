@@ -6,6 +6,7 @@ from text_verify_web import fact_check_with_web
 
 
 def verify_text(statement):
+    return check_verifyability("I like to eat bread at night")
     summary = summarize_text(statement)
     verifyability = check_verifyability(summary)
 

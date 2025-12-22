@@ -6,12 +6,7 @@ import json
 
 
 def _safe_parse(output: Any) -> Dict:
-    """
-    Robustly extract and parse JSON from LLM output.
-    Fail-closed to UNVERIFYABLE.
-    """
     try:
-        # Extract raw content
         if hasattr(output, "content"):
             raw = output.content
         elif isinstance(output, dict):
@@ -19,35 +14,38 @@ def _safe_parse(output: Any) -> Dict:
         elif isinstance(output, str):
             raw = output
         else:
-            raise ValueError("Unknown LLM output type")
+            raise ValueError()
 
         if not isinstance(raw, str):
-            raise ValueError("Content is not string")
+            raise ValueError()
 
         raw = raw.strip()
-
-        # Extract JSON object
         start = raw.find("{")
         end = raw.rfind("}")
 
-        if start == -1 or end == -1 or end <= start:
-            raise ValueError("No JSON object found")
+        if start == -1 or end == -1:
+            raise ValueError()
 
-        json_text = raw[start : end + 1]
-        data = json.loads(json_text)
+        data = json.loads(raw[start : end + 1])
 
+        # Normalize mark
         mark = data.get("mark")
-        confidence = data.get("confidence")
-        reason = data.get("reason")
-
+        if not isinstance(mark, str):
+            raise ValueError()
+        mark = mark.upper()
         if mark not in ("VERIFYABLE", "UNVERIFYABLE"):
-            raise ValueError("Invalid mark")
+            raise ValueError()
 
-        if not isinstance(confidence, int) or not (0 <= confidence <= 100):
-            raise ValueError("Invalid confidence")
+        # Normalize confidence
+        confidence_raw = data.get("confidence")
+        confidence = int(float(confidence_raw))
+        if not (0 <= confidence <= 100):
+            raise ValueError()
 
+        # Check reason
+        reason = data.get("reason")
         if not isinstance(reason, str) or len(reason.strip()) < 60:
-            raise ValueError("Reason too short")
+            raise ValueError()
 
         return {
             "mark": mark,
@@ -75,75 +73,75 @@ def check_verifyability(text: str) -> Dict:
         llm = get_llm("qwen2_5")
 
         prompt = f"""
-You are classifying whether a statement ASSERTS an objective factual claim.
+You classify a statement based only on whether it ASSERTS an objective factual claim.
 
-You are NOT checking whether the statement is true.
-You are ONLY deciding whether it is the kind of statement that COULD be
-verified or falsified using external evidence.
+You are NOT judging truth or accuracy.
+You are ONLY deciding whether the statement COULD, in principle, be verified or falsified using external evidence.
 
-Definitions (STRICT):
+====================
+DEFINITIONS
+====================
 
-VERIFYABLE:
-- The statement asserts an objective fact about the real world.
-- The claim could be checked against external evidence.
-- The claim may be TRUE or FALSE.
-- Statements about uniquely identifiable or universally known entities
-  (such as the Sun, Earth, Moon, gravity, water, planets, physical objects)
-  are VERIFYABLE even if incorrect.
-- Statements that assert extraordinary, implausible, or controversial facts
-  about real-world events (for example: alien involvement, conspiracies,
-  supernatural causes, or scientific impossibilities) are STILL VERIFYABLE
-  if they clearly claim that something happened in the real world.
+A statement is VERIFYABLE if:
+- It asserts an objective claim about the real world.
+- The claim could be checked using scientific, historical, physical, or observable evidence.
+- It may be TRUE or FALSE; accuracy does not matter.
+- Claims about physical objects, places, biological species, products, or natural phenomena are VERIFYABLE.
+- Claims comparing physical characteristics (taste, color, size, weight, composition, etc.) are VERIFYABLE because they can be tested.
+  Example: "Apples taste the same as mangoes." → VERIFYABLE.
+- Extraordinary or controversial claims are VERIFYABLE if they assert that something happened in the real world.
 
-UNVERIFYABLE:
-- Opinions, preferences, feelings, admiration, inspiration.
-- Generic labels, roles, or titles.
-- Meaningless or gibberish text.
-- Vague or incomplete statements that lack essential identifying details
-  where no reasonable person could know what evidence to check.
+A statement is UNVERIFYABLE if:
+- It is a personal feeling, preference, belief, or opinion.
+  Examples: "I like apples.", "Mangoes taste better."
+- It relies on subjective evaluation instead of objective comparison.
+- It is too vague to test because it lacks essential identifiers required to locate evidence when the subject is a person, organization, or event.
+  Examples: "He won the award." (which person?)
+- It is purely abstract, metaphorical, or philosophical.
+- It is meaningless, nonsensical, or gibberish.
 
-CRITICAL RULES ABOUT SPECIFICITY:
+====================
+SPECIFICITY RULE
+====================
 
-- If a statement sounds factual BUT does NOT specify enough details for a
-  reasonable person to know WHAT evidence to look for, it is UNVERIFYABLE.
-- Missing identifiers such as which person, which committee, which proposal,
-  which organization, or which event make the statement UNVERIFYABLE.
-- HOWEVER, do NOT mark a statement UNVERIFYABLE simply because the claim
-  is strange, implausible, controversial, or likely false.
-- Do NOT confuse lack of credibility with lack of verifyability.
+Specificity is required ONLY for claims about:
+- individuals
+- organizations
+- events
 
-Explanation requirements:
+Generic categories of physical objects (e.g., fruits, animals, chemicals, planets) do NOT require further specificity to be VERIFYABLE.
 
-If the mark is UNVERIFYABLE, your explanation MUST:
-- Restate what the statement is claiming in simple words.
-- Explain what type of statement it is.
-- Clearly explain which critical details are missing.
-- Explain why those missing details prevent verification.
-- Use very simple, non-technical language.
-- Be VERY LONG, VERY DETAILED, and EXPLICIT.
+====================
+EXPLANATION REQUIREMENTS
+====================
 
-If the mark is VERIFYABLE:
-- Briefly explain why the statement is an objective factual claim
-  that could be checked against reality.
+If UNVERIFYABLE:
+- Provide a long, simple-language explanation describing why the claim cannot be objectively checked.
 
-Confidence score:
-- 0 to 100 indicating how confident you are in your classification.
+If VERIFYABLE:
+- Provide a detailed explanation describing why the claim could be tested in the real world.
 
-Output STRICTLY valid JSON in this exact format:
+====================
+OUTPUT FORMAT
+====================
+
+Output STRICT JSON:
 
 {{
   "mark": "VERIFYABLE or UNVERIFYABLE",
   "confidence": number between 0 and 100,
-  "reason": "very long, very detailed explanation"
+  "reason": "very long, detailed explanation"
 }}
 
-Rules:
-- Do NOT add facts.
-- Do NOT correct the statement.
-- Do NOT use outside knowledge.
-- Output ONLY JSON. No extra text.
+No extra text outside the JSON.
+No commentary.
+No markdown.
+No corrections of the statement.
 
-Text:
+====================
+STATEMENT
+====================
+
 {text}
 """.strip()
 

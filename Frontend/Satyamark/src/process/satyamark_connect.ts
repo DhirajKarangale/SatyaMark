@@ -3,6 +3,27 @@ const wsUrl = import.meta.env.VITE_URL_WS;
 let socket: WebSocket | null = null;
 let storedConnectionData: SatyaMarkConnectionData | null = null;
 
+let isConnected = false;
+type ConnectionListener = (connected: boolean) => void;
+const connectionListeners: ConnectionListener[] = [];
+
+export function onConnectionChange(cb: ConnectionListener) {
+    connectionListeners.push(cb);
+    return () => {
+        const i = connectionListeners.indexOf(cb);
+        if (i !== -1) connectionListeners.splice(i, 1);
+    };
+}
+
+function notifyConnectionState(state: boolean) {
+    isConnected = state;
+    connectionListeners.forEach(cb => cb(state));
+}
+
+export function isSocketConnected() {
+    return isConnected;
+}
+
 export type SatyaMarkConnectionData = {
     app_id: string;
     user_id: string;
@@ -35,6 +56,8 @@ export function init(connectionData: SatyaMarkConnectionData) {
             clientId: connectionData.user_id,
             appId: connectionData.app_id
         });
+
+        notifyConnectionState(true);
     };
 
     socket.onmessage = (event) => {

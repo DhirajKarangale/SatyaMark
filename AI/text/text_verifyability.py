@@ -73,59 +73,64 @@ def check_verifyability(text: str) -> Dict:
         llm = get_llm("qwen2_5")
 
         prompt = f"""
-You classify a statement based only on whether it ASSERTS an objective factual claim.
+You classify a statement based ONLY on whether it can be FACT-CHECKED
+using independent, external evidence.
 
 You are NOT judging truth or accuracy.
-You are ONLY deciding whether the statement COULD, in principle, be verified or falsified using external evidence.
+You are NOT assuming access to private records, self-reports, or personal testimony.
+
+A claim must be realistically checkable by an independent verifier
+to be considered VERIFYABLE.
 
 ====================
 DEFINITIONS
 ====================
 
 A statement is VERIFYABLE if:
-- It asserts an objective claim about the real world.
-- The claim could be checked using scientific, historical, physical, or observable evidence.
-- It may be TRUE or FALSE; accuracy does not matter.
-- Claims about physical objects, places, biological species, products, or natural phenomena are VERIFYABLE.
-- Claims comparing physical characteristics (taste, color, size, weight, composition, etc.) are VERIFYABLE because they can be tested.
-  Example: "Apples taste the same as mangoes." → VERIFYABLE.
-- Extraordinary or controversial claims are VERIFYABLE if they assert that something happened in the real world.
+- It asserts an objective claim about the real world
+AND
+- There exists a realistic way for an independent party to check it using
+  public records, scientific measurement, historical documentation,
+  physical inspection, or widely accessible evidence.
+- The claim does NOT rely solely on a person's private actions,
+  internal records, or self-reporting.
+- Claims about public events, known facts, physical properties,
+  scientific phenomena, or documented history are VERIFYABLE.
+
+Examples:
+- "Water boils at 100°C at sea level." → VERIFYABLE
+- "The Eiffel Tower is in Paris." → VERIFYABLE
+- "COVID-19 vaccines were approved in 2020." → VERIFYABLE
 
 A statement is UNVERIFYABLE if:
+- It describes a private personal action, habit, or behavior
+  that cannot be independently verified.
 - It is a personal feeling, preference, belief, or opinion.
-  Examples: "I like apples.", "Mangoes taste better."
-- It relies on subjective evaluation instead of objective comparison.
-- It is too vague to test because it lacks essential identifiers required to locate evidence when the subject is a person, organization, or event.
-  Examples: "He won the award." (which person?)
-- It is purely abstract, metaphorical, or philosophical.
-- It is meaningless, nonsensical, or gibberish.
+- It refers to internal mental states.
+- It lacks sufficient identifiers to locate evidence.
+- It is abstract, philosophical, or subjective.
+
+Examples:
+- "I eat bread at night." → UNVERIFYABLE
+- "I drank coffee yesterday." → UNVERIFYABLE
+- "I like apples." → UNVERIFYABLE
+- "He won an award." → UNVERIFYABLE (unclear subject)
 
 ====================
-SPECIFICITY RULE
+IMPORTANT RULE
 ====================
 
-Specificity is required ONLY for claims about:
-- individuals
-- organizations
-- events
+If no realistic external fact-checking path exists,
+the statement MUST be classified as UNVERIFYABLE.
 
-Generic categories of physical objects (e.g., fruits, animals, chemicals, planets) do NOT require further specificity to be VERIFYABLE.
-
-====================
-EXPLANATION REQUIREMENTS
-====================
-
-If UNVERIFYABLE:
-- Provide a long, simple-language explanation describing why the claim cannot be objectively checked.
-
-If VERIFYABLE:
-- Provide a detailed explanation describing why the claim could be tested in the real world.
+Do NOT classify something as VERIFYABLE merely because it could be
+observed in theory or under hypothetical surveillance.
 
 ====================
 OUTPUT FORMAT
 ====================
 
-Output STRICT JSON:
+Output STRICT JSON ONLY:
 
 {{
   "mark": "VERIFYABLE or UNVERIFYABLE",
@@ -133,10 +138,9 @@ Output STRICT JSON:
   "reason": "very long, detailed explanation"
 }}
 
-No extra text outside the JSON.
-No commentary.
+No extra text.
 No markdown.
-No corrections of the statement.
+No commentary.
 
 ====================
 STATEMENT

@@ -57,7 +57,7 @@ function Documentation() {
           </p>
         </motion.section>
 
-        <motion.section custom={7} variants={fadeUp} className="space-y-4">
+        <motion.section custom={0} variants={fadeUp}>
           <h2 className="text-white text-xl font-semibold">
             React SDK
           </h2>
@@ -75,10 +75,7 @@ function Documentation() {
                 href="https://www.npmjs.com/package/satyamark-react"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="
-                            text-cyan-400 hover:text-cyan-300
-                            underline underline-offset-4
-                        "
+                className="text-cyan-400 hover:text-cyan-300 underline underline-offset-4"
               >
                 View on npm →
               </a>

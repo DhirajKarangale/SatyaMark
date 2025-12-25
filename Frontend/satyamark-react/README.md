@@ -32,14 +32,10 @@ SatyaMark is a React library that provides real-time verification for text and i
 
 ## Installation
 
-Install via npm or yarn:
+Install via npm:
 
 ```bash
 npm install satyamark-react
-```
-
-```bash
-yarn add satyamark-react
 ```
 
 **Peer Dependencies:**

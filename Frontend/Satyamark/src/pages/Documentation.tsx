@@ -57,6 +57,50 @@ function Documentation() {
           </p>
         </motion.section>
 
+        <motion.section custom={7} variants={fadeUp} className="space-y-4">
+          <h2 className="text-white text-xl font-semibold">
+            React SDK
+          </h2>
+
+          <div
+            className="space-y-4 max-w-3xl"
+          >
+            <p className="leading-relaxed text-gray-300">
+              Official React SDK to embed verification marks, process content,
+              and receive real-time trust signals with minimal setup.
+            </p>
+
+            <div className="flex flex-wrap items-center gap-4">
+              <a
+                href="https://www.npmjs.com/package/satyamark-react"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="
+                            text-cyan-400 hover:text-cyan-300
+                            underline underline-offset-4
+                        "
+              >
+                View on npm →
+              </a>
+
+              <div className="flex gap-2">
+                <img
+                  src="https://img.shields.io/npm/v/satyamark-react?color=22c55e&label=version"
+                  alt="npm version"
+                />
+                <img
+                  src="https://img.shields.io/npm/dm/satyamark-react?color=38bdf8&label=downloads"
+                  alt="npm downloads"
+                />
+                <img
+                  src="https://img.shields.io/npm/l/satyamark-react?color=818cf8"
+                  alt="npm license"
+                />
+              </div>
+            </div>
+          </div>
+        </motion.section>
+
         {/* WHAT IS SATYAMARK */}
         <motion.section custom={1} variants={fadeUp} className="space-y-3">
           <h2 className="text-white text-2xl font-semibold">

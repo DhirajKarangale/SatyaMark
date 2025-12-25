@@ -13,6 +13,14 @@ app.use(helmet());
 app.use(express.json());
 app.use(bodyParser.json({ limit: "1mb" }));
 
+app.get('/health', async (req, res, next) => {
+    try {
+        res.status(200).json("Ok");
+    } catch (error) {
+        next(error);
+    }
+});
+
 app.get("/getTextResult", async (req, res) => {
     const id = req.query.id;
     const textData = await modelText.GetTextById(id);
@@ -32,12 +40,9 @@ app.get("/getImageResult", async (req, res) => {
 });
 
 app.post("/text/remove", async (req, res) => {
-    console.log("========= Text =========");
     
     try {
         const { id } = req.body;
-        console.log("========= ID: ", id);
-
         if (!id) {
             return res.status(400).json({
                 success: false,

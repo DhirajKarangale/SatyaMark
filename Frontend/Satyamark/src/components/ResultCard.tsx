@@ -275,7 +275,7 @@ function ResultCard() {
             <div className="w-full h-full flex flex-col items-center justify-center gap-3">
                 <div className="w-8 h-8 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin" />
                 <div className="text-cyan-300 text-sm">
-                    Connecting to backend…
+                    Connecting to server…
                 </div>
             </div>
         );

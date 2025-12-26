@@ -20,9 +20,17 @@ async function enqueueJob({ text, jobId, clientId, callback_url, image_url, text
         image_hash
     };
 
-    await redis.xAdd(STREAM_KEY, "*", {
-        data: JSON.stringify(job),
-    });
+    // await redis.xAdd(STREAM_KEY, "*", { data: JSON.stringify(job), });
+
+
+    try {
+        await redis.xAdd(STREAM_KEY, "*", {
+            data: JSON.stringify(job),
+        });
+    } catch (err) {
+        console.log("Redis xAdd failed:", err.message);
+        throw err;
+    }
 
     return { taskId, job_token };
 }

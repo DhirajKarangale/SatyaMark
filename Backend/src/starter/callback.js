@@ -125,7 +125,7 @@ app.post("/ai-callback/text", async (req, res) => {
         res.json({ ok: true });
 
     } catch (err) {
-        console.error("Callback error:", err);
+        console.log("Callback error:", err);
         res.status(500).json({ error: "server_error" });
     }
 });
@@ -151,7 +151,7 @@ app.post("/ai-callback/image", async (req, res) => {
         res.json({ ok: true });
 
     } catch (err) {
-        console.error("Callback error:", err);
+        console.log("Callback error:", err);
         res.status(500).json({ error: "server_error" });
     }
 });

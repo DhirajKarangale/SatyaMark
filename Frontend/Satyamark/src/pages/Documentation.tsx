@@ -98,6 +98,38 @@ function Documentation() {
           </div>
         </motion.section>
 
+        {/* DEMO & SOURCE */}
+        <motion.section custom={1} variants={fadeUp}>
+          <h2 className="text-white text-xl font-semibold">
+            Demo & Source
+          </h2>
+
+          <p className="mt-2 text-gray-400 max-w-3xl">
+            Explore a live social-media style demo using SatyaMark, or review the full
+            open-source implementation on GitHub.
+          </p>
+
+          <div className="mt-4 flex flex-wrap items-center gap-6">
+            <a
+              href="https://satyamark-demo-socialmedia.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-cyan-400 hover:text-cyan-300 underline underline-offset-4 font-medium"
+            >
+              Live Demo →
+            </a>
+
+            <a
+              href="https://github.com/DhirajKarangale/SatyaMark"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-indigo-400 hover:text-indigo-300 underline underline-offset-4 font-medium"
+            >
+              GitHub Repository →
+            </a>
+          </div>
+        </motion.section>
+
         {/* WHAT IS SATYAMARK */}
         <motion.section custom={1} variants={fadeUp} className="space-y-3">
           <h2 className="text-white text-2xl font-semibold">

@@ -138,7 +138,7 @@ export function receiveData(data: any) {
         try {
             cb(data);
         } catch (err) {
-            console.error("listener error", err);
+            console.log("listener error", err);
         }
     }
 }

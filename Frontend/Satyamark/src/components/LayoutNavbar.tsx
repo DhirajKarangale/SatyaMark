@@ -4,14 +4,6 @@ import Navbar from "./Navbar";
 
 function LayoutNavbar() {
     return (
-        // <div className="min-h-screen w-full bg-slate-950">
-        //     <Navbar />
-
-        //     <main className="pt-16">
-        //         <Outlet />
-        //     </main>
-        // </div>
-
         <div className="min-h-screen w-full bg-slate-950">
             <Navbar />
 

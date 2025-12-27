@@ -21,7 +21,7 @@ type JobEntry = {
 const jobMap: Record<string, JobEntry> = {};
 
 const DEFAULT_ICON_SIZE = 20;
-const satyamark_url = "https://satyamark.vercel.app/";
+const satyamark_url = "https://satyamark.vercel.app/chat";
 
 const iconMap: Record<string, string> = {
     verifyable: verifyableIcon,
@@ -47,29 +47,41 @@ export function registerStatus(
     updateIcon(jobId, "pending", null);
 }
 
-function updateIcon(jobId: string, mark: string, data: any) {
+function updateIcon(jobId: string, rawMark: string, data: any) {
     const entry = jobMap[jobId];
     if (!entry) return;
 
     const { root, iconSize } = entry;
+    const mark = rawMark ?? "pending";
 
     const container = root.querySelector("[data-satyamark-status-container]") as HTMLElement;
     if (!container) return;
 
     container.style.position = "relative";
-    let icon = container.querySelector("img") as HTMLImageElement;
+    // let icon = container.querySelector("img") as HTMLImageElement;
 
-    if (!icon) {
-        icon = document.createElement("img");
-        icon.alt = "status";
-        icon.style.objectFit = "contain";
-        icon.style.display = "block";
-        container.appendChild(icon);
-    }
+    // if (!icon) {
+    //     icon = document.createElement("img");
+    //     icon.alt = "status";
+    //     icon.style.objectFit = "contain";
+    //     icon.style.display = "block";
+    //     container.appendChild(icon);
+    // }
 
+    // icon.style.width = iconSize + "px";
+    // icon.style.height = iconSize + "px";
+    // icon.src = iconMap[mark] || iconMap["pending"];
+
+    container.innerHTML = "";
+
+    const icon = document.createElement("img");
+    icon.alt = "status";
+    icon.style.objectFit = "contain";
+    icon.style.display = "block";
     icon.style.width = iconSize + "px";
     icon.style.height = iconSize + "px";
     icon.src = iconMap[mark] || iconMap["pending"];
+    container.appendChild(icon);
 
     const type = data?.type;
     const isValidType = type === "text" || type === "image";
@@ -96,12 +108,14 @@ function updateIcon(jobId: string, mark: string, data: any) {
     }
 
     tooltip.textContent = mark.toUpperCase();
+    icon.onmouseenter = () => { tooltip.style.opacity = "1"; };
+    icon.onmouseleave = () => { tooltip.style.opacity = "0"; };
 
     if (isClickable) {
         icon.style.cursor = "pointer";
 
-        icon.onmouseenter = () => { tooltip.style.opacity = "1"; };
-        icon.onmouseleave = () => { tooltip.style.opacity = "0"; };
+        // icon.onmouseenter = () => { tooltip.style.opacity = "1"; };
+        // icon.onmouseleave = () => { tooltip.style.opacity = "0"; };
 
         icon.onclick = () => {
             window.open(
@@ -112,9 +126,9 @@ function updateIcon(jobId: string, mark: string, data: any) {
     } else {
         icon.style.cursor = "default";
         icon.onclick = null;
-        icon.onmouseenter = null;
-        icon.onmouseleave = null;
-        tooltip.style.opacity = "0";
+        // icon.onmouseenter = null;
+        // icon.onmouseleave = null;
+        // tooltip.style.opacity = "0";
     }
 }
 

@@ -15,9 +15,9 @@ function Chat() {
     useEffect(() => {
         const run = async () => {
             const parts = location.pathname.split("/").filter(Boolean);
-            if (parts.length < 2) return;
+            if (parts.length < 3) return;
 
-            const [type, id] = parts;
+            const [, type, id] = parts;
 
             if (jobStore.has(id)) return;
 

@@ -1,5 +1,5 @@
 import { memo, useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
   BookOpen, Code, Package, Github, ExternalLink,
@@ -8,7 +8,7 @@ import {
 import { MARK_META } from "../utils/MARK_META";
 import { routeChat } from "../utils/Routes";
 
-const fadeUp = {
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 20 },
   visible: (i: number) => ({
     opacity: 1,

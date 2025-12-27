@@ -1,14 +1,11 @@
 import { memo } from "react";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { Link } from "react-router-dom";
-import {
-    CheckCircle2, XCircle, AlertCircle, Clock,
-    Sparkles, User, HelpCircle, Github, ExternalLink, Package
-} from "lucide-react";
 import { MARK_META } from "../utils/MARK_META";
 import { routeChat, routeDoccu } from "../utils/Routes";
+import { CheckCircle2, XCircle, AlertCircle, Sparkles, Github, ExternalLink, Package } from "lucide-react";
 
-const fadeUp = {
+const fadeUp: Variants = {
     hidden: { opacity: 0, y: 20 },
     visible: (i: number) => ({
         opacity: 1,

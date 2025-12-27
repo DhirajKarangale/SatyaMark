@@ -1,4 +1,5 @@
 export const routeHome = '/';
-export const routeHomeWithId = '/:type/:id';
+export const routeChat = '/chat';
+export const routeChatWithId = '/chat/:type/:id';
 export const routeDoccu = '/documentation';
-export const routeAbout = '/about';
+export const routeAbout = '/';

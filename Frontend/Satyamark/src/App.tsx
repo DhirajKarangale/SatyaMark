@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
+import Chat from './pages/Chat';
 import Home from './pages/Home';
-import About from './pages/About';
 import NotFound from "./pages/NotFound";
 import Documentation from './pages/Documentation';
 
@@ -12,7 +12,7 @@ import { useEffect } from "react";
 import { init } from "./process/satyamark_connect";
 import { getUserId } from './utils/GenerateIds';
 
-import { routeHome, routeHomeWithId, routeAbout, routeDoccu } from './utils/Routes';
+import { routeHome, routeChat, routeChatWithId, routeDoccu } from './utils/Routes';
 
 function App() {
   useEffect(() => {
@@ -26,8 +26,8 @@ function App() {
       <Routes>
         <Route element={<LayoutNavbar />}>
           <Route path={routeHome} element={<Home />} />
-          <Route path={routeHomeWithId} element={<Home />} />
-          <Route path={routeAbout} element={<About />} />
+          <Route path={routeChat} element={<Chat />} />
+          <Route path={routeChatWithId} element={<Chat />} />
           <Route path={routeDoccu} element={<Documentation />} />
           <Route path="*" element={<NotFound />} />
         </Route>

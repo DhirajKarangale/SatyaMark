@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+/* Custom Scrollbar Styles */
 .custom-scroll::-webkit-scrollbar-button {
     display: none;
 }
@@ -14,25 +15,27 @@
 }
 
 .custom-scroll::-webkit-scrollbar-thumb {
-    background: rgba(1, 222, 255, 0.6);
+    background: rgba(6, 182, 212, 0.6);
     border-radius: 8px;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(6, 182, 212, 0.8);
 }
 
 .custom-scroll {
     scrollbar-width: thin;
-    scrollbar-color: rgba(1, 222, 255, 0.6) rgba(15, 23, 42, 0.4);
+    scrollbar-color: rgba(6, 182, 212, 0.6) rgba(15, 23, 42, 0.4);
 }
 
-
-
-
-
+/* Global Scrollbar */
 *::-webkit-scrollbar-button {
     display: none;
 }
 
 *::-webkit-scrollbar {
     width: 8px;
+    height: 8px;
 }
 
 *::-webkit-scrollbar-track {
@@ -41,11 +44,25 @@
 }
 
 *::-webkit-scrollbar-thumb {
-    background: rgba(1, 222, 255, 0.6);
+    background: rgba(6, 182, 212, 0.6);
     border-radius: 8px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: rgba(6, 182, 212, 0.8);
 }
 
 * {
     scrollbar-width: thin;
-    scrollbar-color: rgba(1, 222, 255, 0.6) rgba(15, 23, 42, 0.4);
+    scrollbar-color: rgba(6, 182, 212, 0.6) rgba(15, 23, 42, 0.4);
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Prevent horizontal overflow */
+body {
+    overflow-x: hidden;
 }

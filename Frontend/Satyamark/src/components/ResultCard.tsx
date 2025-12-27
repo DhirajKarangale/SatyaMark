@@ -7,7 +7,8 @@ import { onReceive } from "../process/satyamark_connect";
 import { process } from "../process/satyamark_process";
 import { getDataId } from "../utils/GenerateIds";
 import { isSocketConnected, onConnectionChange } from "../process/satyamark_connect";
-import GradientText from "../reactbits/GradientText/GradientText";
+import { MARK_META } from "../utils/MARK_META";
+import { ExternalLink, RotateCcw, Loader2, ChevronRight } from "lucide-react";
 
 type ResultData = {
     dataId: string | number;
@@ -15,7 +16,6 @@ type ResultData = {
     confidence: number | string;
     reason: string;
     urls?: string[] | null;
-
     type?: "text" | "image";
     summary?: string;
     image_url?: string;
@@ -37,13 +37,12 @@ function ResultCard() {
 
     const RECHECK_GENERIC_ERROR = "We can't process the recheck right now. Please try again later.";
 
-
     const cardVariants: Variants = {
-        hidden: { opacity: 0, scale: 0.95 },
+        hidden: { opacity: 0, scale: 0.98 },
         visible: {
             opacity: 1,
             scale: 1,
-            transition: { duration: 0.35, ease: "easeOut" }
+            transition: { duration: 0.4, ease: "easeOut" }
         }
     };
 
@@ -52,7 +51,7 @@ function ResultCard() {
         visible: (i: number) => ({
             opacity: 1,
             y: 0,
-            transition: { delay: 0.1 + i * 0.05, duration: 0.35 }
+            transition: { delay: 0.1 + i * 0.05, duration: 0.4 }
         })
     };
 
@@ -78,10 +77,9 @@ function ResultCard() {
 
         return (
             <div className="relative w-full flex justify-center rounded-xl">
-
                 {!loaded && (
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+                        <Loader2 className="w-8 h-8 text-cyan-400 animate-spin" />
                     </div>
                 )}
 
@@ -90,34 +88,17 @@ function ResultCard() {
                     loading="lazy"
                     onLoad={() => setLoaded(true)}
                     className={`
-                        max-h-[200px]
+                        max-h-[300px]
                         w-auto
                         max-w-full
                         object-contain
+                        rounded-xl
+                        border border-white/10
                         transition-opacity duration-300
                         ${loaded ? "opacity-100" : "opacity-0"}
                     `}
+                    alt="Verified content"
                 />
-            </div>
-        );
-    }
-
-    function Section({
-        title,
-        children
-    }: {
-        title: string;
-        children: React.ReactNode;
-    }) {
-        return (
-            <div className="flex flex-col gap-2">
-                <div className="text-xs uppercase tracking-wider text-cyan-400 font-semibold">
-                    {title}
-                </div>
-                <div className="bg-white/5 border border-white/10
-                    rounded-lg p-3 text-gray-200 leading-relaxed">
-                    {children}
-                </div>
             </div>
         );
     }
@@ -130,7 +111,7 @@ function ResultCard() {
             setRecheckMsg("");
 
             const endpoint = currentData.type === "image" ? "/image/remove" : "/text/remove";
-            const api = `${urlBase}${endpoint}`
+            const api = `${urlBase}${endpoint}`;
 
             const res = await fetch(api, {
                 method: "POST",
@@ -272,9 +253,9 @@ function ResultCard() {
 
     if (showConnecting) {
         return (
-            <div className="w-full h-full flex flex-col items-center justify-center gap-3">
-                <div className="w-8 h-8 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin" />
-                <div className="text-cyan-300 text-sm">
+            <div className="w-full h-full flex flex-col items-center justify-center gap-4 py-20">
+                <Loader2 className="w-12 h-12 text-cyan-400 animate-spin" />
+                <div className="text-gray-300 text-lg font-medium">
                     Connecting to server…
                 </div>
             </div>
@@ -286,37 +267,61 @@ function ResultCard() {
             const jobs = jobStore.list();
 
             return (
-                <div className="w-full h-full flex flex-col items-center justify-center gap-4">
-                    <div className="animate-spin w-12 h-12 rounded-full border-4 border-cyan-400 border-t-transparent" />
-                    <div className="text-gray-300 text-center">
-                        Processing your data<br />
-                        <span className="text-cyan-400 text-sm">
+                <div className="w-full h-full flex flex-col items-center justify-center gap-4 py-20">
+                    <Loader2 className="w-16 h-16 text-cyan-400 animate-spin" />
+                    <div className="text-gray-300 text-center space-y-2">
+                        <div className="text-xl font-semibold">Processing your content</div>
+                        <div className="text-cyan-400 text-sm font-mono">
                             Job ID: {jobs[jobs.length - 1]}
-                        </span>
+                        </div>
                     </div>
                 </div>
             );
         }
 
         return (
-            <motion.div
-                variants={cardVariants}
-                initial="hidden"
-                animate="visible"
-                className="w-full h-full border border-white/20 bg-transparent
-                backdrop-blur-sm rounded-xl p-4 flex items-center justify-center"
-            >
-                <GradientText
-                    colors={["#40ffaa", "#4079ff", "#40ffaa"]}
-                    animationSpeed={6}
-                    showBorder={false}
-                    className="text-3xl font-semibold"
+            <div className="w-full h-full flex flex-col items-center justify-center py-20">
+                <motion.div
+                    variants={cardVariants}
+                    initial="hidden"
+                    animate="visible"
+                    className="text-center space-y-6 max-w-2xl"
                 >
-                    Welcome to Satyamark
-                </GradientText>
-            </motion.div>
+                    <div className="w-20 h-20 mx-auto rounded-2xl bg-linear-to-br from-cyan-500/20 to-blue-500/20 
+                        border border-cyan-500/30 flex items-center justify-center">
+                        <span className="text-4xl">✓</span>
+                    </div>
+
+                    <div className="space-y-3">
+                        <h2 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 
+                            bg-clip-text text-transparent">
+                            Welcome to SatyaMark
+                        </h2>
+                        <p className="text-gray-400 text-lg">
+                            Submit content below to verify its authenticity
+                        </p>
+                    </div>
+
+                    <div className="grid sm:grid-cols-2 gap-4 pt-4">
+                        <div className="bg-white/5 border border-white/10 rounded-xl p-4 text-left">
+                            <div className="text-cyan-400 font-semibold mb-2">Text Verification</div>
+                            <p className="text-sm text-gray-400">
+                                Check factual accuracy and detect AI-generated text
+                            </p>
+                        </div>
+                        <div className="bg-white/5 border border-white/10 rounded-xl p-4 text-left">
+                            <div className="text-blue-400 font-semibold mb-2">Image Verification</div>
+                            <p className="text-sm text-gray-400">
+                                Detect AI-generated or manipulated images
+                            </p>
+                        </div>
+                    </div>
+                </motion.div>
+            </div>
         );
     }
+
+    const markMeta = MARK_META[currentData.mark.toLowerCase()] || MARK_META["pending"];
 
     return (
         <>
@@ -324,134 +329,180 @@ function ResultCard() {
                 variants={cardVariants}
                 initial="hidden"
                 animate="visible"
-                className="w-full h-full bg-white/5 border border-white/20
-                backdrop-blur-sm flex flex-col gap-1 rounded-xl p-4"
+                className="w-full"
             >
-                <div className="relative w-full h-full flex flex-col gap-4 overflow-y-auto custom-scroll">
-                    <motion.div
-                        custom={0}
-                        variants={contentVariants}
-                        initial="hidden"
-                        animate="visible"
-                        className="flex justify-between items-center"
-                    >
-                        <div className="text-white text-lg font-semibold">
-                            ID: {currentData.dataId}
-                        </div>
-
-                        <div className="flex items-center gap-4">
-                            <span className="text-cyan-400 font-medium">
-                                Mark: {currentData.mark}
-                            </span>
-                            <span className="text-green-400 font-medium">
-                                Confidence: {currentData.confidence}
-                            </span>
-                        </div>
-                    </motion.div>
-
-                    {currentData.type === "text" && currentData.summary && (
+                <div className="bg-slate-900/50 border border-white/10 rounded-2xl shadow-xl overflow-hidden">
+                    {/* Header Section */}
+                    <div className="bg-gradient-to-r from-slate-800 to-slate-900 border-b border-white/10 p-6">
                         <motion.div
-                            custom={1}
+                            custom={0}
                             variants={contentVariants}
                             initial="hidden"
                             animate="visible"
+                            className="space-y-4"
                         >
-                            <Section title="Input">
-                                <div className="whitespace-pre-wrap">
-                                    {currentData.summary}
+                            <div className="flex items-start justify-between gap-4">
+                                <div className="space-y-2">
+                                    <div className="text-sm text-gray-400 font-mono">
+                                        Verification ID: {currentData.dataId}
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <img
+                                            src={markMeta.icon}
+                                            alt={markMeta.label}
+                                            className="w-8 h-8 object-contain"
+                                        />
+                                        <span className={`text-2xl font-bold ${markMeta.color}`}>
+                                            {markMeta.label}
+                                        </span>
+                                    </div>
                                 </div>
-                            </Section>
-                        </motion.div>
-                    )}
 
-                    {currentData.type === "image" && currentData.image_url && (
-                        <motion.div
-                            custom={1}
-                            variants={contentVariants}
-                            initial="hidden"
-                            animate="visible"
-                        >
-                            <Section title="Image">
-                                <LazyImage src={currentData.image_url} />
-                            </Section>
-                        </motion.div>
-                    )}
-
-                    <motion.div
-                        custom={2}
-                        variants={contentVariants}
-                        initial="hidden"
-                        animate="visible"
-                    >
-                        <Section title="Reason">
-                            <div className="whitespace-pre-wrap">
-                                {currentData.reason}
+                                <div className="text-right">
+                                    <div className="text-sm text-gray-400 mb-1">Confidence</div>
+                                    <div className="text-2xl font-bold text-green-400">
+                                        {currentData.confidence}%
+                                    </div>
+                                </div>
                             </div>
-                        </Section>
-                    </motion.div>
+                        </motion.div>
+                    </div>
 
-                    {currentData.urls?.length ? (
+                    {/* Content Sections */}
+                    <div className="p-6 space-y-6">
+                        {/* Input Content */}
+                        {currentData.type === "text" && currentData.summary && (
+                            <motion.div
+                                custom={1}
+                                variants={contentVariants}
+                                initial="hidden"
+                                animate="visible"
+                                className="space-y-2"
+                            >
+                                <div className="text-xs uppercase tracking-wider text-cyan-400 font-semibold">
+                                    Submitted Content
+                                </div>
+                                <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                                    <div className="text-gray-200 leading-relaxed whitespace-pre-wrap">
+                                        {currentData.summary}
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {currentData.type === "image" && currentData.image_url && (
+                            <motion.div
+                                custom={1}
+                                variants={contentVariants}
+                                initial="hidden"
+                                animate="visible"
+                                className="space-y-2"
+                            >
+                                <div className="text-xs uppercase tracking-wider text-cyan-400 font-semibold">
+                                    Submitted Image
+                                </div>
+                                <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                                    <LazyImage src={currentData.image_url} />
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {/* Verification Result */}
                         <motion.div
-                            custom={3}
+                            custom={2}
                             variants={contentVariants}
                             initial="hidden"
                             animate="visible"
+                            className="space-y-2"
                         >
-                            <Section title="Sources">
-                                <div className="flex flex-col gap-2">
-                                    {currentData.urls.map((url, i) => (
-                                        <a
-                                            key={i}
-                                            href={url}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="text-cyan-400 underline break-all hover:text-cyan-300"
-                                        >
-                                            {url}
-                                        </a>
-                                    ))}
+                            <div className="text-xs uppercase tracking-wider text-cyan-400 font-semibold">
+                                Verification Analysis
+                            </div>
+                            <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                                <div className="text-gray-200 leading-relaxed whitespace-pre-wrap">
+                                    {currentData.reason}
                                 </div>
-                            </Section>
+                            </div>
                         </motion.div>
-                    ) : null}
-                </div>
 
+                        {/* Sources */}
+                        {currentData.urls && currentData.urls.length > 0 && (
+                            <motion.div
+                                custom={3}
+                                variants={contentVariants}
+                                initial="hidden"
+                                animate="visible"
+                                className="space-y-2"
+                            >
+                                <div className="text-xs uppercase tracking-wider text-cyan-400 font-semibold">
+                                    Sources ({currentData.urls.length})
+                                </div>
+                                <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                                    <div className="space-y-2">
+                                        {currentData.urls.map((url, i) => (
+                                            <a
+                                                key={i}
+                                                href={url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-start gap-2 text-cyan-400 hover:text-cyan-300 
+                                                    transition-colors group"
+                                            >
+                                                <ExternalLink size={16} className="mt-1 shrink-0" />
+                                                <span className="break-all text-sm group-hover:underline">
+                                                    {url}
+                                                </span>
+                                            </a>
+                                        ))}
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+                    </div>
 
-                <div className="w-full h-11">
-                    <button
-                        onClick={() => setShowRecheckPopup(true)}
-                        className="absolute bottom-4 left-4
-                        bg-orange-500/20 border border-orange-400
-                        text-orange-300 text-xs px-3 py-2 rounded-lg
-                        hover:bg-orange-500/30 transition"
-                    >
-                        Recheck
-                    </button>
-
-                    {queue.length > 0 && (
+                    {/* Action Buttons */}
+                    <div className="border-t border-white/10 bg-slate-900/50 p-4 flex flex-wrap items-center justify-between gap-3">
                         <button
-                            onClick={loadNext}
-                            className="absolute bottom-4 right-4
-                            bg-cyan-500/20 border border-cyan-400
-                            text-cyan-300 text-xs px-3 py-2 rounded-lg
-                            hover:bg-cyan-500/30 transition"
+                            onClick={() => setShowRecheckPopup(true)}
+                            className="inline-flex items-center gap-2 px-4 py-2 
+                                bg-orange-500/10 hover:bg-orange-500/20 
+                                border border-orange-500/30 hover:border-orange-500/50
+                                text-orange-400 font-medium rounded-lg 
+                                transition-all duration-200"
                         >
-                            Load next ({queue.length})
+                            <RotateCcw size={16} />
+                            Request Recheck
                         </button>
-                    )}
 
-                    {queue.length === 0 && jobStore.hasJobs() && (
-                        <div className="absolute bottom-4 right-4 flex items-center gap-2
-                            bg-black/40 backdrop-blur-md px-3 py-2 rounded-lg
-                            border border-white/20">
-                            <div className="w-4 h-4 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin" />
-                            <span className="text-xs text-cyan-300">
-                                Processing…
-                            </span>
+                        <div className="flex items-center gap-3">
+                            {jobStore.hasJobs() && (
+                                <div className="flex items-center gap-2 px-4 py-2 
+                                    bg-cyan-500/10 border border-cyan-500/30 
+                                    rounded-lg text-sm">
+                                    <Loader2 size={16} className="text-cyan-400 animate-spin" />
+                                    <span className="text-cyan-400 font-medium">
+                                        Processing…
+                                    </span>
+                                </div>
+                            )}
+
+                            {queue.length > 0 && (
+                                <button
+                                    onClick={loadNext}
+                                    className="inline-flex items-center gap-2 px-4 py-2 
+                                        bg-gradient-to-r from-cyan-600 to-blue-600 
+                                        hover:from-cyan-500 hover:to-blue-500
+                                        text-white font-semibold rounded-lg 
+                                        shadow-lg shadow-cyan-500/25 
+                                        transition-all duration-200"
+                                >
+                                    Load Next ({queue.length})
+                                    <ChevronRight size={16} />
+                                </button>
+                            )}
                         </div>
-                    )}
+                    </div>
                 </div>
-
             </motion.div>
 
             <Alert

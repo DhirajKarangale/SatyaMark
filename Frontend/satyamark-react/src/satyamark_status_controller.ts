@@ -57,22 +57,8 @@ function updateIcon(jobId: string, rawMark: string, data: any) {
     const container = root.querySelector("[data-satyamark-status-container]") as HTMLElement;
     if (!container) return;
 
-    container.style.position = "relative";
-    // let icon = container.querySelector("img") as HTMLImageElement;
-
-    // if (!icon) {
-    //     icon = document.createElement("img");
-    //     icon.alt = "status";
-    //     icon.style.objectFit = "contain";
-    //     icon.style.display = "block";
-    //     container.appendChild(icon);
-    // }
-
-    // icon.style.width = iconSize + "px";
-    // icon.style.height = iconSize + "px";
-    // icon.src = iconMap[mark] || iconMap["pending"];
-
     container.innerHTML = "";
+    container.style.position = "relative";
 
     const icon = document.createElement("img");
     icon.alt = "status";

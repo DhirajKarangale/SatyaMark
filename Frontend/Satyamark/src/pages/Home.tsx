@@ -41,9 +41,14 @@ function Home() {
     }, []);
 
     return (
-        <div className="w-full h-full flex flex-col gap-2 justify-between items-center p-2">
-            <ResultCard />
-            <ChatInput />
+        <div className="w-full h-full flex flex-col p-2">
+            <div className="flex-1 min-h-0 overflow-y-auto">
+                <ResultCard />
+            </div>
+
+            <div className="shrink-0">
+                <ChatInput />
+            </div>
 
             <Alert
                 isOpen={showAlert}
@@ -51,8 +56,6 @@ function Home() {
                 onClose={() => setShowAlert(false)}
                 onConfirm={() => setShowAlert(false)}
             />
-
-            <div className="w-full h-1 text-transparent text-center">-DK-</div>
         </div>
     );
 }

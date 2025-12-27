@@ -4,7 +4,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "text"))
 sys.path.append(os.path.join(os.path.dirname(__file__), "img_ml"))
 sys.path.append(os.path.join(os.path.dirname(__file__), "img_forensic"))
 
-from text_verify import verify_text
+from text_verify import verify_text, verify_text_summary
 from img_ml_verify import verify_img_ml, evaluate_img_ml, verify_img_ml_url
 from img_forensic_verify import (
     verify_img_forensic,
@@ -26,7 +26,8 @@ statement10 = "earth is 3rd planet from sun"
 statement11 = "there is accident between car and bus in pune on 15 dec 2025 causing death of 8 people"
 statement12 = "there is match sheduled between roman reigns and cm punk in next wwe paperview"
 statement13 = "Apples taste same like mangoes"
-statement = statement1
+statement14 = "The world population has crossed 8.1 billion according to the latest UN report."
+statement = statement14
 
 # Image Data
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__)))

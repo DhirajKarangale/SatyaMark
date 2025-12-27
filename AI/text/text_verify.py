@@ -4,19 +4,30 @@ from text_summarize import summarize_text
 from text_verifyability import check_verifyability
 from text_verify_web import fact_check_with_web
 
+LOG_FILE = "text_verification_log.txt"
+
+
+def log(data, title=None):
+    with open(LOG_FILE, "a", encoding="utf-8") as f:
+        f.write("\n" + "=" * 80 + "\n")
+        if title:
+            f.write(f"{title}:\n")
+        f.write(str(data) + "\n")
+
 
 def verify_text(statement):
-    return check_verifyability("I like to eat bread at night")
     summary = summarize_text(statement)
     verifyability = check_verifyability(summary)
 
     if verifyability and verifyability["mark"] == "UNVERIFYABLE":
         return verifyability
 
+    # log(summary, "text")
     fact = fact_check(summary)
 
     if fact and fact["mark"] == "Insufficient":
         webcontent = get_content(summary)
+        # log(webcontent, "web_data")
         webverify = fact_check_with_web(summary, webcontent)
         return webverify
 

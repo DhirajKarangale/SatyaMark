@@ -105,7 +105,7 @@ function Documentation() {
                 className="h-5"
               />
               <img
-                src="https://img.shields.io/npm/dm/satyamark-react?color=38bdf8&label=downloads"
+                src="https://img.shields.io/npm/dt/satyamark-react?color=38bdf8&label=total%20downloads"
                 alt="npm downloads"
                 className="h-5"
               />

@@ -1,5 +1,4 @@
 const { v4: uuidv4 } = require("uuid");
-const redis = require("../redis/redis");
 const textRedis = require("../redis/redisText");
 const imageRedis = require("../redis/redisImage");
 

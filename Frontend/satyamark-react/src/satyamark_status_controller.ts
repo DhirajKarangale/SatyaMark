@@ -1,13 +1,6 @@
 import { onReceive } from "./satyamark_connect";
-
-import verifyableIcon from "../icons-mark/verifyable.png";
-import unverifyableIcon from "../icons-mark/unverifyable.png";
-import insufficientIcon from "../icons-mark/insufficient.png";
-import correctIcon from "../icons-mark/correct.png";
-import incorrectIcon from "../icons-mark/incorrect.png";
-import pendingIcon from "../icons-mark/pending.png";
-import aiIcon from "../icons-mark/ai.png";
-import nonaiIcon from "../icons-mark/nonai.png";
+import { ICON_URLS, type IconKey } from "./utils/iconRegistry";
+import { ensureIconLoaded } from "./utils/iconLoader";
 
 type StatusOptions = {
     iconSize?: number;
@@ -23,16 +16,7 @@ const jobMap: Record<string, JobEntry> = {};
 const DEFAULT_ICON_SIZE = 20;
 const satyamark_url = "https://satyamark.vercel.app/chat";
 
-const iconMap: Record<string, string> = {
-    verifyable: verifyableIcon,
-    unverifyable: unverifyableIcon,
-    insufficient: insufficientIcon,
-    correct: correctIcon,
-    incorrect: incorrectIcon,
-    pending: pendingIcon,
-    ai: aiIcon,
-    nonai: nonaiIcon,
-};
+const iconMap = ICON_URLS;
 
 export function registerStatus(
     jobId: string,
@@ -52,7 +36,9 @@ function updateIcon(jobId: string, rawMark: string, data: any) {
     if (!entry) return;
 
     const { root, iconSize } = entry;
-    const mark = rawMark ?? "pending";
+    const mark: IconKey = rawMark in ICON_URLS ? (rawMark as IconKey) : "pending";
+  
+    ensureIconLoaded(mark);
 
     const container = root.querySelector("[data-satyamark-status-container]") as HTMLElement;
     if (!container) return;
@@ -66,7 +52,7 @@ function updateIcon(jobId: string, rawMark: string, data: any) {
     icon.style.display = "block";
     icon.style.width = iconSize + "px";
     icon.style.height = iconSize + "px";
-    icon.src = iconMap[mark] || iconMap["pending"];
+    icon.src = ICON_URLS[mark];
     container.appendChild(icon);
 
     const type = data?.type;
@@ -99,10 +85,6 @@ function updateIcon(jobId: string, rawMark: string, data: any) {
 
     if (isClickable) {
         icon.style.cursor = "pointer";
-
-        // icon.onmouseenter = () => { tooltip.style.opacity = "1"; };
-        // icon.onmouseleave = () => { tooltip.style.opacity = "0"; };
-
         icon.onclick = () => {
             window.open(
                 `${satyamark_url}/${type}/${data.dataId}`,
@@ -112,9 +94,6 @@ function updateIcon(jobId: string, rawMark: string, data: any) {
     } else {
         icon.style.cursor = "default";
         icon.onclick = null;
-        // icon.onmouseenter = null;
-        // icon.onmouseleave = null;
-        // tooltip.style.opacity = "0";
     }
 }
 

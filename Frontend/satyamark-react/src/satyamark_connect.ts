@@ -1,5 +1,8 @@
+import { preloadIcons } from "./utils/iconLoader";
+
 const wsUrl = "wss://satyamark.onrender.com";
 // const wsUrl = "ws://localhost:1000";
+
 let socket: WebSocket | null = null;
 let storedConnectionData: SatyaMarkConnectionData | null = null;
 
@@ -27,6 +30,8 @@ export function onConnected(cb: ConnectedCallback) {
 }
 
 export function init(connectionData: SatyaMarkConnectionData, options?: { onConnected?: ConnectedCallback }) {
+    preloadIcons();
+
     if (socket && socket.readyState == WebSocket.OPEN && storedConnectionData == connectionData) {
         console.log("Already Connected: ", connectionData);
         return;

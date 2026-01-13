@@ -1,8 +1,8 @@
-# verifyability_with_detailed_reason.py
-
 from typing import Any, Dict
 from connect import get_llm
 import json
+
+_PREFERRED_MODELS = ["deepseek_r1", "minicheck", "bart_large_cnn", "flan_t5_xl"]
 
 
 def _safe_parse(output: Any) -> Dict:
@@ -70,8 +70,6 @@ def check_verifyability(text: str) -> Dict:
     LLM-only verifyability classification with deep explanation.
     """
     try:
-        llm = get_llm("qwen2_5")
-
         prompt = f"""
 You classify a statement based ONLY on whether it can be FACT-CHECKED
 using independent, external evidence.
@@ -149,8 +147,17 @@ STATEMENT
 {text}
 """.strip()
 
-        response = llm.invoke(prompt)
-        return _safe_parse(response)
+        for model_name in _PREFERRED_MODELS:
+            try:
+                llm = get_llm(model_name)
+                response = llm.invoke(prompt)
+                result = _safe_parse(response)
+
+                if result and result.get("mark"):
+                    return result
+
+            except Exception:
+                continue
 
     except Exception:
         return {

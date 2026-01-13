@@ -1,0 +1,201 @@
+# SatyaMark
+
+## Project Overview
+
+SatyaMark is a centralized, AI-powered verification service designed to help users and platforms distinguish truthful digital content from misinformation in real time. It provides a universal, visual **trust signal** that can be embedded across applications via an SDK or API.
+
+SatyaMark is built as **trust infrastructure**, not just a fact-checking tool.
+
+---
+
+## 1. Problem Statement
+
+Misinformation spreads faster than verified facts across social platforms, messaging apps, and digital media. This leads to confusion, erosion of trust, and real-world harm.
+
+Current fact-checking solutions suffer from major limitations:
+
+* Slow response times
+* Fragmented and platform-specific implementations
+* Poor detection of AI-generated or manipulated content
+* Lack of transparency, sources, and confidence scores
+
+There is no unified, real-time verification layer for the internet.
+
+---
+
+## 2. Core Idea
+
+SatyaMark acts as a **central verification layer** for digital content.
+
+Platforms integrate SatyaMark to:
+
+* Verify content in real time
+* Display standardized trust icons (verification marks)
+* Allow users to inspect reasoning, confidence, and sources
+* Accept feedback and re-verification requests
+
+---
+
+## 3. Current Capabilities
+
+### Supported (Active)
+
+* **Text verification** – most mature and reliable
+* **Image verification** – early-stage, lower accuracy
+
+### Planned (Future)
+
+* Video verification
+* Audio verification
+* Hybrid verification combining multiple signals
+
+SatyaMark follows an incremental rollout strategy, improving accuracy and coverage over time.
+
+---
+
+## 4. Verification Workflow
+
+### Step 1: Content Ingestion
+
+* Text
+* Images
+
+### Step 2: Claim Extraction
+
+* NLP models extract factual claims from text
+* Vision models analyze image content and metadata
+
+### Step 3: Cross Verification
+
+* Retrieval-Augmented Generation (RAG)
+* Vector search using FAISS / Milvus
+* Trusted sources and internal knowledge bases
+* Detection of AI-generated or synthetic media
+
+### Step 4: Verdict Assignment
+
+Each verification produces:
+
+* A verification mark
+* Confidence score
+* Human-readable explanation
+
+### Step 5: Feedback Loop
+
+* Users can submit feedback or request rechecks
+* The system improves continuously
+
+---
+
+## 5. Verification Marks
+
+SatyaMark assigns clear, visual trust indicators to content:
+
+* Correct
+* Incorrect
+* Verifiable
+* Unverifiable
+* Insufficient
+* Pending
+* AI-Generated
+* Non AI / Human-Generated
+
+These marks are designed to be instantly understandable by users.
+
+---
+
+## 6. Accuracy & Maturity Notes
+
+* Text verification is currently the most reliable component
+* Image verification is experimental and may have lower confidence
+* Hybrid verification techniques are planned to improve accuracy
+* SatyaMark prioritizes transparency over false certainty
+
+---
+
+## 7. Privacy & Data Handling
+
+SatyaMark is privacy-first by design.
+
+* No use of content for advertising, profiling, or resale
+* Original text is not stored
+* A short AI-generated summary of text may be stored for transparency
+* Images may be temporarily stored only to display verification results on the SatyaMark platform
+* Data is processed ephemerally wherever possible
+
+---
+
+## 8. AI Models & Processing
+
+SatyaMark uses a combination of self-hosted systems and third-party Large Language Models.
+
+Models may include:
+
+* LLaMA 3 (Meta)
+* Mistral 7B
+* DeepSeek R1 & V3
+* Hermes 3
+* Qwen 2.5
+
+Third-party models are accessed via Hugging Face and process data only to generate verification results. Data handling by these providers follows their respective privacy policies.
+
+---
+
+## 9. Platform Architecture
+
+* Central verification backend
+* SDK / API for cross-platform integration
+* Real-time processing pipeline
+* Modular and extensible design
+
+---
+
+## 10. Target Users
+
+* Social media platforms
+* Messaging applications
+* Content publishers
+* Moderation teams
+* Researchers
+* General public
+
+---
+
+## 11. Go-To-Market Strategy
+
+* Pilot SDK with niche publishers and fact-checking NGOs
+* Partnerships with messaging apps and CMS platforms
+* Developer-first documentation and sample integrations
+
+---
+
+## 12. Monetization
+
+* Tiered API / SDK subscriptions
+* Enterprise verification and moderation features
+* Analytics dashboards for moderation teams
+
+---
+
+## 13. Design Principles
+
+* Transparency over certainty
+* Trust before speed
+* Privacy-first by default
+* Honest accuracy disclosure
+* Incremental and scalable rollout
+
+---
+
+## 14. Important Constraints
+
+* Video and audio verification are not yet supported
+* Image verification accuracy is currently limited
+* SatyaMark should not be treated as infallible
+* Avoid overpromising capabilities
+
+---
+
+## 15. One-Line Positioning
+
+**SatyaMark is a trust infrastructure layer that verifies digital content and surfaces clear, evidence-backed credibility signals in real time.**

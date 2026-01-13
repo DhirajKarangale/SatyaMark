@@ -52,7 +52,8 @@ Create a `.env` file in the backend root:
 
 ```
 PORT=1000
-REDIS_URL=rediss://your-upstash-url
+REDIS_TEXT_URL=rediss://your-upstash-url
+REDIS_IMAGE_URL=rediss://your-upstash-url
 RESULT_RECEIVER_TEXT=http://localhost:1000/ai-callback/text
 RESULT_RECEIVER_IMG=http://localhost:1000/ai-callback/image
 IMAGE_ALGO=FORENSIC

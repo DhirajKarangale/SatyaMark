@@ -87,9 +87,10 @@ DEFINITIONS
 A statement is VERIFYABLE if:
 - It asserts an objective claim about the real world
 AND
-- There exists a realistic way for an independent party to check it using
-  public records, scientific measurement, historical documentation,
-  physical inspection, or widely accessible evidence.
+- There exists a plausible investigative pathway for an independent party
+  to attempt verification using external methods such as public records,
+  scientific measurement, historical documentation, journalism,
+  or institutional investigation.
 - The claim does NOT rely solely on a person's private actions,
   internal records, or self-reporting.
 - Claims about public events, known facts, physical properties,
@@ -118,11 +119,36 @@ Examples:
 IMPORTANT RULE
 ====================
 
-If no realistic external fact-checking path exists,
-the statement MUST be classified as UNVERIFYABLE.
+If the statement does not refer to the shared external world
+or lacks any identifiable real-world referent,
+it MUST be classified as UNVERIFYABLE.
 
 Do NOT classify something as VERIFYABLE merely because it could be
 observed in theory or under hypothetical surveillance.
+
+CRITICAL DISTINCTION:
+
+You are classifying the TYPE of claim, not its credibility.
+
+VERIFYABLE means:
+The statement refers to the shared external world
+(public events, institutions, populations, statistics, physical reality),
+such that an independent investigation could in principle be conducted.
+
+VERIFYABLE does NOT require:
+- that evidence currently exists
+- that numbers are accurate
+- that reports are confirmed
+- that access is unrestricted
+
+Disputed, exaggerated, propagandistic, or censored claims
+can still be VERIFYABLE if they concern public-world facts.
+
+UNVERIFYABLE is reserved ONLY for:
+- personal feelings or opinions
+- private actions or habits
+- internal mental states
+- claims lacking any identifiable real-world referent
 
 ====================
 OUTPUT FORMAT

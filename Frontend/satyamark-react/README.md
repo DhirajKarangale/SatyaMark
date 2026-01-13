@@ -4,6 +4,7 @@
 
 SatyaMark is a React library that provides real-time verification for text and image content through AI-powered fact-checking and deepfake detection. Display transparent trust signals directly in your UI to help users distinguish between reliable and unreliable information.
 
+![npm downloads](https://img.shields.io/npm/dt/satyamark-react)
 [![npm version](https://badge.fury.io/js/satyamark-react.svg)](https://www.npmjs.com/package/satyamark-react)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 

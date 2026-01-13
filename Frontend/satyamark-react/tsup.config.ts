@@ -10,5 +10,4 @@ export default defineConfig({
   loader: {
     ".png": "copy"
   },
-  publicDir: "icons-mark"
 });

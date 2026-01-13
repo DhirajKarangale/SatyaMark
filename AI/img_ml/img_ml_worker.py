@@ -10,6 +10,7 @@ from connect import connect_llms
 load_dotenv()
 
 REDIS_URL = os.getenv("REDIS_URL")
+REDIS_CHECK_RATE = int(os.getenv("REDIS_CHECK_RATE", "10000"))
 
 GROUP = "workers"
 CONSUMER = "image-ml-worker-1"
@@ -28,7 +29,7 @@ def process_loop():
     connect_llms()
 
     while True:
-        entries = r.xreadgroup(GROUP, CONSUMER, {STREAM_KEY: ">"}, count=1, block=5000)
+        entries = r.xreadgroup(GROUP, CONSUMER, {STREAM_KEY: ">"}, count=1, block=REDIS_CHECK_RATE)
 
         if not entries:
             continue

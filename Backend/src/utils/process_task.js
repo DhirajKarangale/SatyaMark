@@ -22,10 +22,6 @@ function getTask(data) {
     const text = data.text;
     const image_url = data.image_url;
 
-    // if (image_url) process_image(clientId, jobId, image_url);
-    // else if (text) process_text(clientId, jobId, text);
-
-
     const hasText = typeof text === "string" && text.trim().length > 0;
     const hasImage = typeof image_url === "string" && image_url.trim().length > 0;
 
@@ -68,6 +64,7 @@ async function process_text(clientId, jobId, text) {
     console.log(`[TEXT] Task enqueued → job=${jobId}`);
 
     await enqueueJob({
+        type: "text",
         text: text,
         jobId: jobId,
         clientId: clientId,
@@ -104,6 +101,7 @@ async function process_image(clientId, jobId, image_url) {
 
     console.log(`[IMAGE] Task enqueued → job=${jobId}, algo=${IMAGE_ALGO}`);
     await enqueueJob({
+        type: "image",
         jobId: jobId,
         clientId: clientId,
         image_url: image_url,

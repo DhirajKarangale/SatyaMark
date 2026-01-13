@@ -22,8 +22,9 @@ export function getUserId() {
 
     if (!id) {
         const uuid = crypto.randomUUID();
-        const time = uniqueTimestamp();
-        id = `${uuid}_${time}`;
+        // const time = uniqueTimestamp();
+        // id = `${uuid}_${time}`;
+        id = `${uuid}`;
     }
 
     return id;

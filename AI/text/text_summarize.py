@@ -1,5 +1,3 @@
-import time
-from huggingface_hub.utils import HfHubHTTPError
 import re
 from typing import Any, List
 from html import unescape
@@ -11,10 +9,34 @@ except Exception:
 
 from connect import get_llm
 
+_PREFERRED_MODELS = ["flan_t5_xl", "bart_large_cnn", "minicheck"]
+# _PREFERRED_MODELS = ["deepseek_r1", "flan_t5_xl", "bart_large_cnn", "minicheck"]
 
 # ------------------------------------------------------------------
 # Helpers
 # ------------------------------------------------------------------
+
+
+def _clean_summary_output(text: str) -> str:
+    if not isinstance(text, str):
+        return ""
+
+    # remove think blocks
+    text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL | re.IGNORECASE)
+
+    # remove labels
+    text = re.sub(r"^compressed summary:\s*", "", text, flags=re.IGNORECASE)
+
+    # normalize whitespace
+    text = text.strip()
+
+    # enforce sentence limit (max 2)
+    sentences = re.split(r"(?<=[.!?])\s+", text)
+    if len(sentences) > 2:
+        text = " ".join(sentences[:2]).strip()
+
+    return text
+
 
 def _extract_text(output: Any) -> str:
     if hasattr(output, "content"):
@@ -45,6 +67,7 @@ def _looks_english(text: str) -> bool:
 # ------------------------------------------------------------------
 # Low-level text cleaning (NO LLM)
 # ------------------------------------------------------------------
+
 
 def _clean_input_text(text: str) -> str:
     if not text:
@@ -105,6 +128,7 @@ def extract_core_content(raw: str) -> str:
 # LLM-assisted semantic pruning (NO summarization)
 # ------------------------------------------------------------------
 
+
 def semantic_prune(text: str) -> str:
     llm = get_llm("qwen2_5")
 
@@ -117,12 +141,24 @@ def semantic_prune(text: str) -> str:
         "Extracted content:"
     )
 
-    out = llm.invoke(prompt)
-    return _extract_text(out)
+    for model_name in _PREFERRED_MODELS:
+        try:
+            llm = get_llm(model_name)
+            out = llm.invoke(prompt)
+            # result = _extract_text(out)
+            raw = _extract_text(out)
+            result = _clean_summary_output(raw)
+            
+            if result:
+                return result
+        except Exception:
+            continue
+
 
 # ------------------------------------------------------------------
 # Meaning normalization (stable semantic input)
 # ------------------------------------------------------------------
+
 
 def normalize_meaning(text: str) -> str:
     cleaned = _clean_input_text(text)
@@ -138,8 +174,20 @@ def normalize_meaning(text: str) -> str:
         "Clean rewrite:"
     )
 
-    out = llm.invoke(prompt)
-    return _extract_text(out)
+    for model_name in _PREFERRED_MODELS:
+        try:
+            llm = get_llm(model_name)
+            out = llm.invoke(prompt)
+            # result = _extract_text(out)
+            raw = _extract_text(out)
+            result = _clean_summary_output(raw)
+
+            if result:
+                return result
+        except Exception:
+            continue
+
+    return cleaned
 
 
 def summarize_text(text: str) -> str:
@@ -154,9 +202,20 @@ def summarize_text(text: str) -> str:
         "Compressed summary:"
     )
 
-    out = llm.invoke(prompt)
-    return _extract_text(out)
+    for model_name in _PREFERRED_MODELS:
+        try:
+            llm = get_llm(model_name)
+            out = llm.invoke(prompt)
+            # result = _extract_text(out)
+            raw = _extract_text(out)
+            result = _clean_summary_output(raw)
+            
+            if result:
+                return result
+        except Exception:
+            continue
 
+    return text
 
 
 def clean_and_summarize(raw_input: str) -> str:

@@ -1,7 +1,8 @@
 from typing import Any, Dict, List, Optional
 from connect import get_llm 
 
-_PREFERRED_MODELS = ["deepseek_r1", "qwen2_5", "hermes", "llama3"]
+# _PREFERRED_MODELS = ["deepseek_r1", "qwen2_5", "hermes", "llama3"]
+_PREFERRED_MODELS = ["deepseek_r1", "bart_large_cnn", "flan_t5_xl"]
 
 
 def _choose_llm_for_summarization(preferred: Optional[List[str]] = None):
@@ -25,7 +26,7 @@ def _choose_llm_for_summarization(preferred: Optional[List[str]] = None):
             continue
 
     # fallback attempts
-    for fallback_name in ("deepseek_r1", "llama3"):
+    for fallback_name in _PREFERRED_MODELS:
         try:
             return get_llm(fallback_name), fallback_name
         except Exception as e:
@@ -138,7 +139,7 @@ _SUMMARIZE_PROMPT = """You are a careful assistant that summarizes news and arti
 Your task:
 - Read the ARTICLE.
 - Focus primarily on information that is relevant to the given SUMMARY/CLAIM.
-- Produce a concise summary (3–5 sentences) highlighting the most relevant facts.
+- Produce a concise summary (3-5 sentences) highlighting the most relevant facts.
 - If the ARTICLE is unrelated to the SUMMARY/CLAIM, just summarize the main facts of the ARTICLE.
 
 Return ONLY the summary text (no JSON, no extra explanation).
@@ -172,12 +173,10 @@ def summarize_web_content_in_place(
     for item in web_content:
         original = (item.get("data") or "").strip()
         if not original:
-            # nothing to summarize
             continue
 
         article_for_prompt = original
         if max_chars_per_article and len(article_for_prompt) > max_chars_per_article:
-            # simple truncation to keep prompts reasonable
             head = article_for_prompt[: max_chars_per_article // 2]
             tail = article_for_prompt[-(max_chars_per_article // 2):]
             article_for_prompt = head + "\n\n...TRUNCATED MIDDLE...\n\n" + tail
@@ -190,7 +189,6 @@ def summarize_web_content_in_place(
         try:
             summary_out = _call_llm_safe(llm, prompt)
         except Exception:
-            # if summarization fails, keep original text
             summary_out = original
 
         item["data"] = (summary_out or original).strip()

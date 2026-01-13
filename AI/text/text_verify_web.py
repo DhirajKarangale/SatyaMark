@@ -151,7 +151,7 @@ STATEMENT:
 "{text}"
 
 You are given information that was found publicly online.
-Use it ONLY if it is relevant to the statement.
+Use it ONLY if it is directly relevant to verifying the statement.
 
 ONLINE INFORMATION:
 {json.dumps(cleaned_web, ensure_ascii=False, indent=2)}
@@ -163,22 +163,84 @@ You must determine whether the statement is:
 - Incorrect
 - Insufficient
 
-Follow these principles:
+Your goal is to verify whether the statement accurately describes
+a real-world event or fact, not whether someone reported it.
+
+-----------------------------------
+CORE FACT-CHECKING RULES
+-----------------------------------
 
 1. Compare the statement directly against the online information.
-2. If the information clearly confirms the claim, mark it Correct.
-3. If the information clearly disproves the claim, mark it Incorrect.
-4. If the information does not clearly confirm or disprove the claim, mark it Insufficient.
+2. Mark the statement Correct ONLY if the real-world event or fact
+   is independently confirmed by multiple reliable sources.
+3. Mark the statement Incorrect ONLY if the online information
+   explicitly and clearly disproves the claim.
+4. Mark the statement Insufficient if the information does not
+   clearly confirm or disprove the claim.
 
-Important clarifications:
-- Phrases like "latest report", "current data", or "recent figures" refer to the most up-to-date information available in the provided sources.
-- Numeric claims should be evaluated by whether the reported values satisfy or contradict the claim.
-- Do not require exact wording matches; evaluate factual equivalence.
-- Do not guess or assume facts not present in the information.
+-----------------------------------
+CLAIM TYPE RULE (MANDATORY)
+-----------------------------------
+
+If a statement asserts that a real-world event occurred
+(e.g., deaths, attacks, casualties, disasters, mass arrests),
+you must verify whether the event itself is independently confirmed.
+
+Confirmation that a media outlet, organization, or individual
+reported or concluded something does NOT count as confirmation
+of the event itself.
+
+Such cases MUST be marked Insufficient unless independently verified.
+
+-----------------------------------
+SOURCE INDEPENDENCE RULE (MANDATORY)
+-----------------------------------
+
+Multiple sources only count as independent if they originate
+from different organizations and do not rely on the same
+primary report or investigation.
+
+Sources that merely repeat, summarize, or cite another outlet’s
+reporting (including Wikipedia) do NOT count as independent
+confirmation.
+
+Wikipedia may be used for background context only and must NOT
+be treated as primary evidence for extraordinary claims.
+
+-----------------------------------
+NUMERIC CLAIM RULE (MANDATORY)
+-----------------------------------
+
+Numeric claims must be evaluated carefully:
+
+- Lower confirmed numbers do NOT contradict higher claimed numbers
+  unless a source explicitly states that the higher figure is false,
+  impossible, or disproven.
+
+- Reports stating “at least”, “confirmed so far”, or partial counts
+  represent minimum verified figures, not upper limits.
+
+- If numeric figures conflict without explicit refutation,
+  the result MUST be marked Insufficient.
+
+-----------------------------------
+EXTRAORDINARY CLAIM RULE
+-----------------------------------
+
+Claims involving exceptionally large numbers of deaths,
+historic-scale events, or mass casualties require confirmation
+from multiple independent international or neutral sources.
+
+Single-outlet confirmation is insufficient for such claims.
+
+-----------------------------------
+REASONING AND OUTPUT
+-----------------------------------
 
 Then:
 - Explain your reasoning in clear, non-technical language.
-- List only URLs that were actually used.
+- Do NOT rely on tone, emotion, or political framing.
+- List ONLY the URLs that were actually used in your reasoning.
 
 OUTPUT STRICT JSON ONLY:
 
@@ -192,14 +254,6 @@ OUTPUT STRICT JSON ONLY:
         response = llm.invoke(prompt)
         parsed = _safe_parse_json(response)
 
-        # final = parsed.get("final", {})
-        # reason = final.get("reason")
-        # confidence = final.get("confidence")
-        # urls = final.get("urls", [])
-
-        # analysis = parsed.get("analysis", {})
-        # relationship = _normalize_relationship(analysis.get("relationship"))
-
         mark = parsed.get("mark")
         confidence = parsed.get("confidence")
         reason = parsed.get("reason")
@@ -210,14 +264,6 @@ OUTPUT STRICT JSON ONLY:
 
         if not isinstance(urls, list):
             urls = []
-
-        # Enforce verdict strictly from relationship
-        # if relationship == "supports":
-        #     mark = "Correct"
-        # elif relationship == "contradicts":
-        #     mark = "Incorrect"
-        # else:
-        #     mark = "Insufficient"
 
         if mark == "Insufficient":
             confidence = _confidence_for_insufficient(len(cleaned_web))

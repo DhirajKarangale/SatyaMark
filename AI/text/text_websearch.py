@@ -12,7 +12,8 @@ load_dotenv()
 SERPER_API_KEY = os.getenv("SERPER_API_KEY")
 llm = get_llm("deepseek_r1")
 
-URLS_COUNT = 5
+SEARCH_COUNT = 20
+URLS_COUNT = 10
 
 prompt_template = """
 You are an expert at converting any claim or statement into a **strong, precise, factual web search query**.
@@ -79,54 +80,108 @@ def is_excluded(url: str):
     return any(domain in url for domain in EXCLUDED_DOMAINS)
 
 
-def get_urls(query: str):
-    search = GoogleSerperAPIWrapper(SERPER=SERPER_API_KEY)
-    result = search.results(query, n=20)
+def serper_search(query: str, tbs: str | None = None):
+    search = GoogleSerperAPIWrapper(
+        serper_api_key=SERPER_API_KEY,
+        search_params={"tbs": tbs} if tbs else None,
+    )
+    return search.results(query, n=SEARCH_COUNT)
 
-    organic_results = result.get("organic", [])
 
+def extract_urls(result):
     urls = []
-
-    for item in organic_results:
+    for item in result.get("organic", []):
         url = item.get("link")
-        if not url:
+        if not url or is_excluded(url):
             continue
-
-        if is_excluded(url):
-            continue
-
         urls.append(url)
-
         if len(urls) == URLS_COUNT:
             break
-
     return urls
 
 
-def extract_text(urls):
+def extract_urls_with_meta(result, freshness):
+    out = []
+    for item in result.get("organic", []):
+        url = item.get("link")
+        if not url or is_excluded(url):
+            continue
+        out.append(
+            {
+                "url": url,
+                "freshness": freshness,
+                "title": item.get("title"),
+                "snippet": item.get("snippet"),
+                "date": item.get("date"),
+            }
+        )
+        if len(out) == URLS_COUNT:
+            break
+    return out
+
+
+def get_urls_with_meta(query: str):
     results = []
 
-    for url in urls:
+    recent = serper_search(query, tbs="qdr:w")
+    results.extend(extract_urls_with_meta(recent, freshness="last_7_days"))
+
+    if len(results) < URLS_COUNT:
+        older = serper_search(query)
+        older_urls = extract_urls_with_meta(older, freshness="older")
+
+        existing = {r["url"] for r in results}
+        for item in older_urls:
+            if item["url"] not in existing:
+                results.append(item)
+            if len(results) == URLS_COUNT:
+                break
+
+    return results[:URLS_COUNT]
+
+
+def extract_text(url_items):
+    results = []
+
+    for item in url_items:
+        url = item["url"]
         try:
-            r = requests.get(url, timeout=10, headers={"User-Agent": "Mozilla/5.0"})
+            r = requests.get(
+                url,
+                timeout=10,
+                headers={"User-Agent": "Mozilla/5.0"},
+            )
 
-            if r.status_code != 200:
-                results.append({"url": url, "data": ""})
-                continue
+            text = ""
+            if r.status_code == 200:
+                extracted = trafilatura.extract(
+                    r.text,
+                    include_comments=False,
+                )
+                text = extracted.strip() if extracted else ""
 
-            downloaded = trafilatura.extract(r.text, include_comments=False)
-            clean_text = downloaded if downloaded else ""
-            results.append({"url": url, "data": clean_text.strip()})
+            results.append(
+                {
+                    **item,
+                    "data": text,
+                }
+            )
 
         except Exception:
-            results.append({"url": url, "data": ""})
+            results.append(
+                {
+                    **item,
+                    "data": "",
+                }
+            )
 
     return results
 
 
 def get_content(statement: str):
     query = get_query(statement)
-    urls = get_urls(query)
+    urls = get_urls_with_meta(query)
     content = extract_text(urls)
 
+    print("query: ", query)
     return content

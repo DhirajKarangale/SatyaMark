@@ -183,4 +183,5 @@ def get_content(statement: str):
     urls = get_urls_with_meta(query)
     content = extract_text(urls)
 
+    print("query: ", query)
     return content

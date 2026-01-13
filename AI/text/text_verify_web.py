@@ -192,14 +192,6 @@ OUTPUT STRICT JSON ONLY:
         response = llm.invoke(prompt)
         parsed = _safe_parse_json(response)
 
-        # final = parsed.get("final", {})
-        # reason = final.get("reason")
-        # confidence = final.get("confidence")
-        # urls = final.get("urls", [])
-
-        # analysis = parsed.get("analysis", {})
-        # relationship = _normalize_relationship(analysis.get("relationship"))
-
         mark = parsed.get("mark")
         confidence = parsed.get("confidence")
         reason = parsed.get("reason")
@@ -210,14 +202,6 @@ OUTPUT STRICT JSON ONLY:
 
         if not isinstance(urls, list):
             urls = []
-
-        # Enforce verdict strictly from relationship
-        # if relationship == "supports":
-        #     mark = "Correct"
-        # elif relationship == "contradicts":
-        #     mark = "Incorrect"
-        # else:
-        #     mark = "Insufficient"
 
         if mark == "Insufficient":
             confidence = _confidence_for_insufficient(len(cleaned_web))

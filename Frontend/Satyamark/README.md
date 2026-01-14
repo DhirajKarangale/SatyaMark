@@ -160,7 +160,6 @@ Create a `.env` file in `Frontend/Satyamark` with the following values:
 
 ```env
 VITE_URL_BASE=<backend_base_url>
-VITE_URL_WS=<backend_websocket_url>
 
 VITE_CLOUD_NAME=<cloudinary_cloud_name>
 VITE_UPLOAD_PRESET=<cloudinary_upload_preset>

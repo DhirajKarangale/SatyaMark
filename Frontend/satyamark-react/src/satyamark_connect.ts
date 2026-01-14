@@ -1,7 +1,7 @@
 import { preloadIcons } from "./utils/iconLoader";
 
-const wsUrl = "wss://satyamark.onrender.com";
 // const wsUrl = "ws://localhost:1000";
+let wsUrl: string | null = null;
 
 let socket: WebSocket | null = null;
 let storedConnectionData: SatyaMarkConnectionData | null = null;
@@ -17,6 +17,19 @@ type ReceiveCallback = (data: any) => void;
 const listeners: ReceiveCallback[] = [];
 let onConnectedCb: ConnectedCallback | null = null;
 
+async function getWsUrl() {
+    if (wsUrl) return wsUrl;
+
+    const res = await fetch(
+        "https://dhirajkarangale.github.io/SatyaMark/ws.json",
+        { cache: "no-store" }
+    );
+
+    const data = await res.json();
+    wsUrl = data.wsUrl;
+    return wsUrl;
+}
+
 export function onReceive(cb: ReceiveCallback) {
     listeners.push(cb);
     return () => {
@@ -29,7 +42,7 @@ export function onConnected(cb: ConnectedCallback) {
     onConnectedCb = cb;
 }
 
-export function init(connectionData: SatyaMarkConnectionData, options?: { onConnected?: ConnectedCallback }) {
+export async function init(connectionData: SatyaMarkConnectionData, options?: { onConnected?: ConnectedCallback }) {
     preloadIcons();
 
     if (socket && socket.readyState == WebSocket.OPEN && storedConnectionData == connectionData) {
@@ -37,7 +50,15 @@ export function init(connectionData: SatyaMarkConnectionData, options?: { onConn
         return;
     }
 
-    socket = new WebSocket(wsUrl);
+    const url = await getWsUrl();
+    if (url) {
+        socket = new WebSocket(url);
+    }
+    else {
+        console.error("WebSocket endpoint resolution failed. Unable to establish connection.");
+        return;
+    }
+
     onConnectedCb = options?.onConnected ?? onConnectedCb;
 
     socket.onopen = () => {

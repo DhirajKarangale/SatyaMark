@@ -1,4 +1,5 @@
-const wsUrl = import.meta.env.VITE_URL_WS;
+// wsUrl = ws://localhost:1000
+let wsUrl: string | null = null;
 
 let socket: WebSocket | null = null;
 let storedConnectionData: SatyaMarkConnectionData | null = null;
@@ -6,6 +7,19 @@ let storedConnectionData: SatyaMarkConnectionData | null = null;
 let isConnected = false;
 type ConnectionListener = (connected: boolean) => void;
 const connectionListeners: ConnectionListener[] = [];
+
+async function getWsUrl() {
+    if (wsUrl) return wsUrl;
+
+    const res = await fetch(
+        "https://dhirajkarangale.github.io/SatyaMark/ws.json",
+        { cache: "no-store" }
+    );
+
+    const data = await res.json();
+    wsUrl = data.wsUrl;
+    return wsUrl;
+}
 
 export function onConnectionChange(cb: ConnectionListener) {
     connectionListeners.push(cb);
@@ -40,13 +54,20 @@ export function onReceive(cb: ReceiveCallback) {
     };
 }
 
-export function init(connectionData: SatyaMarkConnectionData) {
+export async function init(connectionData: SatyaMarkConnectionData) {
     if (socket && socket.readyState == WebSocket.OPEN && storedConnectionData == connectionData) {
         console.log("Already Connected: ", connectionData);
         return;
     }
 
-    socket = new WebSocket(wsUrl);
+    const url = await getWsUrl();
+    if (url) {
+        socket = new WebSocket(url);
+    }
+    else {
+        console.error("WebSocket endpoint resolution failed. Unable to establish connection.");
+        return;
+    }
 
     socket.onopen = () => {
         console.log("Connected to server: ", connectionData.user_id);

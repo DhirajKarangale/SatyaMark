@@ -3,8 +3,23 @@ const db = require('./db');
 const tableName = "text_results";
 
 async function GetText(text_hash, summary_hash) {
-    const result = await db.query(`SELECT * FROM ${tableName} WHERE text_hash = $1 OR summary_hash = $2 LIMIT 1`, [text_hash, summary_hash]);
-    return result.rows[0];
+    if (text_hash) {
+        const byText = await db.query(
+            `SELECT * FROM ${tableName} WHERE text_hash = $1 LIMIT 1`,
+            [text_hash]
+        );
+        if (byText.rows.length) return byText.rows[0];
+    }
+
+    if (summary_hash) {
+        const bySummary = await db.query(
+            `SELECT * FROM ${tableName} WHERE summary_hash = $1 LIMIT 1`,
+            [summary_hash]
+        );
+        if (bySummary.rows.length) return bySummary.rows[0];
+    }
+
+    return null;
 }
 
 async function GetTextById(Id) {

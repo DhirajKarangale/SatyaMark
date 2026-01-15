@@ -17,6 +17,8 @@ let STREAM_KEY_IMAGE = STREAM_KEY_IMAGE_Forensic;
 if (IMAGE_ALGO && IMAGE_ALGO.toLowerCase() == "ml") STREAM_KEY_IMAGE = STREAM_KEY_IMAGE_ML;
 
 function getTask(data) {
+    if (!data || !data.clientId || !data.jobId) return;
+
     const clientId = data.clientId;
     const jobId = data.jobId;
     const text = data.text;
@@ -78,7 +80,14 @@ async function process_text(clientId, jobId, text) {
 async function process_image(clientId, jobId, image_url) {
     console.log(`[IMAGE] Task received → client=${clientId}, job=${jobId}`);
 
-    const { image_hash } = await generateImageHash(image_url)
+    let image_hash;
+    try {
+        ({ image_hash } = await generateImageHash(image_url));
+    } catch (err) {
+        console.log("[IMAGE] Hash failed:", err.message);
+        // return;
+    }
+    // const { image_hash } = await generateImageHash(image_url)
     const imageData = await modelImage.GetImage(image_url, image_hash);
 
     if (imageData && typeof imageData === "object") {

@@ -14,7 +14,7 @@ function startws(server) {
     socket.on("message", (msg) => {
       let data;
       try {
-        data = JSON.parse(msg);
+        data = JSON.parse(msg.toString());
       } catch {
         return;
       }
@@ -25,14 +25,16 @@ function startws(server) {
         return;
       }
 
-      console.log("Client message:", data.clientId);
       process_task.getTask(data);
     });
 
     socket.on("close", () => {
       for (const [id, s] of clients.entries()) {
-        if (s === socket) clients.delete(id);
-        console.log("Connection Closed: ", id);
+        if (s === socket) {
+          clients.delete(id);
+          console.log("Connection Closed: ", id);
+          break;
+        }
       }
     });
   });

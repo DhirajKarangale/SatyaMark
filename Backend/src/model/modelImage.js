@@ -3,8 +3,23 @@ const db = require('./db');
 const tableName = "image_results";
 
 async function GetImage(image_url, image_hash) {
-    const result = await db.query(`SELECT * FROM ${tableName} WHERE image_url = $1 OR image_hash = $2 LIMIT 1`, [image_url, image_hash]);
-    return result.rows[0];
+    if (image_hash) {
+        const byHash = await db.query(
+            `SELECT * FROM ${tableName} WHERE image_hash = $1 LIMIT 1`,
+            [image_hash]
+        );
+        if (byHash.rows.length) return byHash.rows[0];
+    }
+
+    if (image_url) {
+        const byUrl = await db.query(
+            `SELECT * FROM ${tableName} WHERE image_url = $1 LIMIT 1`,
+            [image_url]
+        );
+        if (byUrl.rows.length) return byUrl.rows[0];
+    }
+
+    return null;
 }
 
 async function GetImageById(Id) {

@@ -6,7 +6,10 @@ const textRedis = redis.createClient({
   socket: { reconnectStrategy: r => Math.min(r * 100, 3000) },
 });
 
-textRedis.on("error", e => console.log("Text Redis error:", e.message));
-(async () => { if (!textRedis.isOpen) await textRedis.connect(); })();
+textRedis.on("error", e =>
+  console.log("Text Redis error:", e.message)
+);
 
-module.exports = textRedis;
+const ready = textRedis.connect();
+
+module.exports = { textRedis, ready };

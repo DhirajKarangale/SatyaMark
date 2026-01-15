@@ -6,7 +6,10 @@ const imageRedis = redis.createClient({
   socket: { reconnectStrategy: r => Math.min(r * 100, 3000) },
 });
 
-imageRedis.on("error", e => console.log("Image Redis error:", e.message));
-(async () => { if (!imageRedis.isOpen) await imageRedis.connect(); })();
+imageRedis.on("error", e =>
+  console.log("Image Redis error:", e.message)
+);
 
-module.exports = imageRedis;
+const ready = imageRedis.connect();
+
+module.exports = { imageRedis, ready };

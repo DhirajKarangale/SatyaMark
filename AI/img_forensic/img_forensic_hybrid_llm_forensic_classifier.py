@@ -5,7 +5,7 @@ import json
 import regex as re
 
 # Use BEST reasoning model
-llm = get_llm("qwen2_5")
+llm = get_llm("deepseek_r1")
 
 def interpret_forensics(w, s, g, l, m, sc):
     facts = []

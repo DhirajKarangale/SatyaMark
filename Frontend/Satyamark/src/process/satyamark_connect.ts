@@ -1,5 +1,5 @@
-// wsUrl = ws://localhost:1000
 let wsUrl: string | null = null;
+const wsUrlLocal = "ws://localhost:1000";
 
 let socket: WebSocket | null = null;
 let storedConnectionData: SatyaMarkConnectionData | null = null;
@@ -62,7 +62,7 @@ export async function init(connectionData: SatyaMarkConnectionData) {
 
     const url = await getWsUrl();
     if (url) {
-        socket = new WebSocket(url);
+        socket = new WebSocket(wsUrlLocal);
     }
     else {
         console.error("WebSocket endpoint resolution failed. Unable to establish connection.");

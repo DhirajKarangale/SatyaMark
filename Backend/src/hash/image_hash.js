@@ -1,37 +1,38 @@
 const crypto = require("crypto");
 const { URL } = require("url");
-const fetch = require("node-fetch"); // REQUIRED
 
 async function generateImageHash(imageUrl) {
-  let parsedUrl;
+    try {
+        let parsedUrl;
+        try {
+            parsedUrl = new URL(imageUrl);
+        } catch {
+            throw new Error("Invalid URL");
+        }
 
-  try {
-    parsedUrl = new URL(imageUrl);
-  } catch {
-    throw new Error("Invalid image URL");
-  }
+        if (!["http:", "https:"].includes(parsedUrl.protocol)) {
+            throw new Error("Only HTTP/HTTPS URLs are allowed");
+        }
 
-  if (!["http:", "https:"].includes(parsedUrl.protocol)) {
-    throw new Error("Only HTTP/HTTPS URLs are allowed");
-  }
+        const response = await fetch(imageUrl);
 
-  const response = await fetch(imageUrl, { timeout: 10000 });
+        if (!response.ok) {
+            throw new Error(`Failed to download image: ${response.status} ${response.statusText}`);
+        }
 
-  if (!response.ok) {
-    throw new Error(`Failed to download image: ${response.status}`);
-  }
+        const arrayBuffer = await response.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
 
-  const hash = crypto.createHash("sha256");
+        if (!buffer.length) {
+            throw new Error("Downloaded image is empty");
+        }
 
-  await new Promise((resolve, reject) => {
-    response.body.on("data", chunk => hash.update(chunk));
-    response.body.on("end", resolve);
-    response.body.on("error", reject);
-  });
+        const hash = crypto.createHash("sha256").update(buffer).digest("hex");
 
-  return {
-    image_hash: hash.digest("hex"),
-  };
+        return { image_hash: hash };
+    } catch (err) {
+        return { error: err.message };
+    }
 }
 
 module.exports = { generateImageHash };

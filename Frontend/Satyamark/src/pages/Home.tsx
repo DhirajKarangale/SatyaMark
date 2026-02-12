@@ -3,7 +3,7 @@ import { motion, type Variants } from "framer-motion";
 import { Link } from "react-router-dom";
 import { MARK_META } from "../utils/MARK_META";
 import { routeChat, routeDoccu } from "../utils/Routes";
-import { CheckCircle2, XCircle, AlertCircle, Sparkles, Github, ExternalLink, Package } from "lucide-react";
+import { CheckCircle2, XCircle, AlertCircle, Sparkles, Github, ExternalLink, Package, MessageCircleCode } from "lucide-react";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -54,18 +54,18 @@ function Home() {
               variants={fadeUp}
               className="flex flex-wrap items-center justify-center gap-4 pt-4"
             >
-              {/* <Link
-                  to={routeChat}
-                  className="inline-flex items-center gap-2 px-8 py-3 
-                      bg-linear-to-r from-cyan-600 to-blue-600 
-                      hover:from-cyan-500 hover:to-blue-500
-                      text-white font-semibold rounded-lg 
-                      shadow-lg shadow-cyan-500/25 
-                      transition-all duration-200 hover:scale-105"
+
+              <Link
+                to={routeChat}
+                className="inline-flex items-center gap-2 px-8 py-3 
+               bg-white/5 hover:bg-white/10 
+               border border-white/20 
+               text-white font-semibold rounded-lg 
+                transition-all duration-200 hover:scale-105"
               >
-                  Try Live Demo
-                  <ExternalLink size={18} />
-              </Link> */}
+                <MessageCircleCode size={18} />
+                Open Chat
+              </Link>
 
               <a
                 href="https://satyamark-demo-socialmedia.vercel.app/"

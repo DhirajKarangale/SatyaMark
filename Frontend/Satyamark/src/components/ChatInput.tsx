@@ -160,8 +160,8 @@ function ChatInput() {
           <div className="flex gap-3 items-end">
             {/* TEXTAREA */}
             <div className="flex-1 bg-white/5 rounded-xl px-4 py-3 
-                            border border-white/10 focus-within:border-cyan-500/50 
-                            transition-colors">
+              border border-white/10 focus-within:border-cyan-500/50 
+              transition-colors">
               <textarea
                 ref={textareaRef}
                 value={text}
@@ -175,8 +175,8 @@ function ChatInput() {
                 placeholder="Enter text or upload an image to verify..."
                 rows={1}
                 className="w-full resize-none bg-transparent text-white 
-                                    placeholder:text-gray-500 outline-none
-                                    max-h-[120px] overflow-y-auto custom-scroll"
+                placeholder:text-gray-500 outline-none
+                max-h-[120px] overflow-y-auto custom-scroll"
               />
             </div>
 
@@ -186,10 +186,10 @@ function ChatInput() {
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
                 className="w-11 h-11 rounded-xl flex justify-center items-center
-                                    bg-white/5 hover:bg-white/10 border border-white/10
-                                    text-gray-300 hover:text-white
-                                    disabled:opacity-50 disabled:cursor-not-allowed
-                                    transition-all duration-200"
+                bg-white/5 hover:bg-white/10 border border-white/10
+                text-gray-300 hover:text-white
+                disabled:opacity-50 disabled:cursor-not-allowed
+                transition-all duration-200"
                 title="Upload image"
               >
                 <Paperclip size={20} />
@@ -199,9 +199,8 @@ function ChatInput() {
                 onClick={send}
                 disabled={!isValid || uploading}
                 whileTap={{ scale: 0.95 }}
-                className={`w-11 h-11 rounded-xl flex justify-center items-center
-                                    transition-all duration-200
-                                    ${isValid && !uploading
+                className={`w-11 h-11 rounded-xl flex justify-center items-center transition-all duration-200
+                ${isValid && !uploading
                     ? "bg-linear-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white shadow-lg shadow-cyan-500/25"
                     : "bg-slate-700 text-gray-500 cursor-not-allowed"
                   }`}

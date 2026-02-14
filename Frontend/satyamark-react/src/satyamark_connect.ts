@@ -29,7 +29,7 @@ async function getWsUrl() {
 
     const data = await res.json();
     wsUrl = data.wsUrl;
-    wsUrl = wsUrlLocal;
+    // wsUrl = wsUrlLocal;
     return wsUrl;
 }
 

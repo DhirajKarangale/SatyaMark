@@ -1,7 +1,7 @@
 const eventBus = require("../starter/eventBus");
 
-const LIMIT = 100;
-const WINDOW = 10_000;
+const LIMIT = 5;
+const WINDOW = 15_000;
 const CLEANUP_INTERVAL = 60 * 60 * 1000;
 
 const requests = new Map();

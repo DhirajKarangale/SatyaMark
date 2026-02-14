@@ -2,8 +2,10 @@ import PostCard from "./PostCard";
 import posts from "../data/posts.json";
 import { type PostData } from "../utils/PostData";
 
-export default function Home() {
+export default function Home({ isConnectedToSatyamark }: { isConnectedToSatyamark: boolean }) {
     const typedPosts = posts as PostData[];
+
+    if (!isConnectedToSatyamark) return <>Loading...</>
 
     return (
         <div className="min-h-screen bg-black text-white flex justify-center">

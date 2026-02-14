@@ -55,7 +55,7 @@ export async function process(divRef: HTMLDivElement, dataId: string) {
         throw new Error("Extracted text is too short");
     }
 
-    const jobId = sendData(mergedText, validImage ?? "", dataId);
+    const jobId = await sendData(mergedText, validImage ?? "", dataId);
 
     return jobId;
 }

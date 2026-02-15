@@ -5,7 +5,7 @@ import { type PostData } from "../utils/PostData";
 export default function Home({ isConnectedToSatyamark }: { isConnectedToSatyamark: boolean }) {
     const typedPosts = posts as PostData[];
 
-    if (false && !isConnectedToSatyamark) {
+    if (!isConnectedToSatyamark) {
         return (
             <div className="min-h-screen bg-black flex items-center justify-center">
                 <div className="flex flex-col items-center gap-4">

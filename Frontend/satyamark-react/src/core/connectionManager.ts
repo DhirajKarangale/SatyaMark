@@ -13,6 +13,10 @@ type ConnectionContext = {
 let context: ConnectionContext | null = null;
 let socketClient: SocketClient | null = null;
 
+let isConnecting = false;
+let isConnected = false;
+let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+
 /* -------------------------------------------------------------------------- */
 /*                          WebSocket URL Resolution                          */
 /* -------------------------------------------------------------------------- */
@@ -44,8 +48,17 @@ export async function init(newContext: ConnectionContext) {
   if (!newContext?.app_id || !newContext?.user_id) {
     throw new Error("init() requires valid app_id and user_id");
   }
-  
+
+  if (isConnecting || isConnected) return;
   context = newContext;
+  await connect();
+}
+
+async function connect() {
+  if (!context) return;
+  if (isConnecting || isConnected) return;
+
+  isConnecting = true;
 
   const url = await resolveWsUrl();
 
@@ -60,6 +73,8 @@ export async function init(newContext: ConnectionContext) {
         sessionId,
       });
 
+      isConnected = true;
+      isConnecting = false;
       emitConnection(context);
     },
 
@@ -73,8 +88,6 @@ export async function init(newContext: ConnectionContext) {
         if (data.msg === "Invalid session") {
           clearSession();
           socketClient?.close();
-          emitConnection(null);
-          init(context!);
         }
         return;
       }
@@ -85,7 +98,13 @@ export async function init(newContext: ConnectionContext) {
     },
 
     onClose: () => {
+      if (!isConnected && !isConnecting) return;
+
+      isConnected = false;
+      isConnecting = false;
+
       emitConnection(null);
+      scheduleReconnect();
     },
 
     onError: () => {
@@ -94,6 +113,15 @@ export async function init(newContext: ConnectionContext) {
   });
 
   socketClient.connect();
+}
+
+function scheduleReconnect() {
+  if (reconnectTimer || !context) return;
+
+  reconnectTimer = setTimeout(() => {
+    reconnectTimer = null;
+    connect();
+  }, 1000);
 }
 
 /* -------------------------------------------------------------------------- */

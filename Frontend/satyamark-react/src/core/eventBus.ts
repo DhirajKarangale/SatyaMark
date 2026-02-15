@@ -58,14 +58,13 @@ export function onConnected(
   return () => connectionListeners.delete(cb);
 }
 
-export function emitConnection(
-  context: ConnectionContext | null
-) {
+export function emitConnection(context: ConnectionContext | null) {
   connectionListeners.forEach((cb) => {
+    console.log("emitConnection");
     try {
       cb(context);
     } catch (err) {
-      console.error("Connection listener error:", err);
+      console.log("Connection listener error:", err);
     }
   });
 }

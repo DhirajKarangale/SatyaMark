@@ -19,8 +19,7 @@ export class SocketClient {
     this.socket = new WebSocket(this.url);
 
     this.socket.onopen = () => this.handlers.onOpen();
-    this.socket.onmessage = (event) =>
-      this.handlers.onMessage(JSON.parse(event.data));
+    this.socket.onmessage = (event) => this.handlers.onMessage(JSON.parse(event.data));
     this.socket.onclose = () => this.handlers.onClose();
     this.socket.onerror = () => this.handlers.onError();
   }

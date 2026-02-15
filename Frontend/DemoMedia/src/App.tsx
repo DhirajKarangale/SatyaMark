@@ -29,10 +29,16 @@ export default function App() {
     return id;
   }
 
-  onConnected((data: any) => {
-    setIsConnectedToSatyamark(data);
-    console.log("Connected:", data);
-  });
+  useEffect(() => {
+    const unsubscribe = onConnected((data: any) => {
+      setIsConnectedToSatyamark(!!data);
+      console.log("Connected:", data);
+    });
+  
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     init({ app_id: "APP123", user_id: getUserId() })

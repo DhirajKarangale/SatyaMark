@@ -1,7 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { type PostData } from "../utils/PostData";
 import { process } from "satyamark-react";
-import { registerStatus } from "satyamark-react";
 
 type PostCardProps = {
     postData: PostData;
@@ -20,48 +19,12 @@ const formatDate = (dateStr: string) => {
 
 export default function PostCard({ postData }: PostCardProps) {
     const { title, description, imageURL, userName, date } = postData;
-    const [jobId, setJobId] = useState<string | null>(null);
     const cardRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
-        let mounted = true;
-
-        const run = async () => {
-            if (!cardRef.current) return;
-
-            let attempt = 0;
-            let id: string | null | undefined = null;
-
-            while (mounted && !id) {
-                attempt++;
-                try {
-                    id = await process(cardRef.current, postData.id);
-
-                    if (id) {
-                        if (!mounted) return;
-                        setJobId(id);
-                        break;
-                    }
-                } catch (error) {
-                    console.log(error);
-                    break;
-                }
-
-                await new Promise((resolve) => setTimeout(resolve, 1000));
-            }
-        };
-
-        run();
-
-        return () => {
-            mounted = false;
-        };
+        if (!cardRef.current) return;
+        process(cardRef.current, postData.id);
     }, []);
-
-    useEffect(() => {
-        if (!jobId || !cardRef.current) return;
-        registerStatus(jobId, cardRef.current, { iconSize: 20 });
-    }, [jobId]);
 
     return (
         <div

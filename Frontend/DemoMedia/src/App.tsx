@@ -1,8 +1,10 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { init, onConnected } from "satyamark-react";
 import Home from "./components/Home";
 
 export default function App() {
+  const [isConnectedToSatyamark, setIsConnectedToSatyamark] = useState(false);
+
   function uniqueTimestamp() {
     const now = new Date();
 
@@ -27,13 +29,20 @@ export default function App() {
     return id;
   }
 
-  onConnected((data: any) => {
-    console.log("Connected:", data);
-  });
+  useEffect(() => {
+    const unsubscribe = onConnected((data: any) => {
+      setIsConnectedToSatyamark(!!data);
+      console.log("Connected:", data);
+    });
+  
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     init({ app_id: "APP123", user_id: getUserId() })
   }, []);
 
-  return <Home />;
+  return <Home isConnectedToSatyamark={isConnectedToSatyamark} />;
 }

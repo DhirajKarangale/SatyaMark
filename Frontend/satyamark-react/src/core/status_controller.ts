@@ -1,43 +1,15 @@
-import { onReceive } from "./satyamark_connect";
-import { ICON_URLS, type IconKey } from "./utils/iconRegistry";
-import { ensureIconLoaded } from "./utils/iconLoader";
-
-type StatusOptions = {
-    iconSize?: number;
-};
-
-type JobEntry = {
-    root: HTMLElement;
-    iconSize: number;
-};
-
-const jobMap: Record<string, JobEntry> = {};
+import { ICON_URLS, type IconKey } from "../utils/iconRegistry";
+import { ensureIconLoaded } from "../utils/iconLoader";
 
 const DEFAULT_ICON_SIZE = 20;
 const satyamark_url = "https://satyamark.vercel.app/chat";
 
-const iconMap = ICON_URLS;
+export function updateIcon(containerRef: HTMLDivElement, data: any) {
+    const root = containerRef;
+    const iconSize = DEFAULT_ICON_SIZE;
+    let mark: IconKey = "pending";
+    if (data && data.mark) mark = data.mark?.toLowerCase();
 
-export function registerStatus(
-    jobId: string,
-    rootElement: HTMLElement,
-    options: StatusOptions = {}
-) {
-    jobMap[jobId] = {
-        root: rootElement,
-        iconSize: options.iconSize ?? DEFAULT_ICON_SIZE,
-    };
-
-    updateIcon(jobId, "pending", null);
-}
-
-function updateIcon(jobId: string, rawMark: string, data: any) {
-    const entry = jobMap[jobId];
-    if (!entry) return;
-
-    const { root, iconSize } = entry;
-    const mark: IconKey = rawMark in ICON_URLS ? (rawMark as IconKey) : "pending";
-  
     ensureIconLoaded(mark);
 
     const container = root.querySelector("[data-satyamark-status-container]") as HTMLElement;
@@ -96,8 +68,3 @@ function updateIcon(jobId: string, rawMark: string, data: any) {
         icon.onclick = null;
     }
 }
-
-onReceive((data) => {
-    if (!data?.jobId) return;
-    updateIcon(data.jobId, data.mark?.toLowerCase() ?? "pending", data);
-});

@@ -1,6 +1,7 @@
 const WebSocket = require("ws");
 const eventBus = require("./eventBus");
 const process_task = require("../utils/process_task");
+const { generateSessionId } = require("../utils/generateIds");
 
 let wss = null;
 const clients = new Map();
@@ -12,6 +13,7 @@ function startws(server) {
 
   wss.on("connection", (socket) => {
     socket.on("message", (msg) => {
+      
       let data;
       try {
         data = JSON.parse(msg.toString());
@@ -19,13 +21,14 @@ function startws(server) {
         return;
       }
 
+      if (!data) return;
+
       if (data.type === "handshake" && data.clientId) {
-        clients.set(String(data.clientId), socket);
-        console.log("Client registered:", data.clientId);
+        clientRegistration(data, socket);
         return;
       }
 
-      process_task.getTask(data);
+      process_task.getTask(data, socket.sessionId);
     });
 
     socket.on("close", () => {
@@ -45,6 +48,30 @@ function startws(server) {
       socket.send(JSON.stringify(payload));
     }
   });
+
+  function clientRegistration(data, socket) {
+    let sessionId = data.sessionId;
+
+    if (!sessionId) {
+      sessionId = generateSessionId(data.app_id);
+
+      socket.send(JSON.stringify({
+        type: "session_created",
+        sessionId
+      }));
+    }
+
+    socket.sessionId = sessionId;
+    socket.clientId = String(data.clientId);
+
+    const existing = clients.get(String(data.clientId));
+    if (existing && existing !== socket) {
+      existing.close();
+    }
+    clients.set(String(data.clientId), socket);
+
+    console.log("Client registered:", data.clientId);
+  }
 
   return wss;
 }

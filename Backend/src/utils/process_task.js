@@ -4,6 +4,7 @@ const modelImage = require('../model/modelImage');
 const { enqueueJob } = require("../utils/enqueueJob");
 const { generateTextHashes } = require('../hash/text_hash');
 const { generateImageHash } = require('../hash/image_hash');
+const { checkRateLimiter } = require("./rateLimiter");
 const eventBus = require("../starter/eventBus");
 
 const IMAGE_ALGO = process.env.IMAGE_ALGO;
@@ -16,7 +17,7 @@ let STREAM_KEY_IMAGE = STREAM_KEY_IMAGE_Forensic;
 
 if (IMAGE_ALGO && IMAGE_ALGO.toLowerCase() == "ml") STREAM_KEY_IMAGE = STREAM_KEY_IMAGE_ML;
 
-function getTask(data) {
+function getTask(data, socketSessionId) {
     if (!data || !data.clientId || !data.jobId) return;
 
     const clientId = data.clientId;
@@ -28,17 +29,17 @@ function getTask(data) {
     const hasImage = typeof image_url === "string" && image_url.trim().length > 0;
 
     if (hasImage) {
-        process_image(clientId, jobId, image_url);
+        process_image(clientId, jobId, image_url, data.sessionId, socketSessionId);
         return;
     }
 
     if (hasText) {
-        process_text(clientId, jobId, text);
+        process_text(clientId, jobId, text, data.sessionId, socketSessionId);
         return;
     }
 }
 
-async function process_text(clientId, jobId, text) {
+async function process_text(clientId, jobId, text, dataSessionId, socketSessionId) {
     console.log(`[TEXT] Task received → client=${clientId}, job=${jobId}`);
 
     const { text_hash, summary_hash } = generateTextHashes(text)
@@ -63,6 +64,8 @@ async function process_text(clientId, jobId, text) {
         return;
     }
 
+    if (!checkRateLimiter(clientId, dataSessionId, socketSessionId)) return;
+
     console.log(`[TEXT] Task enqueued → job=${jobId}`);
 
     await enqueueJob({
@@ -77,17 +80,10 @@ async function process_text(clientId, jobId, text) {
     });
 }
 
-async function process_image(clientId, jobId, image_url) {
+async function process_image(clientId, jobId, image_url, dataSessionId, socketSessionId) {
     console.log(`[IMAGE] Task received → client=${clientId}, job=${jobId}`);
 
-    let image_hash;
-    try {
-        ({ image_hash } = await generateImageHash(image_url));
-    } catch (err) {
-        console.log("[IMAGE] Hash failed:", err.message);
-        // return;
-    }
-    // const { image_hash } = await generateImageHash(image_url)
+    const image_hash = await generateImageHash(image_url)
     const imageData = await modelImage.GetImage(image_url, image_hash);
 
     if (imageData && typeof imageData === "object") {
@@ -107,6 +103,8 @@ async function process_image(clientId, jobId, image_url) {
         eventBus.emit("sendData", { clientId, payload });
         return;
     }
+
+    if (!checkRateLimiter(clientId, dataSessionId, socketSessionId)) return;
 
     console.log(`[IMAGE] Task enqueued → job=${jobId}, algo=${IMAGE_ALGO}`);
     await enqueueJob({

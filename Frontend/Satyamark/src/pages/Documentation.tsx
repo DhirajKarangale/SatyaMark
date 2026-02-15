@@ -33,7 +33,7 @@ function Documentation() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const CodeBlock = ({ code, language = "typescript" }: { code: string; language?: string }) => (
+  const CodeBlock = ({ code }: { code: string; language?: string }) => (
     <pre className="bg-slate-900 border border-white/10 rounded-xl p-4 overflow-x-auto">
       <code className="text-sm text-gray-300">{code}</code>
     </pre>
@@ -181,12 +181,7 @@ function Documentation() {
 
             <div className="space-y-3">
               <div>
-                <div className="text-sm text-gray-400 mb-2">npm</div>
                 <CodeBlock code="npm install satyamark-react" />
-              </div>
-              <div>
-                <div className="text-sm text-gray-400 mb-2">yarn</div>
-                <CodeBlock code="yarn add satyamark-react" />
               </div>
             </div>
 
@@ -205,109 +200,244 @@ function Documentation() {
             <h2 className="text-3xl font-bold text-white">Quick Start</h2>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-8">
+
+            {/* Step 1 */}
             <div>
-              <h3 className="text-xl font-semibold text-white mb-3">1. Initialize Connection</h3>
+              <h3 className="text-xl font-semibold text-white mb-3">
+                1. Initialize SatyaMark
+              </h3>
+
               <p className="text-gray-300 mb-4">
-                First, establish a WebSocket connection when your app loads:
+                Initialize SatyaMark once in your root App component.
               </p>
+
               <CodeBlock code={`import { useEffect } from "react";
 import { init } from "satyamark-react";
 
 function App() {
   useEffect(() => {
     init({
-      app_id: "your-app-name",
-      user_id: "user-unique-id"
+      app_id: "your-app-id",
+      user_id: "unique-user-id"
     });
   }, []);
 
-  return <YourAppContent />;
+  return <YourApp />;
+}`} />
+
+              <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4 mt-4">
+                <p className="text-sm text-gray-300">
+                  <strong className="text-blue-400">Optional:</strong> You can use
+                  <code className="text-cyan-300"> onConnected()</code> to track
+                  connection state and show a loader before rendering your app.
+                </p>
+              </div>
+            </div>
+
+            {/* Optional onConnected Section */}
+            <div>
+              <h3 className="text-xl font-semibold text-white mb-3">
+                Optional: Track Connection Status
+              </h3>
+
+              <p className="text-gray-300 mb-4">
+                <code className="text-cyan-300"> onConnected()</code> allows you to listen
+                for connection readiness. This is completely optional.
+              </p>
+
+              <CodeBlock code={`import { useEffect, useState } from "react";
+import { init, onConnected } from "satyamark-react";
+
+function App() {
+  const [isConnected, setIsConnected] = useState(false);
+
+  useEffect(() => {
+    init({
+      app_id: "your-app-id",
+      user_id: "unique-user-id"
+    });
+
+    const unsubscribe = onConnected((data) => {
+      setIsConnected(!!data);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  if (!isConnected) {
+    return <div>Connecting to SatyaMark...</div>;
+  }
+
+  return <YourApp />;
 }`} />
             </div>
 
+            {/* Step 2 */}
             <div>
-              <h3 className="text-xl font-semibold text-white mb-3">2. Verify Text Content</h3>
+              <h3 className="text-xl font-semibold text-white mb-3">
+                2. Process a Content Element
+              </h3>
+
               <p className="text-gray-300 mb-4">
-                Submit text for verification and display the result:
+                Attach a ref to your content container and call
+                <code className="text-cyan-300"> process()</code> once after mount.
+                SatyaMark automatically extracts text and images from the element.
               </p>
-              <CodeBlock code={`import { useState } from "react";
+
+              <CodeBlock code={`import { useEffect, useRef } from "react";
 import { process } from "satyamark-react";
 
-function VerifyText() {
-  const [text, setText] = useState("");
-  const [result, setResult] = useState(null);
+function PostCard({ post }) {
+  const ref = useRef(null);
 
-  const handleVerify = async () => {
-    try {
-      const jobId = await process(
-        text,           // Text to verify
-        "",             // No image
-        "unique-id-1"   // Unique content ID
-      );
-      console.log("Verification job started:", jobId);
-    } catch (error) {
-      console.error("Verification failed:", error);
-    }
-  };
+  useEffect(() => {
+    if (!ref.current) return;
+    process(ref.current, post.id);
+  }, []);
 
   return (
-    <div>
-      <textarea 
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        placeholder="Enter text to verify..."
-      />
-      <button onClick={handleVerify}>
-        Verify Content
-      </button>
+    <div ref={ref}>
+      <h3>{post.title}</h3>
+      <img src={post.imageURL} alt="post" />
+      <p>{post.description}</p>
+
+      {/* Status renders automatically here */}
+      <div data-satyamark-status-container />
     </div>
   );
 }`} />
             </div>
 
+            {/* Step 3 */}
             <div>
-              <h3 className="text-xl font-semibold text-white mb-3">3. Verify Images</h3>
-              <p className="text-gray-300 mb-4">
-                Submit an image URL for AI generation detection:
-              </p>
-              <CodeBlock code={`import { process } from "satyamark-react";
+              <h3 className="text-xl font-semibold text-white mb-3">
+                3. Automatic Status Rendering
+              </h3>
 
-async function verifyImage(imageUrl: string) {
-  try {
-    const jobId = await process(
-      "",              // No text
-      imageUrl,        // Image URL to verify
-      "unique-id-2"    // Unique content ID
-    );
-    console.log("Image verification started:", jobId);
-  } catch (error) {
-    console.error("Verification failed:", error);
-  }
-}`} />
+              <p className="text-gray-300 mb-4">
+                SatyaMark automatically injects verification status inside any element
+                containing the attribute below:
+              </p>
+
+              <CodeBlock code={`data-satyamark-status-container`} />
+
+              <p className="text-sm text-gray-400 mt-3">
+                No manual status handling is required.
+                Verification lifecycle, retries, and rendering are managed internally.
+              </p>
+            </div>
+
+          </div>
+        </section>
+
+        {/* Core Concepts */}
+        <section className="space-y-6">
+          <div className="flex items-center gap-3">
+            <Code className="text-cyan-400" size={28} />
+            <h2 className="text-3xl font-bold text-white">Core Concepts</h2>
+          </div>
+
+          <div className="space-y-6 text-gray-300 leading-relaxed">
+
+            <div>
+              <h3 className="text-xl font-semibold text-white mb-2">
+                1. Connection Layer
+              </h3>
+              <ul className="space-y-2 text-sm">
+                <li>• Authenticates with your app_id and user_id</li>
+                <li>• Maintains persistent WebSocket connection</li>
+                <li>• Handles incoming verification results</li>
+              </ul>
             </div>
 
             <div>
-              <h3 className="text-xl font-semibold text-white mb-3">4. Listen for Results</h3>
-              <p className="text-gray-300 mb-4">
-                Subscribe to verification results in real-time:
-              </p>
-              <CodeBlock code={`import { useEffect } from "react";
-import { onReceive } from "satyamark-react";
-
-function ResultListener() {
-  useEffect(() => {
-    const unsubscribe = onReceive((result) => {
-      console.log("Verification result:", result);
-      // result contains: jobId, mark, confidence, reason, urls
-    });
-
-    return unsubscribe; // Cleanup on unmount
-  }, []);
-
-  return <div>Listening for results...</div>;
-}`} />
+              <h3 className="text-xl font-semibold text-white mb-2">
+                2. Processing Layer
+              </h3>
+              <ul className="space-y-2 text-sm">
+                <li>• Walks the DOM tree to extract visible text</li>
+                <li>• Detects and validates images</li>
+                <li>• Submits content for verification</li>
+              </ul>
             </div>
+
+            <div>
+              <h3 className="text-xl font-semibold text-white mb-2">
+                3. Status Layer
+              </h3>
+              <ul className="space-y-2 text-sm">
+                <li>• Automatically injects verification icons</li>
+                <li>• Updates status in real-time</li>
+                <li>• Displays tooltips and detailed results</li>
+              </ul>
+            </div>
+
+            <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+              <h4 className="text-white font-semibold mb-2">Lifecycle Flow</h4>
+              <CodeBlock
+                code={`1. init()      → Establish connection
+2. render      → Display content
+3. process()   → Extract & auto-inject verification status`}
+              />
+              <p className="text-sm text-gray-400 mt-3">
+                All retries, result handling, and UI updates are managed internally.
+              </p>
+            </div>
+
+          </div>
+        </section>
+
+        {/* API Reference */}
+        <section className="space-y-6">
+          <div className="flex items-center gap-3">
+            <Terminal className="text-cyan-400" size={28} />
+            <h2 className="text-3xl font-bold text-white">API Reference</h2>
+          </div>
+
+          <div className="space-y-8 text-gray-300">
+
+            {/* init */}
+            <div className="bg-white/5 border border-white/10 rounded-xl p-5 space-y-3">
+              <h3 className="text-white font-semibold text-lg">init(connectionData)</h3>
+              <p className="text-sm">
+                Establishes WebSocket connection.
+              </p>
+              <ul className="text-sm space-y-1">
+                <li>• <code>app_id: string</code> — Unique identifier for your application</li>
+                <li>• <code>user_id: string</code> — Unique identifier for the current user</li>
+              </ul>
+            </div>
+
+            {/* onConnected */}
+            <div className="bg-white/5 border border-white/10 rounded-xl p-5 space-y-3">
+              <h3 className="text-white font-semibold text-lg">onConnected(callback)</h3>
+              <p className="text-sm">
+                Listens for connection state changes.
+              </p>
+              <CodeBlock
+                code={`{
+  app_id: string;
+  user_id: string;
+}`}
+              />
+              <p className="text-sm text-gray-400">
+                Returns null if disconnected.
+              </p>
+            </div>
+
+            {/* process */}
+            <div className="bg-white/5 border border-white/10 rounded-xl p-5 space-y-3">
+              <h3 className="text-white font-semibold text-lg">process(rootElement, dataId)</h3>
+              <p className="text-sm">
+                Extracts text and images from a DOM element and submits them for verification.
+              </p>
+              <ul className="text-sm space-y-1">
+                <li>• <code>rootElement: HTMLElement</code> — DOM element containing content</li>
+                <li>• <code>dataId: string</code> — Unique identifier for this content</li>
+              </ul>
+            </div>
+
           </div>
         </section>
 
@@ -346,128 +476,6 @@ function ResultListener() {
           </div>
         </section>
 
-        {/* Result Object */}
-        <section className="space-y-6">
-          <div className="flex items-center gap-3">
-            <Code className="text-cyan-400" size={28} />
-            <h2 className="text-3xl font-bold text-white">Verification Result Object</h2>
-          </div>
-
-          <p className="text-gray-300">
-            When verification completes, you'll receive a result object with the following structure:
-          </p>
-
-          <CodeBlock code={`{
-  jobId: string;           // Unique job identifier
-  dataId: string;          // Your content ID
-  mark: string;            // Verification mark (e.g., "correct", "ai", etc.)
-  confidence: number;      // Confidence score (0-100)
-  reason: string;          // Detailed explanation
-  urls?: string[];         // Supporting source URLs (if available)
-  type?: "text" | "image"; // Content type
-  summary?: string;        // Text summary (for text content)
-  image_url?: string;      // Image URL (for image content)
-}`} />
-
-          <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-xl p-4">
-            <p className="text-sm text-gray-300">
-              <strong className="text-cyan-400">Note:</strong> The <code className="text-cyan-300">urls</code> array
-              contains source references used during verification. It may be empty if no external sources were referenced.
-            </p>
-          </div>
-        </section>
-
-        {/* Complete Example */}
-        <section className="space-y-6">
-          <div className="flex items-center gap-3">
-            <FileCode className="text-cyan-400" size={28} />
-            <h2 className="text-3xl font-bold text-white">Complete Example</h2>
-          </div>
-
-          <p className="text-gray-300">
-            Here's a full working example that combines all the concepts:
-          </p>
-
-          <CodeBlock code={`import { useState, useEffect } from "react";
-import { init, process, onReceive } from "satyamark-react";
-
-function App() {
-  const [text, setText] = useState("");
-  const [result, setResult] = useState(null);
-  const [loading, setLoading] = useState(false);
-
-  // Initialize connection on mount
-  useEffect(() => {
-    init({
-      app_id: "my-app",
-      user_id: \`user_\${Date.now()}\`
-    });
-  }, []);
-
-  // Listen for results
-  useEffect(() => {
-    const unsubscribe = onReceive((data) => {
-      setResult(data);
-      setLoading(false);
-    });
-
-    return unsubscribe;
-  }, []);
-
-  const handleVerify = async () => {
-    if (!text.trim()) return;
-
-    setLoading(true);
-    setResult(null);
-
-    try {
-      await process(text, "", \`content_\${Date.now()}\`);
-    } catch (error) {
-      console.error("Verification failed:", error);
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">
-        Content Verification
-      </h1>
-
-      <textarea
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        placeholder="Enter text to verify..."
-        className="w-full p-3 border rounded mb-4"
-        rows={5}
-      />
-
-      <button
-        onClick={handleVerify}
-        disabled={loading || !text.trim()}
-        className="bg-blue-500 text-white px-6 py-2 rounded"
-      >
-        {loading ? "Verifying..." : "Verify Content"}
-      </button>
-
-      {result && (
-        <div className="mt-6 p-4 border rounded">
-          <h2 className="font-bold text-lg mb-2">
-            Result: {result.mark}
-          </h2>
-          <p className="text-gray-600 mb-2">
-            Confidence: {result.confidence}%
-          </p>
-          <p className="text-sm">{result.reason}</p>
-        </div>
-      )}
-    </div>
-  );
-}
-
-export default App;`} />
-        </section>
-
         {/* Best Practices */}
         <section className="space-y-6">
           <div className="flex items-center gap-3">
@@ -479,11 +487,14 @@ export default App;`} />
             <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-5">
               <h3 className="text-green-400 font-semibold mb-2">✓ Do</h3>
               <ul className="space-y-2 text-sm text-gray-300">
-                <li>• Initialize the connection once in your root App component</li>
-                <li>• Use unique, stable IDs for content (e.g., database IDs)</li>
-                <li>• Handle errors gracefully with try-catch blocks</li>
-                <li>• Unsubscribe from listeners when components unmount</li>
-                <li>• Show loading states while verification is in progress</li>
+                <li>• Initialize init() once in your root App component</li>
+                <li>• Use a unique and stable user_id when calling init()</li>
+                <li>• Use stable and unique content IDs (database IDs recommended)</li>
+                <li>• Call process() only after the element is mounted</li>
+                <li>• Include data-satyamark-status-container where you want status displayed</li>
+                <li>• Style the data-satyamark-status-container element as per your UI requirements</li>
+                <li>• Optionally use onConnected() if your UI depends on connection readiness</li>
+                <li>• Let SatyaMark handle lifecycle and retries internally</li>
               </ul>
             </div>
 
@@ -491,12 +502,97 @@ export default App;`} />
               <h3 className="text-red-400 font-semibold mb-2">✗ Don't</h3>
               <ul className="space-y-2 text-sm text-gray-300">
                 <li>• Don't call init() multiple times or in multiple components</li>
-                <li>• Don't use random IDs - they must be consistent for the same content</li>
-                <li>• Don't submit empty strings or very short text (minimum 3 characters)</li>
-                <li>• Don't forget to handle the case when WebSocket is disconnected</li>
-                <li>• Don't block the UI while waiting for results</li>
+                <li>• Don't use random or changing user_id values for the same user session</li>
+                <li>• Don't use random IDs for the same content</li>
+                <li>• Don't manually retry process() in loops</li>
+                <li>• Don't call process() before the element exists in the DOM</li>
               </ul>
             </div>
+
+            <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-5">
+              <h3 className="text-blue-400 font-semibold mb-2">⚡ Performance Tips</h3>
+              <ul className="space-y-2 text-sm text-gray-300">
+                <li>• <strong>Debounce Input Changes</strong> — Avoid re-processing content on every keystroke</li>
+                <li>• <strong>Process Visible Content Only</strong> — Use Intersection Observer for large feeds</li>
+                <li>• <strong>Prevent Re-Render Loops</strong> — Ensure process() isn’t triggered repeatedly by state updates</li>
+                <li>• <strong>Use Stable Content Identifiers</strong> — Prevent duplicate or unnecessary verification calls</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* Troubleshooting */}
+        <section className="space-y-6">
+          <div className="flex items-center gap-3">
+            <CheckCircle className="text-cyan-400" size={28} />
+            <h2 className="text-3xl font-bold text-white">Troubleshooting</h2>
+          </div>
+
+          <div className="space-y-6 text-gray-300 text-sm">
+
+            <div>
+              <h3 className="text-white font-semibold mb-1">
+                Invalid root element
+              </h3>
+              <p className="text-gray-400">
+                <strong>Cause:</strong> <code>process()</code> was called before the DOM element was mounted.
+              </p>
+              <p className="text-gray-400 mt-1">
+                <strong>Solution:</strong> Ensure the ref exists before calling <code>process()</code>.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-white font-semibold mb-1">
+                No valid text or image found
+              </h3>
+              <p className="text-gray-400">
+                <strong>Cause:</strong> The element contains no extractable content.
+              </p>
+              <p className="text-gray-400 mt-1">
+                <strong>Solution:</strong> Ensure the content contains at least 3 characters of text or a valid image.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-white font-semibold mb-1">
+                Status not appearing
+              </h3>
+              <p className="text-gray-400">
+                <strong>Cause:</strong> Verification lifecycle was not properly triggered.
+              </p>
+              <ul className="space-y-1 mt-2 text-gray-400">
+                <li>• Ensure <code>init()</code> was called</li>
+                <li>• Ensure <code>process()</code> ran after mount</li>
+                <li>• Ensure <code>data-satyamark-status-container</code> exists</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-white font-semibold mb-1">
+                Connection fails or times out
+              </h3>
+              <p className="text-gray-400">
+                <strong>Cause:</strong> Network issues, invalid credentials, or server unavailability.
+              </p>
+              <p className="text-gray-400 mt-1">
+                <strong>Solution:</strong> Check the browser console for WebSocket errors and verify
+                <code> app_id </code> and <code> user_id </code> are valid and stable.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-white font-semibold mb-1">
+                Verification stuck on Pending
+              </h3>
+              <p className="text-gray-400">
+                <strong>Cause:</strong> Server processing delay.
+              </p>
+              <p className="text-gray-400 mt-1">
+                <strong>Solution:</strong> Verification can take a few seconds to a few minutes depending on content complexity and system load.
+              </p>
+            </div>
+
           </div>
         </section>
 

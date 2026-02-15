@@ -1,5 +1,5 @@
-import { encrypt, decrypt } from "../utils/satyamark_encryption";
-import { setCookie, getCookie } from "../utils/satyamark_storage";
+import { encrypt, decrypt } from "./encryption";
+import { setCookie, getCookie } from "./storage";
 
 async function getSessionId(): Promise<string> {
   const raw = getCookie("satya_session");

@@ -60,7 +60,6 @@ export function onConnected(
 
 export function emitConnection(context: ConnectionContext | null) {
   connectionListeners.forEach((cb) => {
-    console.log("emitConnection");
     try {
       cb(context);
     } catch (err) {

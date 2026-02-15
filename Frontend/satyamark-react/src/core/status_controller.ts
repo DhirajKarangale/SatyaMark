@@ -1,6 +1,6 @@
-import { onReceive } from "./satyamark_connect";
-import { ICON_URLS, type IconKey } from "./utils/iconRegistry";
-import { ensureIconLoaded } from "./utils/iconLoader";
+import { onMessage } from "./eventBus";
+import { ICON_URLS, type IconKey } from "../utils/iconRegistry";
+import { ensureIconLoaded } from "../utils/iconLoader";
 
 type StatusOptions = {
     iconSize?: number;
@@ -37,7 +37,7 @@ function updateIcon(jobId: string, rawMark: string, data: any) {
 
     const { root, iconSize } = entry;
     const mark: IconKey = rawMark in ICON_URLS ? (rawMark as IconKey) : "pending";
-  
+
     ensureIconLoaded(mark);
 
     const container = root.querySelector("[data-satyamark-status-container]") as HTMLElement;
@@ -97,7 +97,7 @@ function updateIcon(jobId: string, rawMark: string, data: any) {
     }
 }
 
-onReceive((data) => {
+onMessage((data) => {
     if (!data?.jobId) return;
     updateIcon(data.jobId, data.mark?.toLowerCase() ?? "pending", data);
 });

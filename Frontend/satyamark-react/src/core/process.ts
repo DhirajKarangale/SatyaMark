@@ -1,4 +1,4 @@
-import { sendData } from "./satyamark_connect";
+import { sendJob } from "./connectionManager";
 
 const mergeText = (texts: string[]) => texts.join(", ");
 
@@ -33,7 +33,7 @@ const extractFromDiv = (root: HTMLDivElement) => {
     return { text, images };
 };
 
-export async function process(divRef: HTMLDivElement, dataId: string) {
+export async function process(divRef: HTMLDivElement, dataId: string) {    
     if (!divRef) {
         throw new Error("Invalid root element");
     }
@@ -55,7 +55,7 @@ export async function process(divRef: HTMLDivElement, dataId: string) {
         throw new Error("Extracted text is too short");
     }
 
-    const jobId = await sendData(mergedText, validImage ?? "", dataId);
+    const jobId = await sendJob(mergedText, validImage ?? "", dataId);
 
     return jobId;
 }

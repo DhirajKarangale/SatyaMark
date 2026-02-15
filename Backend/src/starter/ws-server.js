@@ -13,12 +13,15 @@ function startws(server) {
 
   wss.on("connection", (socket) => {
     socket.on("message", (msg) => {
+      
       let data;
       try {
         data = JSON.parse(msg.toString());
       } catch {
         return;
       }
+
+      if (!data) return;
 
       if (data.type === "handshake" && data.clientId) {
         clientRegistration(data, socket);
@@ -50,7 +53,7 @@ function startws(server) {
     let sessionId = data.sessionId;
 
     if (!sessionId) {
-      sessionId = generateSessionId(data.appId);
+      sessionId = generateSessionId(data.app_id);
 
       socket.send(JSON.stringify({
         type: "session_created",

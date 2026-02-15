@@ -145,6 +145,10 @@ SatyaMark consists of three core modules that work together:
 
 All retries, result handling, and UI updates are managed internally.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/DhirajKarangale/SatyaMark/main/Assets/NpmCover/NpmCover_1.png" alt="SatyaMark Architecture" width="100%" />
+</p>
+
 ------------------------------------------------------------------------
 
 ## API Reference

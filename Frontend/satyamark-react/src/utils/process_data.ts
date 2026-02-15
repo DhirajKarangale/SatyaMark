@@ -1,4 +1,4 @@
-const mergeText = (texts: string[]) => texts.join(", ");
+const mergeText = (texts: string[]) => texts.join(" |#| ");
 
 const isValidImageUrl = (url: string): Promise<boolean> => {
   return new Promise((resolve) => {

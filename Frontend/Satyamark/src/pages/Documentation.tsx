@@ -181,12 +181,7 @@ function Documentation() {
 
             <div className="space-y-3">
               <div>
-                <div className="text-sm text-gray-400 mb-2">npm</div>
                 <CodeBlock code="npm install satyamark-react" />
-              </div>
-              <div>
-                <div className="text-sm text-gray-400 mb-2">yarn</div>
-                <CodeBlock code="yarn add satyamark-react" />
               </div>
             </div>
 
@@ -336,6 +331,116 @@ function PostCard({ post }) {
           </div>
         </section>
 
+        {/* Core Concepts */}
+        <section className="space-y-6">
+          <div className="flex items-center gap-3">
+            <Code className="text-cyan-400" size={28} />
+            <h2 className="text-3xl font-bold text-white">Core Concepts</h2>
+          </div>
+
+          <div className="space-y-6 text-gray-300 leading-relaxed">
+
+            <div>
+              <h3 className="text-xl font-semibold text-white mb-2">
+                1. Connection Layer
+              </h3>
+              <ul className="space-y-2 text-sm">
+                <li>• Authenticates with your app_id and user_id</li>
+                <li>• Maintains persistent WebSocket connection</li>
+                <li>• Handles incoming verification results</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-xl font-semibold text-white mb-2">
+                2. Processing Layer
+              </h3>
+              <ul className="space-y-2 text-sm">
+                <li>• Walks the DOM tree to extract visible text</li>
+                <li>• Detects and validates images</li>
+                <li>• Submits content for verification</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-xl font-semibold text-white mb-2">
+                3. Status Layer
+              </h3>
+              <ul className="space-y-2 text-sm">
+                <li>• Automatically injects verification icons</li>
+                <li>• Updates status in real-time</li>
+                <li>• Displays tooltips and detailed results</li>
+              </ul>
+            </div>
+
+            <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+              <h4 className="text-white font-semibold mb-2">Lifecycle Flow</h4>
+              <CodeBlock
+                code={`1. init()      → Establish connection
+2. render      → Display content
+3. process()   → Extract & auto-inject verification status`}
+              />
+              <p className="text-sm text-gray-400 mt-3">
+                All retries, result handling, and UI updates are managed internally.
+              </p>
+            </div>
+
+          </div>
+        </section>
+
+        {/* API Reference */}
+        <section className="space-y-6">
+          <div className="flex items-center gap-3">
+            <Terminal className="text-cyan-400" size={28} />
+            <h2 className="text-3xl font-bold text-white">API Reference</h2>
+          </div>
+
+          <div className="space-y-8 text-gray-300">
+
+            {/* init */}
+            <div className="bg-white/5 border border-white/10 rounded-xl p-5 space-y-3">
+              <h3 className="text-white font-semibold text-lg">init(connectionData)</h3>
+              <p className="text-sm">
+                Establishes WebSocket connection.
+              </p>
+              <ul className="text-sm space-y-1">
+                <li>• <code>app_id: string</code> — Unique identifier for your application</li>
+                <li>• <code>user_id: string</code> — Unique identifier for the current user</li>
+              </ul>
+            </div>
+
+            {/* onConnected */}
+            <div className="bg-white/5 border border-white/10 rounded-xl p-5 space-y-3">
+              <h3 className="text-white font-semibold text-lg">onConnected(callback)</h3>
+              <p className="text-sm">
+                Listens for connection state changes.
+              </p>
+              <CodeBlock
+                code={`{
+  app_id: string;
+  user_id: string;
+}`}
+              />
+              <p className="text-sm text-gray-400">
+                Returns null if disconnected.
+              </p>
+            </div>
+
+            {/* process */}
+            <div className="bg-white/5 border border-white/10 rounded-xl p-5 space-y-3">
+              <h3 className="text-white font-semibold text-lg">process(rootElement, dataId)</h3>
+              <p className="text-sm">
+                Extracts text and images from a DOM element and submits them for verification.
+              </p>
+              <ul className="text-sm space-y-1">
+                <li>• <code>rootElement: HTMLElement</code> — DOM element containing content</li>
+                <li>• <code>dataId: string</code> — Unique identifier for this content</li>
+              </ul>
+            </div>
+
+          </div>
+        </section>
+
         {/* Verification Marks */}
         <section className="space-y-6">
           <div className="flex items-center gap-3">
@@ -403,6 +508,91 @@ function PostCard({ post }) {
                 <li>• Don't call process() before the element exists in the DOM</li>
               </ul>
             </div>
+
+            <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-5">
+              <h3 className="text-blue-400 font-semibold mb-2">⚡ Performance Tips</h3>
+              <ul className="space-y-2 text-sm text-gray-300">
+                <li>• <strong>Debounce Input Changes</strong> — Avoid re-processing content on every keystroke</li>
+                <li>• <strong>Process Visible Content Only</strong> — Use Intersection Observer for large feeds</li>
+                <li>• <strong>Prevent Re-Render Loops</strong> — Ensure process() isn’t triggered repeatedly by state updates</li>
+                <li>• <strong>Use Stable Content Identifiers</strong> — Prevent duplicate or unnecessary verification calls</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* Troubleshooting */}
+        <section className="space-y-6">
+          <div className="flex items-center gap-3">
+            <CheckCircle className="text-cyan-400" size={28} />
+            <h2 className="text-3xl font-bold text-white">Troubleshooting</h2>
+          </div>
+
+          <div className="space-y-6 text-gray-300 text-sm">
+
+            <div>
+              <h3 className="text-white font-semibold mb-1">
+                Invalid root element
+              </h3>
+              <p className="text-gray-400">
+                <strong>Cause:</strong> <code>process()</code> was called before the DOM element was mounted.
+              </p>
+              <p className="text-gray-400 mt-1">
+                <strong>Solution:</strong> Ensure the ref exists before calling <code>process()</code>.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-white font-semibold mb-1">
+                No valid text or image found
+              </h3>
+              <p className="text-gray-400">
+                <strong>Cause:</strong> The element contains no extractable content.
+              </p>
+              <p className="text-gray-400 mt-1">
+                <strong>Solution:</strong> Ensure the content contains at least 3 characters of text or a valid image.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-white font-semibold mb-1">
+                Status not appearing
+              </h3>
+              <p className="text-gray-400">
+                <strong>Cause:</strong> Verification lifecycle was not properly triggered.
+              </p>
+              <ul className="space-y-1 mt-2 text-gray-400">
+                <li>• Ensure <code>init()</code> was called</li>
+                <li>• Ensure <code>process()</code> ran after mount</li>
+                <li>• Ensure <code>data-satyamark-status-container</code> exists</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-white font-semibold mb-1">
+                Connection fails or times out
+              </h3>
+              <p className="text-gray-400">
+                <strong>Cause:</strong> Network issues, invalid credentials, or server unavailability.
+              </p>
+              <p className="text-gray-400 mt-1">
+                <strong>Solution:</strong> Check the browser console for WebSocket errors and verify
+                <code> app_id </code> and <code> user_id </code> are valid and stable.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-white font-semibold mb-1">
+                Verification stuck on Pending
+              </h3>
+              <p className="text-gray-400">
+                <strong>Cause:</strong> Server processing delay.
+              </p>
+              <p className="text-gray-400 mt-1">
+                <strong>Solution:</strong> Verification can take a few seconds to a few minutes depending on content complexity and system load.
+              </p>
+            </div>
+
           </div>
         </section>
 

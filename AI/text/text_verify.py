@@ -1,6 +1,6 @@
 from text_fact import fact_check
 from text_websearch import get_content
-from text_summarize import summarize_text
+from text_summarize import clean_and_summarize
 from text_verifyability import check_verifyability
 from text_verify_web import fact_check_with_web
 
@@ -16,7 +16,7 @@ def log(data, title=None):
 
 
 def verify_text(statement):
-    summary = summarize_text(statement)
+    summary = clean_and_summarize(statement)
     verifyability = check_verifyability(summary)
 
     if verifyability and verifyability["mark"] == "UNVERIFYABLE":
@@ -35,7 +35,7 @@ def verify_text(statement):
 
 
 def verify_text_summary(statement):
-    summary = summarize_text(statement)
+    summary = clean_and_summarize(statement)
 
     verifyability = check_verifyability(summary)
     if verifyability and verifyability["mark"] == "UNVERIFYABLE":
@@ -49,3 +49,6 @@ def verify_text_summary(statement):
         return {"summary": summary, "result": webverify}
 
     return {"summary": summary, "result": fact}
+
+
+print(verify_text_summary("news_update |#| 05 Dec 2025 |#| Indigo Flight Turbulence |#| A recent Indigo flight experienced heavy turbulence, leading to temporary delays and safety inspections."))

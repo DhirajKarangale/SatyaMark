@@ -2,41 +2,16 @@ import re
 from typing import Any, List
 from html import unescape
 
-try:
-    from langdetect import detect
-except Exception:
-    detect = None
-
 from connect import get_llm
 
 _PREFERRED_MODELS = ["flan_t5_xl", "bart_large_cnn", "minicheck"]
-# _PREFERRED_MODELS = ["deepseek_r1", "flan_t5_xl", "bart_large_cnn", "minicheck"]
+
+SEPARATOR = "|#|"
+
 
 # ------------------------------------------------------------------
 # Helpers
 # ------------------------------------------------------------------
-
-
-def _clean_summary_output(text: str) -> str:
-    if not isinstance(text, str):
-        return ""
-
-    # remove think blocks
-    text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL | re.IGNORECASE)
-
-    # remove labels
-    text = re.sub(r"^compressed summary:\s*", "", text, flags=re.IGNORECASE)
-
-    # normalize whitespace
-    text = text.strip()
-
-    # enforce sentence limit (max 2)
-    sentences = re.split(r"(?<=[.!?])\s+", text)
-    if len(sentences) > 2:
-        text = " ".join(sentences[:2]).strip()
-
-    return text
-
 
 def _extract_text(output: Any) -> str:
     if hasattr(output, "content"):
@@ -46,27 +21,23 @@ def _extract_text(output: Any) -> str:
     return (str(output) if output is not None else "").strip()
 
 
-def _split_sentences(text: str) -> List[str]:
-    sents = re.split(r"(?<=[.!?])\s+", text.strip())
-    return [s.strip() for s in sents if s.strip()]
+def _clean_summary_output(text: str) -> str:
+    if not isinstance(text, str):
+        return ""
 
+    text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r"^compressed summary:\s*", "", text, flags=re.IGNORECASE)
 
-def _looks_english(text: str) -> bool:
-    if detect:
-        try:
-            return detect(text) == "en"
-        except Exception:
-            pass
-    letters = [c for c in text if c.isalpha()]
-    if not letters:
-        return True
-    ascii_letters = [c for c in letters if ord(c) < 128]
-    return (len(ascii_letters) / max(1, len(letters))) > 0.92
+    # Hard remove separator if somehow leaked
+    text = text.replace(SEPARATOR, " ")
 
+    text = re.sub(r"\s+", " ", text).strip()
 
-# ------------------------------------------------------------------
-# Low-level text cleaning (NO LLM)
-# ------------------------------------------------------------------
+    sentences = re.split(r"(?<=[.!?])\s+", text)
+    if len(sentences) > 2:
+        text = " ".join(sentences[:2]).strip()
+
+    return text
 
 
 def _clean_input_text(text: str) -> str:
@@ -74,130 +45,115 @@ def _clean_input_text(text: str) -> str:
         return ""
 
     text = unescape(text)
+
+    # Remove HTML
     text = re.sub(r"<[^>]+>", " ", text)
-    text = re.sub(r"[*_`~]+", " ", text)
-    text = re.sub(r"http\S+", " ", text)
-    text = re.sub(r"[@#]\w+", " ", text)
+
+    # Normalize weird whitespace including non-breaking spaces
+    text = text.replace("\u00A0", " ")
     text = re.sub(r"\s+", " ", text).strip()
+
     return text
 
 
 # ------------------------------------------------------------------
-# Rule-based noise detection
+# Deterministic Metadata Filtering
 # ------------------------------------------------------------------
 
 DATE_PATTERNS = [
     r"\b\d{4}-\d{2}-\d{2}\b",
+    r"\b\d{1,2}\s+[A-Za-z]{3,9}\s+\d{4}\b",
     r"\b\d{1,2}/\d{1,2}/\d{2,4}\b",
-    r"\bInvalid Date\b",
 ]
 
-USERNAME_PATTERN = r"^[a-zA-Z0-9_]{2,20}$"
+USERNAME_PATTERN = r"^[a-zA-Z0-9_]+$"
 
 
-def _is_noise_segment(seg: str) -> bool:
-    s = seg.strip()
+def _is_date(text: str) -> bool:
+    return any(re.search(p, text) for p in DATE_PATTERNS)
+
+
+def _is_metadata_segment(segment: str) -> bool:
+    s = segment.strip()
+
     if not s:
         return True
 
-    for p in DATE_PATTERNS:
-        if re.search(p, s):
-            return True
+    if _is_date(s):
+        return True
 
     if re.fullmatch(USERNAME_PATTERN, s):
         return True
 
-    # Tag lists (comma-separated, short)
-    if "," in s and len(s.split()) <= 6:
-        return True
-
-    # Too short → usually title / label
-    if len(s) < 40:
+    # Remove short title-like fragments without punctuation
+    if len(s.split()) <= 4 and not re.search(r"[.!?]", s):
         return True
 
     return False
 
 
-def extract_core_content(raw: str) -> str:
-    parts = [p.strip() for p in raw.split("||satyamark_seperator||")]
-    meaningful = [p for p in parts if not _is_noise_segment(p)]
-    return " ".join(meaningful)
+def extract_meaningful_chunks(raw_text: str) -> str:
+    cleaned = _clean_input_text(raw_text)
+
+    # Normalize separator spacing aggressively
+    cleaned = re.sub(r"\s*\|\#\|\s*", SEPARATOR, cleaned)
+
+    if SEPARATOR not in cleaned:
+        return cleaned
+
+    parts: List[str] = [p.strip() for p in cleaned.split(SEPARATOR) if p.strip()]
+
+    meaningful_parts = [
+        part for part in parts if not _is_metadata_segment(part)
+    ]
+
+    return " ".join(meaningful_parts)
 
 
 # ------------------------------------------------------------------
-# LLM-assisted semantic pruning (NO summarization)
+# Stage 1: Semantic Normalization (NO summarization)
 # ------------------------------------------------------------------
 
-
-def semantic_prune(text: str) -> str:
-    llm = get_llm("qwen2_5")
+def semantic_normalize(text: str) -> str:
+    if not text:
+        return ""
 
     prompt = (
-        "Extract ONLY the sentences that contain the main informational or opinion content.\n"
-        "DO NOT add, infer, expand, or rewrite anything.\n"
-        "DO NOT introduce titles, examples, or background knowledge.\n"
-        "Return ONLY text that appears verbatim or near-verbatim in the input.\n\n"
+        "Perform semantic normalization.\n\n"
+        "- Clean formatting issues.\n"
+        "- Remove structural noise.\n"
+        "- Preserve meaning and intent.\n"
+        "- Do NOT summarize.\n"
+        "- Do NOT add new information.\n\n"
         f"Text:\n{text}\n\n"
-        "Extracted content:"
+        "Normalized text:"
     )
 
     for model_name in _PREFERRED_MODELS:
         try:
             llm = get_llm(model_name)
             out = llm.invoke(prompt)
-            # result = _extract_text(out)
-            raw = _extract_text(out)
-            result = _clean_summary_output(raw)
-            
+            result = _extract_text(out)
             if result:
-                return result
+                return result.strip()
         except Exception:
             continue
 
+    return text
+
 
 # ------------------------------------------------------------------
-# Meaning normalization (stable semantic input)
+# Stage 2: Summarization
 # ------------------------------------------------------------------
-
-
-def normalize_meaning(text: str) -> str:
-    cleaned = _clean_input_text(text)
-
-    llm = get_llm("qwen2_5")
-
-    prompt = (
-        "Rewrite the following text into clean, correct English without changing "
-        "any facts, names, numbers, or meaning.\n"
-        "Fix grammar and broken formatting.\n"
-        "Do NOT summarize.\n\n"
-        f"Text:\n{cleaned}\n\n"
-        "Clean rewrite:"
-    )
-
-    for model_name in _PREFERRED_MODELS:
-        try:
-            llm = get_llm(model_name)
-            out = llm.invoke(prompt)
-            # result = _extract_text(out)
-            raw = _extract_text(out)
-            result = _clean_summary_output(raw)
-
-            if result:
-                return result
-        except Exception:
-            continue
-
-    return cleaned
-
 
 def summarize_text(text: str) -> str:
-    llm = get_llm("qwen2_5")
+    if not text:
+        return ""
 
     prompt = (
-        "Compress the following text to at most 2 sentences.\n"
-        "Use ONLY words and facts present in the input.\n"
-        "Do NOT add new details, examples, names, or assumptions.\n"
-        "If something is not explicitly stated, do not include it.\n\n"
+        "Compress the following text into at most 2 sentences.\n"
+        "Use ONLY information present in the input.\n"
+        "Do NOT add or infer new details.\n\n"
         f"Text:\n{text}\n\n"
         "Compressed summary:"
     )
@@ -206,22 +162,28 @@ def summarize_text(text: str) -> str:
         try:
             llm = get_llm(model_name)
             out = llm.invoke(prompt)
-            # result = _extract_text(out)
             raw = _extract_text(out)
             result = _clean_summary_output(raw)
-            
             if result:
                 return result
         except Exception:
             continue
 
-    return text
+    return text.strip()
 
+
+# ------------------------------------------------------------------
+# Public Pipeline
+# ------------------------------------------------------------------
 
 def clean_and_summarize(raw_input: str) -> str:
-    core = extract_core_content(raw_input)
-    pruned = semantic_prune(core)
-    normalized = normalize_meaning(pruned)
+    meaningful = extract_meaningful_chunks(raw_input)
+
+    if not meaningful:
+        return ""
+
+    normalized = semantic_normalize(meaningful)
+
     return summarize_text(normalized)
 
 

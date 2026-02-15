@@ -3,7 +3,7 @@ import { generateJobId } from "../utils/generateIds";
 import { emitMessage, emitConnection } from "./eventBus";
 import { getSessionId, setSessionId, clearSession } from "../utils/manageSessions";
 
-const isDev = true;
+const isDev = false;
 
 type ConnectionContext = {
   app_id: string;

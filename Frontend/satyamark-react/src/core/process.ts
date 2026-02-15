@@ -1,61 +1,21 @@
+import { onMessage } from "./eventBus";
 import { sendJob } from "./connectionManager";
+import { updateIcon } from "./status_controller";
+import { process_data } from "../utils/process_data";
 
-const mergeText = (texts: string[]) => texts.join(", ");
+const jobMap = new Map();
 
-const isValidImageUrl = (url: string): Promise<boolean> => {
-    return new Promise((resolve) => {
-        const img = new Image();
-        img.onload = () => resolve(true);
-        img.onerror = () => resolve(false);
-        img.src = url;
-    });
-};
-
-const getFirstValidImage = async (urls: string[]) => {
-    for (const url of urls) {
-        if (await isValidImageUrl(url)) return url;
-    }
-    return null;
-};
-
-const extractFromDiv = (root: HTMLDivElement) => {
-    const images = Array.from(root.querySelectorAll("img")).map(img => img.src);
-
-    const text: string[] = [];
-    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-
-    let node: Node | null;
-    while ((node = walker.nextNode())) {
-        const trimmed = node.textContent?.trim();
-        if (trimmed) text.push(trimmed);
-    }
-
-    return { text, images };
-};
-
-export async function process(divRef: HTMLDivElement, dataId: string) {    
-    if (!divRef) {
-        throw new Error("Invalid root element");
-    }
-
-    if (!dataId) {
-        throw new Error("dataId is required");
-    }
-
-    const { text, images } = extractFromDiv(divRef);
-
-    const mergedText = mergeText(text);
-    const validImage = await getFirstValidImage(images);
-
-    if (!mergedText && !validImage) {
-        throw new Error("No valid text or image found in the element");
-    }
-
-    if (mergedText && mergedText.length < 3) {
-        throw new Error("Extracted text is too short");
-    }
-
-    const jobId = await sendJob(mergedText, validImage ?? "", dataId);
-
+export async function process(containerRef: HTMLDivElement, dataId: string) {
+    const { text, image_url } = await process_data(containerRef, dataId);
+    const jobId = await sendJob(text, image_url, dataId);
+    jobMap.set(jobId, containerRef);
+    updateIcon(containerRef, null);
     return jobId;
 }
+
+onMessage((data) => {
+    if (!data || !data.jobId) return;
+    const containerRef = jobMap.get(data.jobId);
+    if (!containerRef) return;
+    updateIcon(containerRef, data);
+});

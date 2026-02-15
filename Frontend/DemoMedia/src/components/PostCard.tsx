@@ -1,7 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { type PostData } from "../utils/PostData";
 import { process } from "satyamark-react";
-import { registerStatus } from "satyamark-react";
 
 type PostCardProps = {
     postData: PostData;
@@ -20,7 +19,6 @@ const formatDate = (dateStr: string) => {
 
 export default function PostCard({ postData }: PostCardProps) {
     const { title, description, imageURL, userName, date } = postData;
-    const [jobId, setJobId] = useState<string | null>(null);
     const cardRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
@@ -39,8 +37,6 @@ export default function PostCard({ postData }: PostCardProps) {
 
                     if (id) {
                         if (!mounted) return;
-                        setJobId(id);
-                        break;
                     }
                 } catch (error) {
                     console.log(error);
@@ -57,12 +53,7 @@ export default function PostCard({ postData }: PostCardProps) {
             mounted = false;
         };
     }, []);
-
-    useEffect(() => {
-        if (!jobId || !cardRef.current) return;
-        registerStatus(jobId, cardRef.current, { iconSize: 20 });
-    }, [jobId]);
-
+ 
     return (
         <div
             ref={cardRef}

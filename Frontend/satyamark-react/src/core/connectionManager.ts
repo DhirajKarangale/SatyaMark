@@ -121,7 +121,7 @@ function scheduleReconnect() {
   reconnectTimer = setTimeout(() => {
     reconnectTimer = null;
     connect();
-  }, 1000);
+  }, 2000);
 }
 
 /* -------------------------------------------------------------------------- */

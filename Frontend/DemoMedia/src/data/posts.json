@@ -5,5 +5,68 @@
         "description": "India's digital payments crossed 130 billion transactions this year, making it the highest globally.",
         "userName": "facts_daily",
         "date": "2025-12-07"
+    },
+    {
+        "id": "2",
+        "title": "I Love MS Dhoni",
+        "description": "I have been a huge fan of MS Dhoni since childhood. His calm attitude inspires me every day.",
+        "userName": "dkcodes",
+        "date": "2025-11-28"
+    },
+    {
+        "id": "3",
+        "title": "Global Population Numbers",
+        "description": "The world population has crossed 8.1 billion according to the latest UN report.",
+        "userName": "frontend_dev",
+        "date": "2025-10-12"
+    },
+    {
+        "id": "4",
+        "title": "Indigo Flight Turbulence",
+        "description": "A recent Indigo flight experienced heavy turbulence, leading to temporary delays and safety inspections.",
+        "userName": "news_update",
+        "date": "2025-12-05"
+    },
+    {
+        "id": "5",
+        "title": "Image Post",
+        "imageURL": "https://res.cloudinary.com/dfamljkyo/image/upload/v1766069146/mwqjj0fds0rqpvky555g.png",
+        "userName": "admin",
+        "date": "2025-12-01"
+    },
+    {
+        "id": "6",
+        "title": "Wrestling Fan Moment",
+        "description": "I have always admired Roman Reigns; his persona and dominance in the ring are unmatched.",
+        "userName": "realtime_guy",
+        "date": "2025-08-15"
+    },
+    {
+        "id": "7",
+        "title": "Tech Layoffs Report",
+        "description": "More than 250 tech companies have conducted layoffs this year, affecting over 85,000 employees globally.",
+        "userName": "cleanCoder",
+        "date": "2025-07-04"
+    },
+    {
+        "id": "8",
+        "title": "Recent Apple Store Theft",
+        "description": "A group of thieves raided an Apple Store in California, stealing devices worth thousands within minutes.",
+        "userName": "db_pro",
+        "date": "2025-06-21"
+    },
+    {
+        "id": "9",
+        "title": "Image Post",
+        "imageURL": "https://res.cloudinary.com/dfamljkyo/image/upload/v1754751870/fuse/m2jrqr3a2fteuc4zkxal.jpg",
+        "userName": "devops",
+        "date": "2025-05-02"
+    },
+    {
+        "id": "10",
+        "title": "Image Post",
+        "imageURL": "https://res.cloudinary.com/dfamljkyo/image/upload/v1765866684/jnosohvjltegdoufkvef.png",
+        "userName": "ts_ninja",
+        "date": "2025-04-11"
     }
-]
+  ]

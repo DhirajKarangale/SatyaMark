@@ -5,16 +5,17 @@ function normalizeText(str) {
 
     let text = str;
 
-    text = text.replace(/<[^>]*>/g, " ");
+    // text = text.replace(/<[^>]*>/g, " ");
 
-    text = text
-        .replace(/\*\*(.*?)\*\*/g, " $1 ")
-        .replace(/\*(.*?)\*/g, " $1 ")
-        .replace(/__(.*?)__/g, " $1 ")
-        .replace(/_(.*?)_/g, " $1 ");
+    // text = text
+    //     .replace(/\*\*(.*?)\*\*/g, " $1 ")
+    //     .replace(/\*(.*?)\*/g, " $1 ")
+    //     .replace(/__(.*?)__/g, " $1 ")
+    //     .replace(/_(.*?)_/g, " $1 ");
 
     text = text.toLowerCase();
-    text = text.replace(/\s+/g, " ").trim();
+    text = text.trim();
+    // text = text.replace(/\s+/g, " ").trim();
 
     return text;
 }
@@ -50,7 +51,8 @@ function normalizeText2(str) {
 }
 
 function createHash(str) {
-    return crypto.createHash("sha256").update(str, "utf8").digest("hex");
+    const normalize = normalizeText(str);
+    return crypto.createHash("sha256").update(normalize, "utf8").digest("hex");
 }
 
 function generateTextHashes(input) {

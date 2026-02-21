@@ -3,7 +3,7 @@ import { generateJobId } from "../utils/generateIds";
 import { emitMessage, emitConnection } from "./eventBus";
 import { getSessionId, setSessionId, clearSession } from "../utils/manageSessions";
 
-const isDev = false;
+const isDev = true;
 
 type ConnectionContext = {
   app_id: string;
@@ -45,17 +45,11 @@ async function resolveWsUrl(): Promise<string> {
 /* -------------------------------------------------------------------------- */
 
 export async function init(newContext: ConnectionContext) {
-  if (!newContext?.app_id || !newContext?.user_id) {
-    throw new Error("init() requires valid app_id and user_id");
-  }
-
-  if (isConnecting || isConnected) return;
   context = newContext;
   await connect();
 }
 
 async function connect() {
-  if (!context) return;
   if (isConnecting || isConnected) return;
 
   isConnecting = true;
@@ -64,18 +58,19 @@ async function connect() {
 
   socketClient = new SocketClient(url, {
     onOpen: async () => {
+      const ctx = getContext();
       const sessionId = await getSessionId();
 
       socketClient?.send({
         type: "handshake",
-        clientId: context?.user_id,
-        app_id: context?.app_id,
+        clientId: ctx.user_id,
+        app_id: ctx.app_id,
         sessionId,
       });
 
       isConnected = true;
       isConnecting = false;
-      emitConnection(context);
+      emitConnection(ctx);
     },
 
     onMessage: async (data) => {
@@ -124,26 +119,25 @@ function scheduleReconnect() {
   }, 2000);
 }
 
+function getContext(): ConnectionContext {
+  if (!context?.app_id || !context?.user_id) {
+    throw new Error("Invalid app_id and user_id in init()");
+  }
+
+  return context;
+}
+
 /* -------------------------------------------------------------------------- */
 /*                                  Sending                                   */
 /* -------------------------------------------------------------------------- */
 
 export async function sendJob(text: string, imageUrl: string, dataId: string): Promise<string> {
-  if (!context) throw new Error("Satyamark is not ready Call init() first");
-
-  if (!text && !imageUrl) {
-    throw new Error("Provide text or imageUrl");
-  }
-
-  if (text && text.trim().length < 3) {
-    throw new Error("Text must be at least 3 characters");
-  }
-
-  const jobId = generateJobId(context.app_id, context.user_id, dataId);
+  const ctx = getContext();
+  const jobId = generateJobId(ctx.app_id, ctx.user_id, dataId);
   const sessionId = await getSessionId();
 
   socketClient?.send({
-    clientId: context.user_id,
+    clientId: ctx.user_id,
     sessionId,
     jobId,
     text,

@@ -32,12 +32,12 @@ const extractFromDiv = (root: HTMLDivElement) => {
 };
 
 export async function process_data(divRef: HTMLDivElement, dataId: string) {
+  if (!dataId) {
+    throw new Error("Invalid dataId");
+  }
+  
   if (!divRef) {
     throw new Error("Invalid root element");
-  }
-
-  if (!dataId) {
-    throw new Error("dataId is required");
   }
 
   const { text, images } = extractFromDiv(divRef);

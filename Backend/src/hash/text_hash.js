@@ -5,17 +5,8 @@ function normalizeText(str) {
 
     let text = str;
 
-    // text = text.replace(/<[^>]*>/g, " ");
-
-    // text = text
-    //     .replace(/\*\*(.*?)\*\*/g, " $1 ")
-    //     .replace(/\*(.*?)\*/g, " $1 ")
-    //     .replace(/__(.*?)__/g, " $1 ")
-    //     .replace(/_(.*?)_/g, " $1 ");
-
     text = text.toLowerCase();
     text = text.trim();
-    // text = text.replace(/\s+/g, " ").trim();
 
     return text;
 }

@@ -49,6 +49,3 @@ def verify_text_summary(statement):
         return {"summary": summary, "result": webverify}
 
     return {"summary": summary, "result": fact}
-
-
-# print(verify_text_summary("news_update |#| 05 Dec 2025 |#| Indigo Flight Turbulence |#| A recent Indigo flight experienced heavy turbulence, leading to temporary delays and safety inspections."))

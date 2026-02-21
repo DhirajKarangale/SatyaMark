@@ -1,5 +1,4 @@
-let wsUrl: string | null = null;
-// const wsUrlLocal = "ws://localhost:1000";
+import { getSessionId, setSessionId, clearSession } from "./manageSessions";
 
 let socket: WebSocket | null = null;
 let storedConnectionData: SatyaMarkConnectionData | null = null;
@@ -8,8 +7,11 @@ let isConnected = false;
 type ConnectionListener = (connected: boolean) => void;
 const connectionListeners: ConnectionListener[] = [];
 
+const isDev = false;
+
 async function getWsUrl() {
-    if (wsUrl) return wsUrl;
+    const wsUrlLocal = "ws://localhost:1000";
+    if (isDev) return wsUrlLocal;
 
     const res = await fetch(
         "https://dhirajkarangale.github.io/SatyaMark/ws.json",
@@ -17,8 +19,7 @@ async function getWsUrl() {
     );
 
     const data = await res.json();
-    wsUrl = data.wsUrl;
-    return wsUrl;
+    return data.wsUrl;
 }
 
 export function onConnectionChange(cb: ConnectionListener) {
@@ -69,20 +70,41 @@ export async function init(connectionData: SatyaMarkConnectionData) {
         return;
     }
 
-    socket.onopen = () => {
-        console.log("Connected to server: ", connectionData.user_id);
-
+    socket.onopen = async () => {
+        const sessionId = await getSessionId();
         safeSend({
             type: "handshake",
             clientId: connectionData.user_id,
-            appId: connectionData.app_id
+            app_id: connectionData.app_id,
+            sessionId,
         });
 
         notifyConnectionState(true);
+
+        console.log("Connected to server: ", connectionData.user_id);
     };
 
-    socket.onmessage = (event) => {
-        receiveData(JSON.parse(event.data));
+    socket.onmessage = async (event) => {
+        const data = JSON.parse(event.data);
+
+        if (data.type === "session_created" && data.sessionId) {
+            await setSessionId(data.sessionId);
+            return;
+        }
+
+        if (data.type === "RateLimiter") {
+            if (data.msg === "Invalid session") {
+                clearSession();
+                socket?.close();
+                socket = null;
+            }
+
+            // throw new Error(data.msg);
+            console.log(data.msg);
+            return;
+        }
+
+        receiveData(data);
     };
 
     socket.onclose = () => {
@@ -106,25 +128,16 @@ function safeSend(msg: any) {
     socket.send(JSON.stringify(msg));
 }
 
-function uniqueTimestamp() {
-    const now = new Date();
+function generateJobId(app_id: string, user_id: string, dataId: string) {
+    const timestamp = Date.now().toString(36);
+    const random = crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
 
-    const yyyy = now.getFullYear();
-    const MM = String(now.getMonth() + 1).padStart(2, "0");
-    const dd = String(now.getDate()).padStart(2, "0");
+    const jobId = `${app_id}_${user_id}_${dataId}_${timestamp}_${random}`;
 
-    const hh = String(now.getHours()).padStart(2, "0");
-    const mm = String(now.getMinutes()).padStart(2, "0");
-    const ss = String(now.getSeconds()).padStart(2, "0");
-    const ms = String(now.getMilliseconds()).padStart(3, "0");
-
-    const micro = String(Math.floor(Math.random() * 1000)).padStart(3, "0");
-
-    return `${yyyy}${MM}${dd}${hh}${mm}${ss}${ms}${micro}`;
+    return jobId;
 }
 
-
-export function sendData(text: string, image_url: string, dataId: string) {
+export async function sendData(text: string, image_url: string, dataId: string) {
     if (!storedConnectionData) {
         console.log("No connectionData found. Call connect() first.");
         return;
@@ -136,14 +149,15 @@ export function sendData(text: string, image_url: string, dataId: string) {
     }
 
     const { app_id, user_id } = storedConnectionData;
-    const timestamp = uniqueTimestamp();
-    const jobId = `${app_id}_${user_id}_${dataId}_${timestamp}`;
+    const jobId = generateJobId(app_id, user_id, dataId);
+    const sessionId = await getSessionId();
 
     const data = {
         clientId: user_id,
         jobId: jobId,
         text,
-        image_url
+        image_url,
+        sessionId
     };
 
     socket.send(JSON.stringify(data));

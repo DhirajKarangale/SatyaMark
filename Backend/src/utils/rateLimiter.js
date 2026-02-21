@@ -69,7 +69,7 @@ function checkRateLimiter(clientId, dataSessionId, socketSessionId) {
     emitRateLimitEvent(clientId, "Session not established");
     return false;
   }
-
+  
   if (dataSessionId !== socketSessionId) {
     emitRateLimitEvent(clientId, "Invalid session");
     return false;

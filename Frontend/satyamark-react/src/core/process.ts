@@ -17,8 +17,21 @@ type ProcessQueueItem = {
 const process_queue: ProcessQueueItem[] = [];
 
 export function process(containerRef: HTMLDivElement, dataId: string) {
+    validateStatusContainer(containerRef);
     process_queue.push({ containerRef, dataId });
     void sendJobs();
+}
+
+function validateStatusContainer(containerRef: HTMLDivElement): void {
+    const statusContainer = containerRef.querySelector(
+        "[data-satyamark-status-container]"
+    );
+
+    if (!statusContainer) {
+        throw new Error(
+            'Satyamark: Missing element with attribute "data-satyamark-status-container" inside containerRef.'
+        );
+    }
 }
 
 async function sendJobs(): Promise<void> {

@@ -35,7 +35,7 @@ async function resolveWsUrl(): Promise<string> {
   const data = await res.json();
   const wsUrl = data.wsUrl;
 
-  if (!wsUrl) throw new Error("WebSocket URL resolution failed");
+  if (!wsUrl) throw new Error("Satyamark: WebSocket URL resolution failed");
 
   return wsUrl;
 }
@@ -121,7 +121,7 @@ function scheduleReconnect() {
 
 function getContext(): ConnectionContext {
   if (!context?.app_id || !context?.user_id) {
-    throw new Error("Invalid app_id and user_id in init()");
+    throw new Error("Satyamark: Invalid app_id and user_id in init()");
   }
 
   return context;

@@ -23,7 +23,11 @@ export default function PostCard({ postData }: PostCardProps) {
 
     useEffect(() => {
         if (!cardRef.current) return;
-        process(cardRef.current, postData.id);
+        try {
+            process(cardRef.current, postData.id);
+        } catch (error) {
+            console.log(error);
+        }
     }, []);
 
     return (

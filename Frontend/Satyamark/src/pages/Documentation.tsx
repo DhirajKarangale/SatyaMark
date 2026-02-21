@@ -292,8 +292,12 @@ function PostCard({ post }) {
   const ref = useRef(null);
 
   useEffect(() => {
-    if (!ref.current) return;
-    process(ref.current, post.id);
+    if (!cardRef.current) return;
+    try {
+      process(cardRef.current, postData.id);
+    } catch (error) {
+      console.log(error);
+    }
   }, []);
 
   return (
@@ -514,7 +518,7 @@ function PostCard({ post }) {
               <ul className="space-y-2 text-sm text-gray-300">
                 <li>• <strong>Debounce Input Changes</strong> — Avoid re-processing content on every keystroke</li>
                 <li>• <strong>Process Visible Content Only</strong> — Use Intersection Observer for large feeds</li>
-                <li>• <strong>Prevent Re-Render Loops</strong> — Ensure process() isn’t triggered repeatedly by state updates</li>
+                <li>• <strong>Prevent Re-Render Loops</strong> — Ensure process() isn't triggered repeatedly by state updates</li>
                 <li>• <strong>Use Stable Content Identifiers</strong> — Prevent duplicate or unnecessary verification calls</li>
               </ul>
             </div>

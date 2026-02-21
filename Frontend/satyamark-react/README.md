@@ -93,8 +93,12 @@ function PostCard({ post }) {
   const ref = useRef(null);
 
   useEffect(() => {
-    if (!ref.current) return;
-    process(ref.current, post.id);
+    if (!cardRef.current) return;
+    try {
+      process(cardRef.current, postData.id);
+    } catch (error) {
+      console.log(error);
+    }
   }, [post.id]);
 
   return (
@@ -245,8 +249,12 @@ SatyaMark displays different marks based on verification results:
 
   **Solution:** Check ref exists before processing:
   ```tsx
-  if (!contentRef.current) return;
-  process(contentRef.current, post.id);
+  if (!cardRef.current) return;
+  try {
+    process(cardRef.current, postData.id);
+  } catch (error) {
+    console.log(error);
+  }
   ```
 
 ### 2. No valid text or image found

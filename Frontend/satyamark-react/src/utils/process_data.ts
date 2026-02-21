@@ -33,11 +33,11 @@ const extractFromDiv = (root: HTMLDivElement) => {
 
 export async function process_data(divRef: HTMLDivElement, dataId: string) {
   if (!dataId) {
-    throw new Error("Invalid dataId");
+    throw new Error("Satyamark: Invalid dataId");
   }
   
   if (!divRef) {
-    throw new Error("Invalid root element");
+    throw new Error("Satyamark: Invalid root element");
   }
 
   const { text, images } = extractFromDiv(divRef);
@@ -46,11 +46,11 @@ export async function process_data(divRef: HTMLDivElement, dataId: string) {
   const validImage = await getFirstValidImage(images);
 
   if (!mergedText && !validImage) {
-    throw new Error("No valid text or image found in the element");
+    throw new Error("Satyamark: No valid text or image found in the element");
   }
 
   if (mergedText && mergedText.length < 3) {
-    throw new Error("Extracted text is too short");
+    throw new Error("Satyamark: Extracted text is too short");
   }
 
   const image_url = validImage ? validImage : "";

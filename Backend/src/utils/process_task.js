@@ -42,7 +42,7 @@ function getTask(data, socketSessionId) {
 async function process_text(clientId, jobId, text, dataSessionId, socketSessionId) {
     console.log(`[TEXT] Task received → client=${clientId}, job=${jobId}`);
 
-    const { text_hash, summary_hash } = generateTextHashes(text)
+    const { text_hash, summary_hash } = generateTextHashes(text);
     const textData = await modelText.GetText(text_hash, summary_hash);
 
     if (textData && typeof textData === "object") {
@@ -65,7 +65,7 @@ async function process_text(clientId, jobId, text, dataSessionId, socketSessionI
     }
 
     if (!checkRateLimiter(clientId, dataSessionId, socketSessionId)) return;
-
+    
     console.log(`[TEXT] Task enqueued → job=${jobId}`);
 
     await enqueueJob({

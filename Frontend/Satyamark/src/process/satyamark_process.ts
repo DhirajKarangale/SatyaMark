@@ -29,6 +29,6 @@ export async function process(text: string, images: string, dataId: string) {
         throw new Error("Invalid image URL");
     }
 
-    const jobId = sendData(text, images ?? "", dataId);
+    const jobId = await sendData(text, images ?? "", dataId);
     return jobId;
 }

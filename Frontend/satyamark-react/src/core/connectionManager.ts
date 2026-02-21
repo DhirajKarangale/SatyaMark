@@ -3,7 +3,7 @@ import { generateJobId } from "../utils/generateIds";
 import { emitMessage, emitConnection } from "./eventBus";
 import { getSessionId, setSessionId, clearSession } from "../utils/manageSessions";
 
-const isDev = true;
+const isDev = false;
 
 type ConnectionContext = {
   app_id: string;
@@ -84,7 +84,8 @@ async function connect() {
           clearSession();
           socketClient?.close();
         }
-        return;
+
+        throw new Error(data.msg);
       }
 
       if (data.clientId === context?.user_id) {

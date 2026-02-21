@@ -17,8 +17,21 @@ type ProcessQueueItem = {
 const process_queue: ProcessQueueItem[] = [];
 
 export function process(containerRef: HTMLDivElement, dataId: string) {
+    validateStatusContainer(containerRef);
     process_queue.push({ containerRef, dataId });
     void sendJobs();
+}
+
+function validateStatusContainer(containerRef: HTMLDivElement): void {
+    const statusContainer = containerRef.querySelector(
+        "[data-satyamark-status-container]"
+    );
+
+    if (!statusContainer) {
+        throw new Error(
+            'Satyamark: Missing element with attribute "data-satyamark-status-container" inside containerRef.'
+        );
+    }
 }
 
 async function sendJobs(): Promise<void> {
@@ -40,13 +53,17 @@ async function sendJobs(): Promise<void> {
             process_queue.shift();
             updateIcon(containerRef, null);
         } catch (error) {
-            isSendingJobs = false;
+            if (error instanceof Error && error.message === "notready") {
+                isSendingJobs = false;
 
-            setTimeout(() => {
-                void sendJobs();
-            }, 1000);
+                setTimeout(() => {
+                    void sendJobs();
+                }, 1000);
 
-            return;
+                return;
+            }
+
+            throw error;
         }
     }
 
@@ -55,9 +72,9 @@ async function sendJobs(): Promise<void> {
 
 onMessage((data) => {
     if (!data || !data.jobId) return;
-    
+
     const containerRef = jobMap.get(data.jobId);
-    
+
     if (!containerRef) return;
 
     jobMap.delete(data.jobId);

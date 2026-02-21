@@ -46,7 +46,7 @@ async function process_text(clientId, jobId, text, dataSessionId, socketSessionI
     const textData = await modelText.GetText(text_hash, summary_hash);
 
     if (textData && typeof textData === "object") {
-        console.log(`[TEXT] Result found in cache → job=${jobId}: `);
+        console.log(`[TEXT] Result found in cache → job=${jobId}`);
 
         const payload = {
             jobId,

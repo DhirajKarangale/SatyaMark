@@ -26,7 +26,7 @@ export class SocketClient {
 
   send(payload: any) {
     if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
-      throw new Error("Socket not ready");
+      throw new Error("notready");
     }
 
     this.socket.send(JSON.stringify(payload));

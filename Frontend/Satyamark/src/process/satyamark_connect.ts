@@ -7,7 +7,7 @@ let isConnected = false;
 type ConnectionListener = (connected: boolean) => void;
 const connectionListeners: ConnectionListener[] = [];
 
-const isDev = true;
+const isDev = false;
 
 async function getWsUrl() {
     const wsUrlLocal = "ws://localhost:1000";
@@ -99,10 +99,12 @@ export async function init(connectionData: SatyaMarkConnectionData) {
                 socket = null;
             }
 
-            throw new Error(data.msg);
+            // throw new Error(data.msg);
+            console.log(data.msg);
+            return;
         }
 
-        receiveData(JSON.parse(data));
+        receiveData(data);
     };
 
     socket.onclose = () => {

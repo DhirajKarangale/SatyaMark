@@ -6,9 +6,10 @@ const imageRedis = redis.createClient({
   socket: { reconnectStrategy: r => Math.min(r * 100, 3000) },
 });
 
-imageRedis.on("error", e =>
+imageRedis.on("error", e => {
+  if (e.message.includes("Socket closed")) return;
   console.log("Image Redis error:", e.message)
-);
+});
 
 const ready = imageRedis.connect();
 

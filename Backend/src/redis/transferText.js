@@ -16,7 +16,7 @@ async function transferJobs() {
   }
 
   isTransferring = true;
-  console.log(`\n[TRANSFER] Waking up to check Render stream...`);
+  // console.log(`\n[TRANSFER] Waking up to check Render stream...`);
 
   const renderClient = redis.createClient({ url: RENDER_URL });
   const upstashClient = redis.createClient({ url: UPSTASH_URL });
@@ -60,7 +60,7 @@ async function transferJobs() {
     try {
       if (renderClient.isOpen) await renderClient.quit();
       if (upstashClient.isOpen) await upstashClient.quit();
-      console.log(`[TRANSFER] Connections gracefully closed.`);
+      // console.log(`[TRANSFER] Connections gracefully closed.`);
     } catch (closeErr) {
       console.log("[TRANSFER CLOSE ERROR]", closeErr.message);
     }

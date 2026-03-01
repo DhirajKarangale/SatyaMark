@@ -4,13 +4,14 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "text"))
 sys.path.append(os.path.join(os.path.dirname(__file__), "img_ml"))
 sys.path.append(os.path.join(os.path.dirname(__file__), "img_forensic"))
 
-from text_verify import verify_text, verify_text_summary
-from img_ml_verify import verify_img_ml, evaluate_img_ml, verify_img_ml_url
-from img_forensic_verify import (
-    verify_img_forensic,
-    evaluate_img_forensic,
-    verify_img_forensic_url,
-)
+from text.starter.text_verify import verify_text, verify_text_summary
+
+# from img_ml_verify import verify_img_ml, evaluate_img_ml, verify_img_ml_url
+# from img_forensic_verify import (
+#     verify_img_forensic,
+#     evaluate_img_forensic,
+#     verify_img_forensic_url,
+# )
 
 # Text Data
 statement1 = "The Great Wall of China is located in China."
@@ -21,13 +22,20 @@ statement5 = "Chocolate ice cream is the best flavor ever."
 statement6 = "The committee approved the proposal yesterday."
 statement7 = "India's digital payments crossed 130 billion transactions this year, making it the highest globally. ||satyamark_seperator|| facts_daily ||satyamark_seperator|| Tech fact ||satyamark_seperator|| Invalid Date ||satyamark_seperator|| tech, it, commerce, business ||satyamark_seperator|| 2025-12-07"
 statement8 = "Wrestling Fan Moment ||satyamark_seperator|| <h1>realtime_guy</h1> ||satyamark_seperator|| 2025-08-15 ||satyamark_seperator|| \nI <b>have always admired</b> Roman Reigns; his persona and dominance in the ring are unmatched."
-statement9 = "africans are involved in delhi bomb blast that happened last month"
+statement9 = (
+    "pakastanis are involved in delhi bomb blast that happened in india recently"
+)
 statement10 = "earth is 3rd planet from sun"
 statement11 = "there is accident between car and bus in pune on 15 dec 2025 causing death of 8 people"
-statement12 = "there is match sheduled between roman reigns and cm punk in next wwe paperview"
+statement12 = (
+    "there is match sheduled between roman reigns and cm punk in next wwe paperview"
+)
 statement13 = "Apples taste same like mangoes"
-statement14 = "The world population has crossed 8.1 billion according to the latest UN report."
-statement = statement13
+statement14 = (
+    "The world population has crossed 8.1 billion according to the latest UN report."
+)
+statement15 = "USA started war with iran, they did bombing on some of iran places"
+statement = statement9
 
 # Image Data
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__)))
@@ -43,10 +51,8 @@ path_real_2 = os.path.join(TEST_REAL_PATH, "2.jpg")
 
 image_url = "https://res.cloudinary.com/dfamljkyo/image/upload/v1765866848/v4fh8c9xhegyx2havzar.png"
 
-print("\n")
-
 # Text
-print(verify_text(statement))
+print("\n\n\n Text: \n", verify_text_summary(statement))
 
 # Image Forensic
 # print(verify_img_forensic(path_real_2))
@@ -58,4 +64,4 @@ print(verify_text(statement))
 # print(evaluate_img_ml(TEST_AI_PATH, TEST_REAL_PATH))
 # print(verify_img_ml_url(image_url))
 
-print("\n")
+print("\n \n \n")

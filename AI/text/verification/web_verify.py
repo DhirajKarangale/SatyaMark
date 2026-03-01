@@ -1,7 +1,8 @@
 import json
 from typing import Any, Dict, List
-from connect import get_llm
+from text.utils.huggingface import invoke
 
+MODELS = ["deepseek_r1", "deepseek_v3", "qwen2_5"]
 
 FORBIDDEN_PHRASES = (
     "provided web evidence",
@@ -11,56 +12,6 @@ FORBIDDEN_PHRASES = (
     "provided data",
     "provided information",
 )
-
-
-# -----------------------------
-# Utilities
-# -----------------------------
-
-def _normalize_relationship(r: str) -> str:
-    if not isinstance(r, str):
-        return "unclear"
-
-    r = r.lower().strip()
-
-    if "support" in r:
-        return "supports"
-    if "contradict" in r:
-        return "contradicts"
-    if "unclear" in r or "insufficient" in r or "not enough" in r:
-        return "unclear"
-
-    return "unclear"
-
-def _strip_noise(text: str) -> str:
-    if not isinstance(text, str):
-        return ""
-    while "<think>" in text and "</think>" in text:
-        s = text.find("<think>")
-        e = text.find("</think>") + len("</think>")
-        text = text[:s] + text[e:]
-    return text.replace("```json", "").replace("```", "").strip()
-
-
-def _safe_parse_json(raw: Any) -> Dict[str, Any]:
-    try:
-        if hasattr(raw, "content"):
-            raw_text = raw.content
-        elif isinstance(raw, dict):
-            raw_text = raw.get("content", "")
-        elif isinstance(raw, str):
-            raw_text = raw
-        else:
-            return {}
-
-        raw_text = _strip_noise(raw_text)
-        start = raw_text.find("{")
-        end = raw_text.rfind("}")
-        if start == -1 or end == -1 or end <= start:
-            return {}
-        return json.loads(raw_text[start : end + 1])
-    except Exception:
-        return {}
 
 
 def _clean_web_data(web_data: List[Dict[str, Any]]) -> List[Dict[str, str]]:
@@ -129,22 +80,10 @@ def _generic_insufficient_reason(text: str) -> str:
     )
 
 
-# -----------------------------
-# Main public function
-# -----------------------------
-
-
 def fact_check_with_web(text: str, web_data: list) -> dict:
-    """
-    Second-pass fact checker using web evidence.
-    Generic, non-hardcoded, single-LLM-call, fail-closed.
-    """
     cleaned_web = _clean_web_data(web_data)
 
-    try:
-        llm = get_llm("deepseek_r1")
-
-        prompt = f"""
+    prompt = f"""
 You are a professional fact-checking system.
 
 STATEMENT:
@@ -251,8 +190,8 @@ OUTPUT STRICT JSON ONLY:
   "urls": ["list", "of", "used", "urls"]
 }}
 """
-        response = llm.invoke(prompt)
-        parsed = _safe_parse_json(response)
+    try:
+        parsed = invoke(MODELS, prompt, parse_as_json=True)
 
         mark = parsed.get("mark")
         confidence = parsed.get("confidence")

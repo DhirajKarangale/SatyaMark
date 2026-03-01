@@ -5,7 +5,6 @@ import redis
 import requests
 from dotenv import load_dotenv
 from text_verify import verify_text_summary
-from connect import connect_llms
 
 load_dotenv()
 
@@ -26,7 +25,6 @@ except:
 
 def process_loop():
     print(f"[{CONSUMER}] Text Worker started...")
-    connect_llms()
 
     while True:
         entries = r.xreadgroup(GROUP, CONSUMER, {STREAM_KEY: ">"}, count=1, block=REDIS_CHECK_RATE)

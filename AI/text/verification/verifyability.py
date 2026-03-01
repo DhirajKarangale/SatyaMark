@@ -1,76 +1,11 @@
-from typing import Any, Dict
-from connect import get_llm
-import json
+from typing import Dict
+from text.utils.huggingface import invoke
 
-_PREFERRED_MODELS = ["deepseek_r1", "minicheck", "bart_large_cnn", "flan_t5_xl"]
-
-
-def _safe_parse(output: Any) -> Dict:
-    try:
-        if hasattr(output, "content"):
-            raw = output.content
-        elif isinstance(output, dict):
-            raw = output.get("content", "")
-        elif isinstance(output, str):
-            raw = output
-        else:
-            raise ValueError()
-
-        if not isinstance(raw, str):
-            raise ValueError()
-
-        raw = raw.strip()
-        start = raw.find("{")
-        end = raw.rfind("}")
-
-        if start == -1 or end == -1:
-            raise ValueError()
-
-        data = json.loads(raw[start : end + 1])
-
-        # Normalize mark
-        mark = data.get("mark")
-        if not isinstance(mark, str):
-            raise ValueError()
-        mark = mark.upper()
-        if mark not in ("VERIFYABLE", "UNVERIFYABLE"):
-            raise ValueError()
-
-        # Normalize confidence
-        confidence_raw = data.get("confidence")
-        confidence = int(float(confidence_raw))
-        if not (0 <= confidence <= 100):
-            raise ValueError()
-
-        # Check reason
-        reason = data.get("reason")
-        if not isinstance(reason, str) or len(reason.strip()) < 60:
-            raise ValueError()
-
-        return {
-            "mark": mark,
-            "confidence": confidence,
-            "reason": reason.strip(),
-        }
-
-    except Exception:
-        return {
-            "mark": "UNVERIFYABLE",
-            "confidence": 100,
-            "reason": (
-                "The system could not reliably interpret the model output as a valid "
-                "structured response. To avoid returning misleading information, the "
-                "statement is treated as unverifyable."
-            ),
-        }
+MODELS = ["deepseek_r1", "deepseek_v3", "qwen2_5", "minicheck"]
 
 
 def check_verifyability(text: str) -> Dict:
-    """
-    LLM-only verifyability classification with deep explanation.
-    """
-    try:
-        prompt = f"""
+    prompt = f"""
 You classify a statement based ONLY on whether it can be FACT-CHECKED
 using independent, external evidence.
 
@@ -171,27 +106,33 @@ STATEMENT
 ====================
 
 {text}
-""".strip()
+"""
+    try:
+        data = invoke(MODELS, prompt.strip(), parse_as_json=True)
 
-        for model_name in _PREFERRED_MODELS:
-            try:
-                llm = get_llm(model_name)
-                response = llm.invoke(prompt)
-                result = _safe_parse(response)
+        mark = data.get("mark", "").upper()
+        if mark not in ("VERIFYABLE", "UNVERIFYABLE"):
+            mark = "UNVERIFYABLE"
 
-                if result and result.get("mark"):
-                    return result
+        confidence = max(0, min(int(float(data.get("confidence", 0))), 100))
+        reason = data.get("reason", "").strip()
 
-            except Exception:
-                continue
+        if len(reason) < 10:
+            raise ValueError("Reason too short")
 
-    except Exception:
+        return {
+            "mark": mark,
+            "confidence": confidence,
+            "reason": reason,
+        }
+
+    except Exception as e:
         return {
             "mark": "UNVERIFYABLE",
             "confidence": 100,
             "reason": (
-                "An internal error occurred while processing the statement. Because the "
-                "system could not reliably determine whether the text asserts an "
-                "objectively checkable factual claim, it is treated as unverifyable."
+                f"An internal error occurred while processing the statement ({str(e)}). "
+                f"Because the system could not reliably determine whether the text asserts an "
+                f"objectively checkable factual claim, it is treated as unverifyable."
             ),
         }

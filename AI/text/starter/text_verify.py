@@ -1,8 +1,8 @@
-from text_fact import fact_check
-from text_websearch import get_content
-from text_summarize import clean_and_summarize
-from text_verifyability import check_verifyability
-from text_verify_web import fact_check_with_web
+from text.verification.factcheck import fact_check
+from text.verification.websearch import get_content
+from text.verification.summarize import clean_and_summarize
+from text.verification.verifyability import check_verifyability
+from text.verification.web_verify import fact_check_with_web
 
 LOG_FILE = "text_verification_log.txt"
 

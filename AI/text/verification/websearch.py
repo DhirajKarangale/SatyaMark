@@ -2,16 +2,21 @@ import os
 import re
 import requests
 import trafilatura
-from connect import get_llm
+from text.utils.huggingface import invoke
 from dotenv import load_dotenv
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser
 from langchain_community.utilities import GoogleSerperAPIWrapper
 
 load_dotenv()
-SERPER_API_KEY = os.getenv("SERPER_API_KEY")
-llm = get_llm("deepseek_r1")
 
+serper_api_keys_env = os.getenv("SERPER_API_KEYS")
+SERPER_API_KEYS = [t.strip() for t in serper_api_keys_env.split(",") if t.strip()]
+
+if not SERPER_API_KEYS:
+    raise ValueError("No Serper API keys found. Please set SERPER_API_KEYS in .env")
+
+_current_serper_key_index = 0
+
+QUERY_MODELS = ["deepseek_r1", "deepseek_v3", "qwen2_5", "llama3"]
 SEARCH_COUNT = 20
 URLS_COUNT = 10
 
@@ -38,9 +43,6 @@ Statement:
 Return ONLY the rewritten search query.
 """
 
-prompt = ChatPromptTemplate.from_template(prompt_template)
-output_parser = StrOutputParser()
-
 EXCLUDED_DOMAINS = [
     "youtube.com",
     "youtu.be",
@@ -57,22 +59,18 @@ EXCLUDED_DOMAINS = [
 ]
 
 
-def get_query(text: str):
-    response = (prompt | llm | output_parser).invoke({"text": text})
+def get_query(text: str) -> str:
+    prompt = prompt_template.format(text=text)
+    try:
+        raw = invoke(QUERY_MODELS, prompt, parse_as_json=False)
+        lines = [line.strip() for line in raw.split("\n") if line.strip()]
+        if not lines:
+            return text
 
-    raw = str(response)
-    raw = re.sub(r"<think>.*?</think>", "", raw, flags=re.DOTALL | re.IGNORECASE)
-    raw = re.sub(r"</?think>", "", raw, flags=re.IGNORECASE)
-
-    lines = [line.strip() for line in raw.split("\n") if line.strip()]
-    if not lines:
-        return ""
-
-    final = lines[-1]
-    final = final.strip().strip('"').strip("'").strip("`")
-    final = re.sub(r"\s+", " ", final).strip()
-
-    return final
+        final = lines[-1].strip().strip('"').strip("'").strip("`")
+        return re.sub(r"\s+", " ", final).strip()
+    except Exception:
+        return text
 
 
 def is_excluded(url: str):
@@ -81,11 +79,57 @@ def is_excluded(url: str):
 
 
 def serper_search(query: str, tbs: str | None = None):
-    search = GoogleSerperAPIWrapper(
-        serper_api_key=SERPER_API_KEY,
-        search_params={"tbs": tbs} if tbs else None,
-    )
-    return search.results(query, n=SEARCH_COUNT)
+    """
+    Executes a Google search via Serper API.
+    If a key runs out of credits or throws an auth error, it rotates to the next key.
+    """
+    global _current_serper_key_index
+    attempts = 0
+
+    while attempts < len(SERPER_API_KEYS):
+        current_key = SERPER_API_KEYS[_current_serper_key_index]
+        try:
+            search = GoogleSerperAPIWrapper(
+                serper_api_key=current_key,
+                search_params={"tbs": tbs} if tbs else None,
+            )
+            results = search.results(query, n=SEARCH_COUNT)
+
+            # Serper occasionally returns an error dictionary instead of raising an exception natively
+            if isinstance(results, dict) and results.get("message") == "Unauthorized.":
+                raise ValueError("Unauthorized. Likely out of credits.")
+
+            return results
+
+        except Exception as e:
+            error_msg = str(e).lower()
+            # Catch common rate-limit or billing errors from Serper
+            if any(
+                keyword in error_msg
+                for keyword in [
+                    "unauthorized",
+                    "credit",
+                    "403",
+                    "429",
+                    "limit",
+                    "forbidden",
+                ]
+            ):
+                print(
+                    f"[Warning] Serper API key index {_current_serper_key_index} failed/out of credits. Rotating key..."
+                )
+                _current_serper_key_index = (_current_serper_key_index + 1) % len(
+                    SERPER_API_KEYS
+                )
+                attempts += 1
+            else:
+                print(f"[Error] Serper search failed with a standard error: {e}")
+                return (
+                    {}
+                )  # Return empty dict so the scraper just safely skips web search
+
+    print("[Error] All Serper API keys exhausted or failed.")
+    return {}
 
 
 def extract_urls(result):
@@ -182,5 +226,4 @@ def get_content(statement: str):
     query = get_query(statement)
     urls = get_urls_with_meta(query)
     content = extract_text(urls)
-
     return content

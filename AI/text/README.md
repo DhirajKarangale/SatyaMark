@@ -96,10 +96,6 @@ User Input
      → Extract article data
      |
      v
-[ text_summarize_web.py ]
-     → Summaries of article content
-     |
-     v
 [ text_verify_web.py ]
      → Compare claim vs article evidence
      |
@@ -129,17 +125,13 @@ Handles external search:
 - Fetches URLs via Serper API  
 - Extracts clean text articles  
 
-### **4. text_summarize_web.py**
-Summarizes long article content:
-- Keeps only the information relevant to the claim  
-
-### **5. text_verify_web.py**
+### **4. text_verify_web.py**
 Main verification logic:
 - Compares claim summary with summarized web info  
 - Detects **supporting**, **contradicting**, or **missing** evidence  
 - Outputs final verdict and accuracy  
 
-### **6. text_verify.py**
+### **5. text_verify.py**
 Entry point for backend:
 - Summarizes text  
 - Fact checks  

@@ -19,10 +19,11 @@ HF_TOKENS = [t.strip() for t in hf_tokens_env.split(",") if t.strip()]
 _current_token_index = 0
 _connected_llms = {}  # Format: { token_index: { model_name: llm_instance } }
 
+
 def _get_llm(name: str, token_index: int):
     if token_index not in _connected_llms:
         _connected_llms[token_index] = {}
-        
+
     if name in _connected_llms[token_index]:
         return _connected_llms[token_index][name]
 
@@ -52,16 +53,18 @@ def _get_llm(name: str, token_index: int):
     _connected_llms[token_index][name] = llm
     return llm
 
+
 def invoke(model_names: list[str], prompt: str, parse_as_json: bool = False):
     global _current_token_index
-    
+
     for model_name in model_names:
         attempts_with_different_tokens = 0
-        
+        # You have depleted your monthly included credits. Purchase pre-paid credits to continue using Inference Providers. Alternatively, subscribe to PRO to get 20x more included usage
+
         while attempts_with_different_tokens < len(HF_TOKENS):
             try:
                 llm = _get_llm(model_name, _current_token_index)
-                
+
                 response = llm.invoke(prompt)
                 if parse_as_json:
                     return extract_json(response)
@@ -70,13 +73,29 @@ def invoke(model_names: list[str], prompt: str, parse_as_json: bool = False):
 
             except Exception as e:
                 error_msg = str(e).lower()
-                
-                if any(keyword in error_msg for keyword in ["rate limit", "quota", "upgrade", "429", "too many requests"]):
-                    print(f"[Warning] Token index {_current_token_index} hit a limit. Rotating token...")
+
+                limit_keywords = [
+                    "rate limit",
+                    "quota",
+                    "upgrade",
+                    "429",
+                    "too many requests",
+                    "402",
+                    "payment required",
+                    "depleted",
+                    "credits",
+                ]
+
+                if any(keyword in error_msg for keyword in limit_keywords):
+                    print(
+                        f"[Warning] Token index {_current_token_index} hit a limit. Rotating token..."
+                    )
                     _current_token_index = (_current_token_index + 1) % len(HF_TOKENS)
                     attempts_with_different_tokens += 1
                 else:
-                    print(f"[Error] Model {model_name} failed: {e}. Trying next model...")
+                    print(
+                        f"[Error] Model {model_name} failed: {e}. Trying next model..."
+                    )
                     break
-                    
+
     raise RuntimeError("All models and tokens failed to generate a valid response.")

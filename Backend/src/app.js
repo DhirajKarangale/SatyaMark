@@ -4,6 +4,7 @@ const app = require("./starter/callback");
 const { startws } = require("./starter/ws-server");
 const { startRateLimiterCleanup } = require("./utils/rateLimiter");
 const { startTextTransfer } = require("./redis/transferText");
+const { startEnqueueJob } = require("./utils/enqueueJob");
 
 const PORT = process.env.PORT;
 const server = http.createServer(app);
@@ -22,4 +23,5 @@ server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   startRateLimiterCleanup();
   startTextTransfer();
+  startEnqueueJob();
 });

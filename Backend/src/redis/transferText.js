@@ -3,7 +3,7 @@ const redis = require("redis");
 
 const RENDER_URL = process.env.REDIS_RENDER_TEXT_URL;
 const UPSTASH_URL = process.env.REDIS_UPSTASH_TEXT_URL;
-const TRANSFER_RATE_MS = parseInt(process.env.REDIS_RENDER_UPSTASH_TRANSFER_RATE) * 1000;
+const TRANSFER_RATE_MS = parseInt(process.env.REDIS_RENDER_UPSTASH_TRANSFER_RATE);
 
 const STREAM_KEY = "stream:ai:text:jobs";
 

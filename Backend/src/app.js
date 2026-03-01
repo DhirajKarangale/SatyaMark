@@ -3,6 +3,7 @@ const http = require("http");
 const app = require("./starter/callback");
 const { startws } = require("./starter/ws-server");
 const { startRateLimiterCleanup } = require("./utils/rateLimiter");
+const { startTextTransfer } = require("./redis/transferText");
 
 const PORT = process.env.PORT;
 const server = http.createServer(app);
@@ -20,4 +21,5 @@ process.on("uncaughtException", (err) => {
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   startRateLimiterCleanup();
+  startTextTransfer();
 });

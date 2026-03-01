@@ -8,68 +8,123 @@ from text_verify import verify_text_summary
 
 load_dotenv()
 
-REDIS_URL = os.getenv("REDIS_URL")
-REDIS_CHECK_RATE = int(os.getenv("REDIS_CHECK_RATE", "10000"))
+REDIS_RENDER_TEXT_URL = os.getenv("REDIS_RENDER_TEXT_URL")
+REDIS_UPSTASH_TEXT_URL = os.getenv("REDIS_UPSTASH_TEXT_URL")
+REDIS_RENDER_CHECK_RATE = int(os.getenv("REDIS_RENDER_CHECK_RATE", "5000"))
+REDIS_UPSTASH_CHECK_RATE = int(os.getenv("REDIS_UPSTASH_CHECK_RATE", "5000"))
 
 GROUP = "workers"
 CONSUMER = "text-worker-1"
 STREAM_KEY = "stream:ai:text:jobs"
 
-r = redis.from_url(REDIS_URL, decode_responses=True)
 
-try:
-    r.xgroup_create(STREAM_KEY, GROUP, id="$", mkstream=True)
-except:
-    pass
+def process_job_data(job_data):
+    jobId = job_data.get("jobId")
+    text = job_data.get("text")
+    clientId = job_data.get("clientId")
+    callback_url = job_data.get("callback_url")
+    text_hash = job_data.get("text_hash")
+    summary_hash = job_data.get("summary_hash")
+
+    print(f"[{CONSUMER}] Processing Job: {jobId}")
+
+    try:
+        output = verify_text_summary(text)
+        summary = output.get("summary")
+        result = output.get("result")
+
+        payload = {
+            "jobId": jobId,
+            "clientId": clientId,
+            "text_hash": text_hash,
+            "summary_hash": summary_hash,
+            "mark": str(result["mark"]),
+            "reason": result.get("reason"),
+            "confidence": result.get("confidence"),
+            "urls": result.get("urls"),
+            "summary": summary,
+        }
+
+        requests.post(callback_url, json=payload)
+        print(f"[{CONSUMER}] Job completed successfully: {jobId}")
+        return True
+
+    except Exception as e:
+        print(f"[{CONSUMER}] AI Processing/Callback ERROR for {jobId}: {e}")
+        return False
 
 
-def process_loop():
-    print(f"[{CONSUMER}] Text Worker started...")
+def fetch_and_process(redis_url, check_rate, source_name):
+    if not redis_url:
+        return "ERROR"
 
-    while True:
-        entries = r.xreadgroup(GROUP, CONSUMER, {STREAM_KEY: ">"}, count=1, block=REDIS_CHECK_RATE)
+    client = redis.from_url(redis_url, decode_responses=True)
+
+    try:
+        try:
+            client.xgroup_create(STREAM_KEY, GROUP, id="$", mkstream=True)
+        except redis.exceptions.ResponseError as e:
+            if "BUSYGROUP" not in str(e):
+                print(f"[{source_name}] Group creation issue: {e}")
+
+        entries = client.xreadgroup(
+            GROUP, CONSUMER, {STREAM_KEY: ">"}, count=1, block=check_rate
+        )
 
         if not entries:
-            continue
+            return "EMPTY"
 
         stream, messages = entries[0]
         msg_id, fields = messages[0]
+        job_data = json.loads(fields["data"])
 
-        job = json.loads(fields["data"])
+        success = process_job_data(job_data)
 
-        text = job.get("text")
-        jobId = job.get("jobId")
-        clientId = job.get("clientId")
-        callback_url = job.get("callback_url")
-        text_hash = job.get("text_hash")
-        summary_hash = job.get("summary_hash")
+        if success:
+            client.xack(STREAM_KEY, GROUP, msg_id)
+            client.xdel(STREAM_KEY, msg_id)
+            return "PROCESSED"
+        else:
+            return "FAILED_JOB"
 
-        print(f"[{CONSUMER}] Processing: {jobId}")
+    except Exception as e:
+        print(f"[{source_name}] Stream or Connection Error: {e}")
+        return "ERROR"
 
-        try:
-            output = verify_text_summary(text)
-            summary = output.get("summary")
-            result = output.get("result")
+    finally:
+        client.close()
 
-            payload = {
-                "jobId": jobId,
-                "clientId": clientId,
-                "text_hash": text_hash,
-                "summary_hash": summary_hash,
-                "mark": str(result["mark"]),
-                "reason": result.get("reason"),
-                "confidence": result.get("confidence"),
-                "urls": result.get("urls"),
-                "summary":summary,
-            }
 
-            requests.post(callback_url, json=payload)
-            r.xack(STREAM_KEY, GROUP, msg_id)
+def process_loop():
+    print(
+        f"[{CONSUMER}] Text Worker started. Prioritizing Render, falling back to Upstash."
+    )
 
-            print(f"[{CONSUMER}] Job completed: {jobId}")
+    while True:
+        status = fetch_and_process(
+            REDIS_RENDER_TEXT_URL, REDIS_RENDER_CHECK_RATE, "RENDER"
+        )
 
-        except Exception as e:
-            print("ERROR:", e)
+        if status == "PROCESSED":
+            continue
+
+        if status in ["EMPTY", "ERROR"]:
+            if status == "ERROR":
+                print(
+                    f"[{CONSUMER}] Render unavailable or errored. Checking Upstash..."
+                )
+
+            upstash_status = fetch_and_process(
+                REDIS_UPSTASH_TEXT_URL, REDIS_UPSTASH_CHECK_RATE, "UPSTASH"
+            )
+
+            if upstash_status == "PROCESSED":
+                continue
+
+            elif upstash_status in ["EMPTY", "ERROR"]:
+                time.sleep(2)
+
+        else:
             time.sleep(2)
 
 

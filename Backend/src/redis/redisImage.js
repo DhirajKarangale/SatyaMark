@@ -2,7 +2,7 @@ const redis = require("redis");
 require("dotenv").config();
 
 const imageRedis = redis.createClient({
-  url: process.env.REDIS_IMAGE_URL,
+  url: process.env.REDIS_UPSTASH_IMAGE_URL,
   socket: { reconnectStrategy: r => Math.min(r * 100, 3000) },
 });
 

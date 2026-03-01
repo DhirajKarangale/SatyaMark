@@ -63,6 +63,7 @@ def fetch_and_process(redis_url, source_name):
         return "ERROR"
 
     client = redis.from_url(redis_url, decode_responses=True)
+    job_data = None
 
     try:
         try:
@@ -71,9 +72,7 @@ def fetch_and_process(redis_url, source_name):
             if "BUSYGROUP" not in str(e):
                 print(f"[{source_name}] Group creation issue: {e}")
 
-        entries = client.xreadgroup(
-            GROUP, CONSUMER, {STREAM_KEY: ">"}, count=1
-        )
+        entries = client.xreadgroup(GROUP, CONSUMER, {STREAM_KEY: ">"}, count=1)
 
         if not entries:
             return "EMPTY"
@@ -82,21 +81,34 @@ def fetch_and_process(redis_url, source_name):
         msg_id, fields = messages[0]
         job_data = json.loads(fields["data"])
 
-        success = process_job_data(job_data, source_name)
-
-        if success:
-            client.xack(STREAM_KEY, GROUP, msg_id)
-            client.xdel(STREAM_KEY, msg_id)
-            return "PROCESSED"
-        else:
-            return "FAILED_JOB"
+        client.xack(STREAM_KEY, GROUP, msg_id)
+        client.xdel(STREAM_KEY, msg_id)
 
     except Exception as e:
-        print(f"[{source_name}] Stream or Connection Error: {e}")
+        print(f"[{source_name}] Stream Read Error: {e}")
         return "ERROR"
 
     finally:
         client.close()
+
+    success = process_job_data(job_data, source_name)
+
+    if success:
+        return "PROCESSED"
+
+    print(
+        f"[{source_name}] Processing failed. Putting job {job_data.get('jobId')} back into queue."
+    )
+
+    reconnect_client = redis.from_url(redis_url, decode_responses=True)
+    try:
+        reconnect_client.xadd(STREAM_KEY, {"data": json.dumps(job_data)})
+        return "FAILED_JOB"
+    except Exception as e:
+        print(f"[{source_name}] CRITICAL: Failed to put job back into stream: {e}")
+        return "ERROR"
+    finally:
+        reconnect_client.close()
 
 
 def worker_loop(redis_url, check_rate_ms, source_name):

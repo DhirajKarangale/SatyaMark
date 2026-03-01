@@ -7,7 +7,8 @@ let isConnected = false;
 type ConnectionListener = (connected: boolean) => void;
 const connectionListeners: ConnectionListener[] = [];
 
-const isDev = import.meta.env.VITE_IS_DEV;
+// const isDev = import.meta.env.VITE_IS_DEV;
+const isDev = false;
 
 async function getWsUrl() {
     const wsUrlLocal = "ws://localhost:1000";

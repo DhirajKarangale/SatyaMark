@@ -1,0 +1,15 @@
+README.md
+setup.py
+my_text_module.egg-info/PKG-INFO
+my_text_module.egg-info/SOURCES.txt
+my_text_module.egg-info/dependency_links.txt
+my_text_module.egg-info/top_level.txt
+starter/__init__.py
+starter/text_verify.py
+starter/text_worker.py
+verification/__init__.py
+verification/factcheck.py
+verification/summarize.py
+verification/verifyability.py
+verification/web_verify.py
+verification/websearch.py

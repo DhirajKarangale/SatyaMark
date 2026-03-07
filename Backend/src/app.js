@@ -4,6 +4,7 @@ const app = require("./starter/callback");
 const { startws } = require("./starter/ws-server");
 const { startRateLimiterCleanup } = require("./utils/rateLimiter");
 const { startTextTransfer } = require("./redis/transferText");
+const { startJanitorCycle } = require("./redis/textJanitor");
 const { startEnqueueJob } = require("./utils/enqueueJob");
 
 const PORT = process.env.PORT;
@@ -22,6 +23,7 @@ process.on("uncaughtException", (err) => {
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   startRateLimiterCleanup();
-  startTextTransfer();
   startEnqueueJob();
+  startTextTransfer();
+  startJanitorCycle();
 });

@@ -6,17 +6,14 @@ const UPSTASH_URL = process.env.REDIS_UPSTASH_TEXT_URL;
 const TRANSFER_RATE_MS = parseInt(process.env.REDIS_RENDER_UPSTASH_TRANSFER_RATE);
 
 const STREAM_KEY = "stream:ai:text:jobs";
+const GROUP_NAME = "workers";
+const CONSUMER_NAME = "transfer-node-script"; // Unique name for the backend script
 
 let isTransferring = false;
 
 async function transferJobs() {
-  if (isTransferring) {
-    console.log("[TRANSFER] Previous transfer still running, skipping this cycle.");
-    return;
-  }
-
+  if (isTransferring) return;
   isTransferring = true;
-  // console.log(`\n[TRANSFER] Waking up to check Render stream...`);
 
   const renderClient = redis.createClient({ url: RENDER_URL });
   const upstashClient = redis.createClient({ url: UPSTASH_URL });
@@ -28,14 +25,21 @@ async function transferJobs() {
     await renderClient.connect();
     await upstashClient.connect();
 
-    const messages = await renderClient.xRange(STREAM_KEY, '-', '+');
+    const response = await renderClient.xReadGroup(
+      GROUP_NAME,
+      CONSUMER_NAME,
+      [{ key: STREAM_KEY, id: ">" }],
+      { COUNT: 500 } 
+    );
 
-    if (!messages || messages.length === 0) {
-      console.log(`[TRANSFER] Render stream is empty. Going back to sleep.`);
-      return; 
+    if (!response || response.length === 0) {
+      console.log(`[TRANSFER] No unassigned jobs in Render. Sleeping.`);
+      return;
     }
 
-    console.log(`[TRANSFER] Found ${messages.length} jobs. Starting transfer...`);
+    const messages = response[0].messages;
+    console.log(`[TRANSFER] Scooped ${messages.length} unassigned jobs. Moving to Upstash...`);
+    
     let successCount = 0;
 
     for (const entry of messages) {
@@ -44,8 +48,9 @@ async function transferJobs() {
 
       try {
         await upstashClient.xAdd(STREAM_KEY, "*", jobData);
+        await renderClient.xAck(STREAM_KEY, GROUP_NAME, renderMessageId);
         await renderClient.xDel(STREAM_KEY, renderMessageId);
-
+        
         successCount++;
       } catch (err) {
         console.log(`[TRANSFER ERROR] Failed to move job ID ${renderMessageId}:`, err.message);
@@ -60,11 +65,9 @@ async function transferJobs() {
     try {
       if (renderClient.isOpen) await renderClient.quit();
       if (upstashClient.isOpen) await upstashClient.quit();
-      // console.log(`[TRANSFER] Connections gracefully closed.`);
     } catch (closeErr) {
       console.log("[TRANSFER CLOSE ERROR]", closeErr.message);
     }
-
     isTransferring = false;
   }
 }

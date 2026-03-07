@@ -7,8 +7,7 @@ let isConnected = false;
 type ConnectionListener = (connected: boolean) => void;
 const connectionListeners: ConnectionListener[] = [];
 
-// const isDev = import.meta.env.VITE_IS_DEV;
-const isDev = false;
+const isDev = import.meta.env.VITE_IS_DEV === "true";
 
 async function getWsUrl() {
     const wsUrlLocal = "ws://localhost:1000";
@@ -67,7 +66,7 @@ export async function init(connectionData: SatyaMarkConnectionData) {
         socket = new WebSocket(url);
     }
     else {
-        console.error("WebSocket endpoint resolution failed. Unable to establish connection.");
+        console.log("WebSocket endpoint resolution failed. Unable to establish connection.");
         return;
     }
 
@@ -100,9 +99,7 @@ export async function init(connectionData: SatyaMarkConnectionData) {
                 socket = null;
             }
 
-            // throw new Error(data.msg);
-            console.log(data.msg);
-            return;
+            throw new Error(data.msg);
         }
 
         receiveData(data);
@@ -140,13 +137,11 @@ function generateJobId(app_id: string, user_id: string, dataId: string) {
 
 export async function sendData(text: string, image_url: string, dataId: string) {
     if (!storedConnectionData) {
-        console.log("No connectionData found. Call connect() first.");
-        return;
+        throw new Error("No connectionData found. Call connect() first.");
     }
 
     if (!socket || socket.readyState !== WebSocket.OPEN) {
-        console.log("Socket not ready");
-        return;
+        throw new Error("Socket not ready");
     }
 
     const { app_id, user_id } = storedConnectionData;

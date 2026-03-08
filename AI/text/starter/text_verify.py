@@ -1,6 +1,6 @@
 from text.verification.factcheck import fact_check
 from text.verification.websearch import get_content
-from text.verification.summarize import clean_and_summarize
+from text.summary.summarizer import clean_and_summarize
 from text.verification.verifyability import check_verifyability
 from text.verification.web_verify import fact_check_with_web
 

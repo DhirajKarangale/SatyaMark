@@ -88,7 +88,7 @@ def invoke(model_names: list[str], prompt: str, parse_as_json: bool = False):
 
                 if any(keyword in error_msg for keyword in limit_keywords):
                     print(
-                        f"[Warning] Token index {_current_token_index} hit a limit. Rotating token..."
+                        f"[Warning] Huggingface Token index {_current_token_index} hit a limit. Rotating token..."
                     )
                     _current_token_index = (_current_token_index + 1) % len(HF_TOKENS)
                     attempts_with_different_tokens += 1

@@ -2,7 +2,8 @@ from text.verification.factcheck import fact_check
 from text.verification.websearch import get_content
 from text.summary.summarizer import clean_and_summarize
 from text.verification.verifyability import check_verifyability
-from text.verification.web_verify import fact_check_with_web
+# from text.verification.web_verify import fact_check_with_web
+from text.websearch.web_verify import web_verify
 
 LOG_FILE = "text_verification_log.txt"
 
@@ -28,7 +29,7 @@ def verify_text(statement):
     if fact and fact["mark"] == "Insufficient":
         webcontent = get_content(summary)
         # log(webcontent, "web_data")
-        webverify = fact_check_with_web(summary, webcontent)
+        webverify = web_verify(summary, webcontent)
         return webverify
 
     return fact
@@ -45,7 +46,7 @@ def verify_text_summary(statement):
 
     if fact and fact["mark"] == "Insufficient":
         webcontent = get_content(summary)
-        webverify = fact_check_with_web(summary, webcontent)
+        webverify = web_verify(summary, webcontent)
         return {"summary": summary, "result": webverify}
 
     return {"summary": summary, "result": fact}

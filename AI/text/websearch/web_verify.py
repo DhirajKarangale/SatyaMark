@@ -4,7 +4,7 @@ from text.websearch.scraper import extract_article_text
 from text.websearch.verifier import fact_check
 
 
-def verify_claim(claim: str):
+def web_verify(claim: str):
     query = generate_search_query(claim)
     search_results = get_urls_with_meta(query)
     scraped_data = []
@@ -19,5 +19,5 @@ def verify_claim(claim: str):
 # Example usage:
 # print(verify_claim("Aliens attacked London yesterday"))
 print(
-    verify_claim("USA started war with iran, they did bombing on some of iran places")
+    web_verify("USA started war with iran, they did bombing on some of iran places")
 )

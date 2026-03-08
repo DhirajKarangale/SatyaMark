@@ -35,7 +35,7 @@ statement14 = (
     "The world population has crossed 8.1 billion according to the latest UN report."
 )
 statement15 = "USA started war with iran, they did bombing on some of iran places"
-statement = statement5
+statement = statement15
 
 # Image Data
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__)))

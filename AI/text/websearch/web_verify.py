@@ -14,10 +14,3 @@ def web_verify(claim: str):
 
     result = fact_check(claim, scraped_data)
     return result
-
-
-# Example usage:
-# print(verify_claim("Aliens attacked London yesterday"))
-print(
-    web_verify("USA started war with iran, they did bombing on some of iran places")
-)

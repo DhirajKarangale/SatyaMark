@@ -1,8 +1,8 @@
 import concurrent.futures
-from text.websearch.query_builder import generate_search_query
-from text.websearch.search_engine import get_urls_with_meta
-from text.websearch.scraper import extract_article_text
-from text.websearch.verifier import fact_check
+from websearch.query_builder import generate_search_query
+from websearch.search_engine import get_urls_with_meta
+from websearch.scraper import extract_article_text
+from websearch.verifier import fact_check
 
 MAX_WORKERS = 5
 MAX_URLS_TO_VERIFY = 10

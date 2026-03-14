@@ -1,4 +1,4 @@
-from text.utils.huggingface import invoke_llm
+from utils.huggingface import invoke_llm
 
 QUERY_MODELS = ["deepseek_r1", "deepseek_v3", "qwen2_5", "llama3"]
 

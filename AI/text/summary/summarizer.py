@@ -1,7 +1,7 @@
 import re
-from text.utils.huggingface import invoke_llm
-from text.summary.cleaner import clean_raw_social_text
-from text.summary.prompts import get_normalization_prompt
+from utils.huggingface import invoke_llm
+from summary.cleaner import clean_raw_social_text
+from summary.prompts import get_normalization_prompt
 
 NORMALIZATION_MODELS = ["qwen2_5", "llama3", "hermes"]
 SUMMARIZATION_MODELS = ["bart_large_cnn", "mistral"]

@@ -1,4 +1,4 @@
-from text.utils.huggingface import invoke
+from text.utils.huggingface import invoke_llm
 
 MODELS = ["deepseek_r1", "deepseek_v3", "qwen2_5", "deepseek_r1_distill_llama_8b"]
 
@@ -50,7 +50,7 @@ def fact_check(text: str) -> dict:
 
     try:
         prompt = PROMPT_TEMPLATE.format(text=text)
-        data = invoke(MODELS, prompt, parse_as_json=True)
+        data = invoke_llm(MODELS, prompt, parse_as_json=True)
         
         mark = data.get("mark", "").strip()
         confidence = max(0, min(int(data.get("confidence", 0)), 100))

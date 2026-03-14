@@ -1,5 +1,5 @@
 import re
-from text.utils.huggingface import invoke
+from text.utils.huggingface import invoke_llm
 from text.summary.cleaner import clean_raw_social_text
 from text.summary.prompts import get_normalization_prompt
 
@@ -12,7 +12,7 @@ def semantic_normalize(text: str) -> str:
         return ""
     prompt = get_normalization_prompt(text)
     try:
-        result = invoke(NORMALIZATION_MODELS, prompt, parse_as_json=False)
+        result = invoke_llm(NORMALIZATION_MODELS, prompt, parse_as_json=False)
         return result.strip() if result else text
     except Exception as e:
         print(f"Normalization failed: {e}")
@@ -26,7 +26,7 @@ def summarize_text(text: str) -> str:
     try:
         prompt = f"Summarize the following text in 1 or 2 objective sentences: {text}"
 
-        result = invoke(SUMMARIZATION_MODELS, prompt, parse_as_json=False)
+        result = invoke_llm(SUMMARIZATION_MODELS, prompt, parse_as_json=False)
         if not result:
             return text
 
@@ -47,7 +47,7 @@ def summarize_text(text: str) -> str:
         return text.strip()
 
 
-def clean_and_summarize(raw_input: str) -> str:
+def summarize(raw_input: str) -> str:
     cleaned_text = clean_raw_social_text(raw_input)
     if not cleaned_text:
         return ""

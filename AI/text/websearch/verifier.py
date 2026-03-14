@@ -1,7 +1,7 @@
 import re
 import json
 from typing import List, Dict, Any
-from text.utils.huggingface import invoke
+from text.utils.huggingface import invoke_llm
 
 MODELS = ["deepseek_v3", "qwen2_5", "deepseek_r1"]
 
@@ -72,7 +72,7 @@ OUTPUT STRICT JSON ONLY. Do not use Markdown formatting blocks (like ```json).
 }}
 """
     try:
-        parsed = invoke(MODELS, prompt, parse_as_json=True)
+        parsed = invoke_llm(MODELS, prompt, parse_as_json=True)
 
         if "reason" in parsed and isinstance(parsed["reason"], str):
             parsed["reason"] = _sanitize_reason(parsed["reason"])

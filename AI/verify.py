@@ -4,7 +4,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "text"))
 sys.path.append(os.path.join(os.path.dirname(__file__), "img_ml"))
 sys.path.append(os.path.join(os.path.dirname(__file__), "img_forensic"))
 
-from text.starter.text_verify import verify_text, verify_text_summary
+from text.starter.text_verify import verify_text_summary
 
 # from img_ml_verify import verify_img_ml, evaluate_img_ml, verify_img_ml_url
 # from img_forensic_verify import (

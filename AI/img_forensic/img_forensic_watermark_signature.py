@@ -1,6 +1,5 @@
 import cv2
 import piexif
-from typing import Dict, Any
 from PIL import Image
 
 

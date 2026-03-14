@@ -1,11 +1,9 @@
-from connect import get_llm
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser
 import json
-import regex as re
+import re
 
-# Use BEST reasoning model
-llm = get_llm("deepseek_r1")
+# IMPORTANT: Adjust this import to match the actual name of your hugging face script
+# For example, if your file is named `huggingface.py`, use:
+from huggingface import invoke_llm
 
 def interpret_forensics(w, s, g, l, m, sc):
     facts = []
@@ -79,6 +77,7 @@ def interpret_forensics(w, s, g, l, m, sc):
 # ---------------------------
 # Prompt
 # ---------------------------
+# Note: Double braces {{ }} are used so Python's .format() doesn't get confused
 PROMPT = """
 You are a forensic image classification expert.
 
@@ -98,38 +97,31 @@ Return ONLY valid JSON:
 {{
   "mark": "AI" or "NONAI",
   "confidence": number,
-  "reason": string
+  "reason": "string"
 }}
 """
 
-prompt = ChatPromptTemplate.from_template(PROMPT)
-parser = StrOutputParser()
-
-
-# ---------------------------
-# JSON extraction
-# ---------------------------
-def extract_json(text):
-    block = re.search(r"\{[\s\S]*\}", text)
-    if not block:
-        return None
-    try:
-        return json.loads(block.group())
-    except:
-        return None
-
-
 # ---------------------------
 # MAIN HYBRID CLASSIFIER
+# ---------------------------
 def classify_image_hybrid(w, s, g, l, m, sc):
     facts = interpret_forensics(w, s, g, l, m, sc)
 
-    response = (prompt | llm | parser).invoke({
-        "facts": "\n".join(f"- {f}" for f in facts)
-    })
+    # 1. Format the string prompt natively
+    formatted_prompt = PROMPT.format(facts="\n".join(f"- {f}" for f in facts))
 
-    parsed = extract_json(response)
+    try:
+        # 2. Call your robust token-rotating function!
+        parsed = invoke_llm(
+            model_names=["deepseek_r1"], 
+            prompt=formatted_prompt, 
+            parse_as_json=True
+        )
+    except Exception as e:
+        print(f"Hybrid Classifier Error: {e}")
+        parsed = None
 
+    # 3. Fallback handling
     if not parsed:
         return {
             "mark": "NONAI",
@@ -138,7 +130,7 @@ def classify_image_hybrid(w, s, g, l, m, sc):
         }
 
     return {
-        "mark": parsed["mark"].upper(),
+        "mark": str(parsed.get("mark", "NONAI")).upper(),
         "confidence": float(parsed.get("confidence", 0.5)) * 100,
         "reason": parsed.get("reason", "")
     }

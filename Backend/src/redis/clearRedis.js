@@ -1,12 +1,32 @@
 require("dotenv").config();
 const redis = require("redis");
 
-const RENDER_URL = process.env.REDIS_RENDER_TEXT_URL;
-const UPSTASH_URL = process.env.REDIS_UPSTASH_TEXT_URL;
+const RENDER_URL = process.env.REDIS_RENDER_IMAGE_URL;
+const UPSTASH_URL = process.env.REDIS_UPSTASH_IMAGE_URL;
 
-async function scanDatabases() {
-  console.log("🔍 Scanning databases for keys...\n");
+async function logKeys(client, name) {
+  console.log(`\n--- ${name} REDIS KEYS ---`);
 
+  let cursor = "0";
+  let total = 0;
+
+  do {
+    const reply = await client.scan(cursor, { MATCH: "*", COUNT: 100 });
+    cursor = reply.cursor;
+    const keys = reply.keys;
+
+    for (const key of keys) {
+      const type = await client.type(key);
+      console.log(`🔑 ${key} | Type: ${type}`);
+      total++;
+    }
+
+  } while (cursor !== "0");
+
+  if (total === 0) console.log("No keys found.");
+}
+
+async function clearDatabases() {
   const renderClient = redis.createClient({ url: RENDER_URL });
   const upstashClient = redis.createClient({ url: UPSTASH_URL });
 
@@ -17,34 +37,18 @@ async function scanDatabases() {
     await renderClient.connect();
     await upstashClient.connect();
 
-    // Scan Render
-    console.log("--- RENDER REDIS ---");
-    const renderKeys = await renderClient.keys("*");
-    if (renderKeys.length === 0) {
-      console.log("No keys found. Database is empty.");
-    } else {
-      for (const key of renderKeys) {
-        const type = await renderClient.type(key);
-        console.log(`🔑 Key: '${key}' | Type: [${type}]`);
-      }
-    }
+    await logKeys(renderClient, "RENDER");
+    await logKeys(upstashClient, "UPSTASH");
 
-    console.log("\n--- UPSTASH REDIS ---");
-    // Scan Upstash
-    const upstashKeys = await upstashClient.keys("*");
-    if (upstashKeys.length === 0) {
-      console.log("No keys found. Database is empty.");
-    } else {
-      for (const key of upstashKeys) {
-        const type = await upstashClient.type(key);
-        console.log(`🔑 Key: '${key}' | Type: [${type}]`);
-      }
-    }
+    console.log("\nDeleting all keys...");
 
-    console.log("\nScan complete.");
+    await renderClient.flushDb();
+    await upstashClient.flushDb();
 
-  } catch (error) {
-    console.error("Failed to scan databases:", error.message);
+    console.log("All Redis data deleted.");
+
+  } catch (err) {
+    console.error("Error:", err.message);
   } finally {
     if (renderClient.isOpen) await renderClient.quit();
     if (upstashClient.isOpen) await upstashClient.quit();
@@ -52,4 +56,4 @@ async function scanDatabases() {
   }
 }
 
-scanDatabases();
+clearDatabases();

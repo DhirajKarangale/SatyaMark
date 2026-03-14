@@ -1,6 +1,6 @@
 import regex as re
 import json
-from connect import get_llm
+from AI.img_forensic.huggingface import get_llm
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 

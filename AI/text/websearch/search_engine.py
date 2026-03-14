@@ -13,7 +13,7 @@ if not SERPER_API_KEYS:
 _current_serper_key_index = 0
 
 SEARCH_COUNT = 20
-URLS_COUNT = 10
+MAX_DAYS_OLD = 14
 
 EXCLUDED_DOMAINS = [
     "youtube.com",
@@ -28,11 +28,13 @@ EXCLUDED_DOMAINS = [
     "pinterest.com",
     "linkedin.com",
     "medium.com",
+    "quora.com",
+    "tumblr.com",
 ]
 
 
 def is_excluded(url: str) -> bool:
-    """Checks if a URL belongs to a social media or excluded domain."""
+    """Checks if a URL belongs to a social media or user-generated domain."""
     url = url.lower()
     return any(domain in url for domain in EXCLUDED_DOMAINS)
 
@@ -40,7 +42,7 @@ def is_excluded(url: str) -> bool:
 def serper_search(query: str, tbs: str | None = None) -> dict:
     """
     Executes a Google search via Serper API.
-    If a key runs out of credits or throws an auth error, it rotates to the next key.
+    Handles key rotation automatically if a key runs out of credits or throws an error.
     """
     global _current_serper_key_index
     attempts = 0
@@ -56,6 +58,7 @@ def serper_search(query: str, tbs: str | None = None) -> dict:
                 search_params={"tbs": tbs} if tbs else None,
             )
             results = search.results(query, n=SEARCH_COUNT)
+
             if isinstance(results, dict) and results.get("message") == "Unauthorized.":
                 raise ValueError("Unauthorized. Likely out of credits.")
 
@@ -64,74 +67,56 @@ def serper_search(query: str, tbs: str | None = None) -> dict:
         except Exception as e:
             error_msg = str(e).lower()
             if any(
-                keyword in error_msg
-                for keyword in [
-                    "unauthorized",
-                    "credit",
-                    "403",
-                    "429",
-                    "limit",
-                    "forbidden",
-                ]
+                k in error_msg
+                for k in ["unauthorized", "credit", "403", "429", "limit", "forbidden"]
             ):
                 print(
-                    f"[Warning] Serper API key index {_current_serper_key_index} failed/out of credits. Rotating key..."
+                    f"[Warning] Serper API key index {_current_serper_key_index} failed. Rotating key..."
                 )
                 _current_serper_key_index = (_current_serper_key_index + 1) % len(
                     SERPER_API_KEYS
                 )
                 attempts += 1
             else:
-                print(f"[Error] Serper search failed with a standard error: {e}")
+                print(f"[Error] Search failed: {e}")
                 return {}
 
-    print("[Error] All Serper API keys exhausted or failed.")
     return {}
 
 
-def extract_urls_with_meta(result: dict, freshness: str) -> list:
-    """Extracts valid, non-excluded URLs along with their snippets and metadata."""
+def extract_urls_with_meta(result: dict) -> list:
+    """Extracts ONLY valid, non-social-media URLs along with their snippets."""
     out = []
     for item in result.get("organic", []):
         url = item.get("link")
+
         if not url or is_excluded(url):
             continue
 
         out.append(
             {
                 "url": url,
-                "freshness": freshness,
-                "title": item.get("title", ""),
                 "snippet": item.get("snippet", ""),
-                "date": item.get("date", ""),
             }
         )
-
-        if len(out) == URLS_COUNT:
-            break
 
     return out
 
 
 def get_urls_with_meta(query: str) -> list:
     """
-    Fetches recent and older search results, combines them,
-    and returns a clean list of dictionaries containing URLs and snippets.
+    Fetches the most relevant search results strictly within the MAX_DAYS_OLD window.
     """
     results = []
+    seen_urls = set()
 
-    recent = serper_search(query, tbs="qdr:w")
-    results.extend(extract_urls_with_meta(recent, freshness="last_7_days"))
+    time_filter = f"qdr:d{MAX_DAYS_OLD}"
+    search_data = serper_search(query, tbs=time_filter)
+    valid_urls = extract_urls_with_meta(search_data)
 
-    if len(results) < URLS_COUNT:
-        older = serper_search(query)
-        older_urls = extract_urls_with_meta(older, freshness="older")
+    for item in valid_urls:
+        if item["url"] not in seen_urls:
+            results.append(item)
+            seen_urls.add(item["url"])
 
-        existing_urls = {r["url"] for r in results}
-        for item in older_urls:
-            if item["url"] not in existing_urls:
-                results.append(item)
-            if len(results) == URLS_COUNT:
-                break
-
-    return results[:URLS_COUNT]
+    return results

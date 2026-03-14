@@ -17,7 +17,7 @@ hf_tokens_env = os.getenv("HF_TOKENS", "")
 HF_TOKENS = [t.strip() for t in hf_tokens_env.split(",") if t.strip()]
 
 _current_token_index = 0
-_connected_llms = {}  # Format: { token_index: { model_name: llm_instance } }
+_connected_llms = {}
 
 
 def _get_llm(name: str, token_index: int):
@@ -54,12 +54,11 @@ def _get_llm(name: str, token_index: int):
     return llm
 
 
-def invoke(model_names: list[str], prompt: str, parse_as_json: bool = False):
+def invoke_llm(model_names: list[str], prompt: str, parse_as_json: bool = False):
     global _current_token_index
 
     for model_name in model_names:
         attempts_with_different_tokens = 0
-        # You have depleted your monthly included credits. Purchase pre-paid credits to continue using Inference Providers. Alternatively, subscribe to PRO to get 20x more included usage
 
         while attempts_with_different_tokens < len(HF_TOKENS):
             try:

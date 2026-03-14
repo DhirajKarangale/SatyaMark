@@ -10,7 +10,7 @@ from redis.backoff import ExponentialBackoff
 from redis.exceptions import ConnectionError, TimeoutError
 from dotenv import load_dotenv
 
-from text.starter.text_verify import verify_text_summary
+from text.starter.text_verify import verify_text
 
 load_dotenv()
 
@@ -48,7 +48,7 @@ def process_job_data(job_data, source_name):
     print(f"[{CONSUMER_NAME} | {source_name}] Processing Job: {jobId}")
 
     try:
-        output = verify_text_summary(text)
+        output = verify_text(text)
         summary = output.get("summary")
         result = output.get("result")
         payload = {

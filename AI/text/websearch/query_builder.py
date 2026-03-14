@@ -1,4 +1,4 @@
-from text.utils.huggingface import invoke
+from text.utils.huggingface import invoke_llm
 
 QUERY_MODELS = ["deepseek_r1", "deepseek_v3", "qwen2_5", "llama3"]
 
@@ -20,7 +20,7 @@ Return ONLY the rewritten search query string. No quotes, no explanations.
 def generate_search_query(text: str) -> str:
     prompt = prompt_template.format(text=text)
     try:
-        raw = invoke(QUERY_MODELS, prompt, parse_as_json=False)
+        raw = invoke_llm(QUERY_MODELS, prompt, parse_as_json=False)
         lines = [line.strip() for line in raw.split("\n") if line.strip()]
         if not lines:
             return text

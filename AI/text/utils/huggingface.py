@@ -3,7 +3,7 @@ import json
 from dotenv import load_dotenv
 from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
 
-from text.utils.parser import clean_text, extract_json
+from utils.parser import clean_text, extract_json
 
 load_dotenv()
 

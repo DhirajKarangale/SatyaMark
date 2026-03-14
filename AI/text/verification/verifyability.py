@@ -1,5 +1,5 @@
 from typing import Dict
-from text.utils.huggingface import invoke_llm
+from utils.huggingface import invoke_llm
 
 MODELS = ["deepseek_r1", "deepseek_v3", "qwen2_5", "minicheck"]
 

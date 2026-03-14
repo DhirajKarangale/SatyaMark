@@ -1,7 +1,7 @@
-from text.summary.summarizer import summarize
-from text.verification.factcheck import fact_check
-from text.verification.verifyability import check_verifyability
-from text.websearch.web_verify import web_verify
+from summary.summarizer import summarize
+from verification.factcheck import fact_check
+from verification.verifyability import check_verifyability
+from websearch.web_verify import web_verify
 
 
 def verify_text(statement):

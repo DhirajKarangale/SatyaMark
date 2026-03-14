@@ -1,7 +1,7 @@
 import re
 import json
 from typing import List, Dict, Any
-from text.utils.huggingface import invoke_llm
+from utils.huggingface import invoke_llm
 
 MODELS = ["deepseek_v3", "qwen2_5", "deepseek_r1"]
 

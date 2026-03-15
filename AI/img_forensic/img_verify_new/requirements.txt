@@ -1,0 +1,13 @@
+requests 
+pillow 
+validators
+numpy 
+imghdr
+urllib.parse
+io
+PIL
+piexif
+PyWavelets
+mediapipe
+cv2
+scipy 

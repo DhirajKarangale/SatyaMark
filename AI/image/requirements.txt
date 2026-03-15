@@ -1,9 +1,3 @@
 requests
-pillow
 numpy
 piexif
-
-# imghdr
-# PIL
-# io
-# urllib.parse

@@ -2,7 +2,6 @@ requests
 pillow
 numpy
 piexif
-scipy
 
 # imghdr
 # PIL

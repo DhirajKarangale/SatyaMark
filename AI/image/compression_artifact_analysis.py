@@ -2,14 +2,32 @@ import json
 import numpy as np
 from PIL import Image
 from io import BytesIO
-from scipy.fftpack import dct
+
+
+# ----------------------------------------------------------
+# Precompute 8x8 DCT transform matrix (orthogonal DCT-II)
+# ----------------------------------------------------------
+def create_dct_matrix(N=8):
+    C = np.zeros((N, N), dtype=np.float32)
+
+    for k in range(N):
+        alpha = np.sqrt(1/N) if k == 0 else np.sqrt(2/N)
+
+        for n in range(N):
+            C[k, n] = alpha * np.cos(((2*n + 1) * k * np.pi) / (2*N))
+
+    return C
+
+
+DCT_MATRIX = create_dct_matrix()
+DCT_MATRIX_T = DCT_MATRIX.T
 
 
 # ----------------------------------------------------------
 # 8x8 DCT transform
 # ----------------------------------------------------------
 def block_dct(block):
-    return dct(dct(block.T, norm="ortho").T, norm="ortho")
+    return DCT_MATRIX @ block @ DCT_MATRIX_T
 
 
 # ----------------------------------------------------------
@@ -196,10 +214,8 @@ def compression_artifact_analysis(image_bytes):
 
     image_format = image.format
 
-    # normalize grayscale to 0-1 (fix for blocking score scaling)
     gray = np.array(image.convert("L")).astype(np.float32) / 255.0
 
-    # extract DCT blocks
     dct_blocks = extract_dct_blocks(gray)
 
     jpeg_blockiness = jpeg_blockiness_metric(gray)
@@ -241,6 +257,7 @@ def compression_artifact_analysis(image_bytes):
             "dct_block_count": len(dct_blocks)
         }
     }
+
 
 def process(image_bytes):
     result = compression_artifact_analysis(image_bytes)

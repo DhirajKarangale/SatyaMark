@@ -1,13 +1,10 @@
-requests 
-pillow 
-validators
-numpy 
-imghdr
-urllib.parse
-io
-PIL
+requests
+pillow
+numpy
 piexif
-PyWavelets
-mediapipe
-cv2
-scipy 
+scipy
+
+# imghdr
+# PIL
+# io
+# urllib.parse

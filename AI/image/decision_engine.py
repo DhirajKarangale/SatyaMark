@@ -85,7 +85,7 @@ def detect(data):
             "reason": "insufficient forensic signals"
         }
 
-    confidence = max(ai_score, real_score) / total
+    confidence = max(ai_score, real_score) / total * 100
 
     if confidence < 0.6:
         mark = "UNCERTAIN"
@@ -98,10 +98,11 @@ def detect(data):
 
     return {
         "mark": mark,
-        "confidence": round(confidence, 3),
+        "confidence": round(confidence, 2),
         "reason": reason
     }
 
 def process(data):
     result = detect(data)
-    return json.dumps(result, indent=2)
+    # return json.dumps(result, indent=2)
+    return result

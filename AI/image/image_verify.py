@@ -56,12 +56,13 @@ def verify(image_url):
         # print("Compression Artifact Analysis: ", img_compression_artifact_analysis)
         # print("Gan: ", img_gan)
         # print("Perturbation Robustness Testing: ", img_perturbation_robustness_testing)
+        # print("Decision Engine: ", img_decision_engine)
 
-        print("Decision Engine: ", img_decision_engine)
+        return img_decision_engine
     except Exception as e:
         print(e)
 
 
 image_url_1 = "https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png"
 image_url_2 = "https://res.cloudinary.com/dfamljkyo/image/upload/v1766424802/jqb9jtdecfetvkzgegqz.png"
-verify(image_url_2)
+print(verify(image_url_2))

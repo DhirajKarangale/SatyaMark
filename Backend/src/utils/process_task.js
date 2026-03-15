@@ -7,15 +7,10 @@ const { generateImageHash } = require('../hash/image_hash');
 const { checkRateLimiter } = require("./rateLimiter");
 const eventBus = require("../starter/eventBus");
 
-const IMAGE_ALGO = process.env.IMAGE_ALGO;
 const callback_url_text = process.env.RESULT_RECEIVER_TEXT;
 const callback_url_image = process.env.RESULT_RECEIVER_IMG;
 const STREAM_KEY_TEXT = "stream:ai:text:jobs";
-const STREAM_KEY_IMAGE_ML = "stream:ai:imageml:jobs";
-const STREAM_KEY_IMAGE_Forensic = "stream:ai:imageforensic:jobs";
-let STREAM_KEY_IMAGE = STREAM_KEY_IMAGE_Forensic;
-
-if (IMAGE_ALGO && IMAGE_ALGO.toLowerCase() == "ml") STREAM_KEY_IMAGE = STREAM_KEY_IMAGE_ML;
+const STREAM_KEY_IMAGE = "stream:ai:image:jobs";
 
 function getTask(data, socketSessionId) {
     if (!data || !data.clientId || !data.jobId) return;
@@ -106,7 +101,7 @@ async function process_image(clientId, jobId, image_url, dataSessionId, socketSe
 
     if (!checkRateLimiter(clientId, dataSessionId, socketSessionId)) return;
 
-    console.log(`[IMAGE] Task enqueued → job=${jobId}, algo=${IMAGE_ALGO}`);
+    console.log(`[IMAGE] Task enqueued → job=${jobId}`);
     await enqueueJob({
         type: "image",
         jobId: jobId,

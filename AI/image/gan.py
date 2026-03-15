@@ -1,8 +1,6 @@
 import json
 import numpy as np
 from PIL import Image
-from scipy.fft import fft2, fftshift
-from scipy.signal import find_peaks
 from io import BytesIO
 
 
@@ -18,6 +16,22 @@ def load_image(image_data):
     img = img.convert("L")
     img = np.array(img).astype(np.float32) / 255.0
     return img
+
+
+# -----------------------------
+# SIMPLE PEAK DETECTOR
+# -----------------------------
+
+def find_peaks(signal, height):
+
+    peaks = []
+    n = len(signal)
+
+    for i in range(1, n - 1):
+        if signal[i] > signal[i-1] and signal[i] > signal[i+1] and signal[i] > height:
+            peaks.append(i)
+
+    return peaks
 
 
 # -----------------------------
@@ -42,8 +56,8 @@ def extract_patches(img, patch_size=128, stride=64):
 
 def checkerboard_score_patch(patch):
 
-    f = fft2(patch)
-    fshift = fftshift(f)
+    f = np.fft.fft2(patch)
+    fshift = np.fft.fftshift(f)
     spectrum = np.log(np.abs(fshift) + 1e-8)
 
     h, w = spectrum.shape
@@ -54,8 +68,11 @@ def checkerboard_score_patch(patch):
     horiz = spectrum[cy]
     vert = spectrum[:, cx]
 
-    peaks_h, _ = find_peaks(horiz, height=np.mean(horiz)*2)
-    peaks_v, _ = find_peaks(vert, height=np.mean(vert)*2)
+    threshold_h = np.mean(horiz) * 2
+    threshold_v = np.mean(vert) * 2
+
+    peaks_h = find_peaks(horiz, threshold_h)
+    peaks_v = find_peaks(vert, threshold_v)
 
     return len(peaks_h) + len(peaks_v)
 
@@ -85,7 +102,7 @@ def detect_gan_checkerboard(img):
 def radial_profile(spectrum):
 
     h, w = spectrum.shape
-    cy, cx = h//2, w//2
+    cy, cx = h // 2, w // 2
 
     y, x = np.ogrid[:h, :w]
     r = np.sqrt((x-cx)**2 + (y-cy)**2)
@@ -102,13 +119,14 @@ def radial_profile(spectrum):
 
 def diffusion_artifacts(img):
 
-    f = fft2(img)
-    fshift = fftshift(f)
+    f = np.fft.fft2(img)
+    fshift = np.fft.fftshift(f)
     spectrum = np.abs(fshift)
 
     radial = radial_profile(spectrum)
 
-    peaks, _ = find_peaks(radial)
+    threshold = np.mean(radial) * 1.5
+    peaks = find_peaks(radial, threshold)
 
     return {
         "radial_std": float(np.std(radial)),
@@ -133,6 +151,7 @@ def detect_gan_diffusion_artifacts(image_data):
         "gan_checkerboard_artifacts": gan,
         "diffusion_sampling_artifacts": diffusion
     }
+
 
 def process(image_bytes):
     result = detect_gan_diffusion_artifacts(image_bytes)

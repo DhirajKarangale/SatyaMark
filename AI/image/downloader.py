@@ -1,4 +1,3 @@
-import imghdr
 import requests
 import numpy as np
 from urllib.parse import urlparse
@@ -41,16 +40,16 @@ def download_image(url):
 
     return image_bytes
 
+
 def validate_image_bytes(image_bytes):
-    image_type = imghdr.what(None, h=image_bytes)
-
-    if image_type not in ALLOWED_FORMATS:
-        raise ValueError(f"Invalid image format: {image_type}")
-
     image = Image.open(BytesIO(image_bytes))
     image.verify()
 
     image = Image.open(BytesIO(image_bytes))
+    image_type = image.format.lower()
+
+    if image_type not in ALLOWED_FORMATS:
+        raise ValueError(f"Invalid image format: {image_type}")
 
     return image, image_type
 

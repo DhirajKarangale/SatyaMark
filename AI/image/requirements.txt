@@ -1,3 +1,6 @@
+redis
+dotenv
 requests
 numpy
 piexif
+exifread

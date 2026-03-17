@@ -34,7 +34,6 @@ def ensure_consumer_group(client, source_name):
     """Creates the consumer group once on startup to save quota."""
     try:
         client.xgroup_create(STREAM_KEY, GROUP, id="$", mkstream=True)
-        print(f"[{source_name}] Consumer group '{GROUP}' ensured.")
     except redis.exceptions.ResponseError as e:
         if "BUSYGROUP" not in str(e):
             print(f"[{source_name}] Group creation issue: {e}")

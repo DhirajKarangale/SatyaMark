@@ -81,7 +81,7 @@ async function process_image(clientId, jobId, image_url, dataSessionId, socketSe
     const image_hash = await generateImageHash(image_url)
     const imageData = await modelImage.GetImage(image_url, image_hash);
 
-    if (false && imageData && typeof imageData === "object") {
+    if (imageData && typeof imageData === "object") {
         console.log(`[IMAGE] Result found in cache → job=${jobId}`);
 
         const payload = {

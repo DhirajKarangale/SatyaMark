@@ -68,8 +68,7 @@ class RedisQueueManager {
 
                 if (usedMB < this.maxMemoryMB) {
                     await renderClient.xAdd(streamKey, "*", jobPayload);
-                    console.log(`Job added to render Stream: ${streamKey}, RenderUrl: ${this.renderUrl}`);
-                    // console.log(`[${this.queueName} ROUTER] Job ${currentJob.jobId} -> RENDER (${usedMB.toFixed(2)} MB used)`);
+                    console.log(`[${this.queueName} ROUTER] Job ${currentJob.jobId} -> RENDER (${usedMB.toFixed(2)} MB used)`);
                 } else {
                     if (!upstashClient) {
                         if (!this.upstashUrl) {

@@ -194,7 +194,6 @@ def upstash_worker_loop(redis_url, check_rate_ms):
 
 
 def process_loop():
-    return
     threads = []
 
     render_thread = threading.Thread(

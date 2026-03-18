@@ -1,0 +1,100 @@
+name: Deploy Multi-Worker Architecture
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'AI/**'
+      - '.github/workflows/**'
+
+jobs:
+  deploy-all-workers:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Main Repository
+        uses: actions/checkout@v4
+
+      # ==========================================
+      # BUILD & DEPLOY: IMAGE WORKERS
+      # ==========================================
+      - name: Prepare Image Worker Build
+        run: |
+          mkdir image_build
+          cp -r AI image_build/
+          
+          cat <<EOF > image_build/Dockerfile
+          FROM python:3.11-slim
+          ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+          WORKDIR /app
+          COPY . .
+          RUN pip install --no-cache-dir -r AI/requirements.txt
+          RUN pip install --no-cache-dir -r AI/image/requirements.txt
+          EXPOSE 7860
+          CMD ["python", "AI/image/image_worker.py"]
+          EOF
+          
+          cat <<EOF > image_build/README.md
+          ---
+          title: Satyamark Image Worker
+          sdk: docker
+          app_port: 7860
+          ---
+          EOF
+
+      - name: Push Image Workers
+        run: |
+          cd image_build
+          git init
+          git branch -M main
+          git config --global user.email "bot@satyamark.com"
+          git config --global user.name "Satyamark-Bot"
+          git add . && git commit -m "Auto-deploy Image Worker"
+          
+          # Push to Account 1
+          git push --force https://DKode02:${{ secrets.HF_TOKEN_ACC1 }}@huggingface.co/spaces/DKode02/image-worker main
+          
+          # Push to Account 2
+          git push --force https://dhirajk02:${{ secrets.HF_TOKEN_ACC2 }}@huggingface.co/spaces/dhirajk02/image-worker main
+
+      # ==========================================
+      # BUILD & DEPLOY: PHASE 2 (TEXT/LLM) WORKERS
+      # ==========================================
+      - name: Prepare Phase 2 Worker Build
+        run: |
+          mkdir text_build
+          cp -r AI text_build/
+          
+          cat <<EOF > text_build/Dockerfile
+          FROM python:3.11-slim
+          ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+          WORKDIR /app
+          COPY . .
+          RUN pip install --no-cache-dir -r AI/requirements.txt
+          RUN pip install --no-cache-dir -r AI/text/requirements.txt
+          EXPOSE 7860
+          # Make sure this matches your actual Phase 2 script name
+          CMD ["python", "AI/text/text_worker.py"] 
+          EOF
+          
+          cat <<EOF > text_build/README.md
+          ---
+          title: Satyamark Phase 2 Worker
+          sdk: docker
+          app_port: 7860
+          ---
+          EOF
+
+      - name: Push Phase 2 Workers
+        run: |
+          cd text_build
+          git init
+          git branch -M main
+          git config --global user.email "bot@satyamark.com"
+          git config --global user.name "Satyamark-Bot"
+          git add . && git commit -m "Auto-deploy Phase 2 Worker"
+          
+          # Push to Account 1
+          git push --force https://DKode02:${{ secrets.HF_TOKEN_ACC1 }}@huggingface.co/spaces/DKode02/text-worker main
+          
+          # Push to Account 2
+          git push --force https://dhirajk02:${{ secrets.HF_TOKEN_ACC2 }}@huggingface.co/spaces/dhirajk02/text-worker main

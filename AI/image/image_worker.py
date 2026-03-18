@@ -217,7 +217,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def health_check():
-    return {"status": "Satyamark image Worker is running!"}, 200
+    return {"status": "Satyamark Image Worker is running!"}, 200
 
 def run_flask():
     app.run(host="0.0.0.0", port=7860)

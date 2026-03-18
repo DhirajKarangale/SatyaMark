@@ -71,7 +71,8 @@ async function process_text(clientId, jobId, text, dataSessionId, socketSessionI
         text_hash: text_hash,
         summary_hash: summary_hash,
         callback_url: callback_url_text,
-        STREAM_KEY: STREAM_KEY_TEXT
+        STREAM_KEY: STREAM_KEY_TEXT,
+        retry: 0
     });
 }
 
@@ -109,7 +110,8 @@ async function process_image(clientId, jobId, image_url, dataSessionId, socketSe
         image_url: image_url,
         image_hash: image_hash,
         callback_url: callback_url_image,
-        STREAM_KEY: STREAM_KEY_IMAGE
+        STREAM_KEY: STREAM_KEY_IMAGE,
+        retry: 0
     });
 }
 

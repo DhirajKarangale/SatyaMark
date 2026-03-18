@@ -1,2 +1,2 @@
--r image/requirements.txt
--r text/requirements.txt
+# -r image/requirements.txt
+# -r text/requirements.txt

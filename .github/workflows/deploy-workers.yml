@@ -15,14 +15,13 @@ jobs:
         uses: actions/checkout@v4
 
       # ==========================================
-      # BUILD & DEPLOY: IMAGE WORKERS
+      # 1. THE BUILD PHASE
       # ==========================================
       - name: Prepare Image Worker Build
         run: |
           mkdir -p image_build/AI
           
-          # 1. Copy ONLY the files in the root of AI (requirements.txt, verify.py, etc.)
-          # maxdepth 1 ensures we do NOT copy sub-directories like dataset/ or text/
+          # 1. Copy ONLY the files in the root of AI
           find AI -maxdepth 1 -type f -exec cp {} image_build/AI/ \;
           
           # 2. Explicitly copy ONLY the image folder
@@ -33,7 +32,6 @@ jobs:
           ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
           WORKDIR /app
           COPY . .
-          RUN pip install --no-cache-dir -r AI/requirements.txt
           RUN pip install --no-cache-dir -r AI/image/requirements.txt
           EXPOSE 7860
           CMD ["python", "AI/image/image_worker.py"]
@@ -46,26 +44,16 @@ jobs:
           app_port: 7860
           ---
           EOF
-
-      - name: Push Image Workers
-        run: |
+          
+          # Initialize Git for Image Build
           cd image_build
           git init
           git branch -M main
           git config --global user.email "bot@satyamark.com"
           git config --global user.name "Satyamark-Bot"
           git add . && git commit -m "Auto-deploy Image Worker"
-          
-          # Push to Account 1
-          git push --force https://DKode02:${{ secrets.HF_TOKEN_ACC1 }}@huggingface.co/spaces/DKode02/satyamark-image-worker main
-          
-          # Push to Account 2 (Replace with actual account name)
-          git push --force https://dhirajk02:${{ secrets.HF_TOKEN_ACC2 }}@huggingface.co/spaces/dhirajk02/satyamark-image-worker main
 
-      # ==========================================
-      # BUILD & DEPLOY: PHASE 2 (TEXT/LLM) WORKERS
-      # ==========================================
-      - name: Prepare Phase 2 Worker Build
+      - name: Prepare Phase 2 (Text) Worker Build
         run: |
           mkdir -p text_build/AI
           
@@ -80,7 +68,6 @@ jobs:
           ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
           WORKDIR /app
           COPY . .
-          RUN pip install --no-cache-dir -r AI/requirements.txt
           RUN pip install --no-cache-dir -r AI/text/requirements.txt
           EXPOSE 7860
           CMD ["python", "AI/text/starter/text_worker.py"] 
@@ -93,18 +80,39 @@ jobs:
           app_port: 7860
           ---
           EOF
-
-      - name: Push Phase 2 Workers
-        run: |
+          
+          # Initialize Git for Text Build
           cd text_build
           git init
           git branch -M main
           git config --global user.email "bot@satyamark.com"
           git config --global user.name "Satyamark-Bot"
           git add . && git commit -m "Auto-deploy Phase 2 Worker"
+
+      # ==========================================
+      # 2. THE DEPLOYMENT PHASE (Staggered by Account)
+      # ==========================================
+      - name: Deploy Primary Cluster (Account 1 - DKode02)
+        run: |
+          # Push to Account 1: Image Space
+          cd ${{ github.workspace }}/image_build
+          git push --force https://DKode02:${{ secrets.HF_TOKEN_ACC1 }}@huggingface.co/spaces/DKode02/satyamark-image-worker main
           
-          # Push to Account 1
+          # Push to Account 1: Text Space
+          cd ${{ github.workspace }}/text_build
           git push --force https://DKode02:${{ secrets.HF_TOKEN_ACC1 }}@huggingface.co/spaces/DKode02/satyamark-text-worker main
+
+      - name: Pipeline Delay
+        run: |
+          echo "Waiting 15 seconds for Account 1 to initialize before pushing Account 2..."
+          sleep 15
+
+      - name: Deploy Secondary Cluster (Account 2 - dhirajk02)
+        run: |
+          # Push to Account 2: Image Space
+          cd ${{ github.workspace }}/image_build
+          git push --force https://dhirajk02:${{ secrets.HF_TOKEN_ACC2 }}@huggingface.co/spaces/dhirajk02/satyamark-image-worker main
           
-          # Push to Account 2 (Replace with actual account name)
+          # Push to Account 2: Text Space
+          cd ${{ github.workspace }}/text_build
           git push --force https://dhirajk02:${{ secrets.HF_TOKEN_ACC2 }}@huggingface.co/spaces/dhirajk02/satyamark-text-worker main

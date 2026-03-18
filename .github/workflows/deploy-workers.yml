@@ -19,8 +19,14 @@ jobs:
       # ==========================================
       - name: Prepare Image Worker Build
         run: |
-          mkdir image_build
-          cp -r AI image_build/
+          mkdir -p image_build/AI
+          
+          # 1. Copy ONLY the files in the root of AI (requirements.txt, verify.py, etc.)
+          # maxdepth 1 ensures we do NOT copy sub-directories like dataset/ or text/
+          find AI -maxdepth 1 -type f -exec cp {} image_build/AI/ \;
+          
+          # 2. Explicitly copy ONLY the image folder
+          cp -r AI/image image_build/AI/
           
           cat <<EOF > image_build/Dockerfile
           FROM python:3.11-slim
@@ -53,7 +59,7 @@ jobs:
           # Push to Account 1
           git push --force https://DKode02:${{ secrets.HF_TOKEN_ACC1 }}@huggingface.co/spaces/DKode02/satyamark-image-worker main
           
-          # Push to Account 2
+          # Push to Account 2 (Replace with actual account name)
           git push --force https://dhirajk02:${{ secrets.HF_TOKEN_ACC2 }}@huggingface.co/spaces/dhirajk02/satyamark-image-worker main
 
       # ==========================================
@@ -61,8 +67,13 @@ jobs:
       # ==========================================
       - name: Prepare Phase 2 Worker Build
         run: |
-          mkdir text_build
-          cp -r AI text_build/
+          mkdir -p text_build/AI
+          
+          # 1. Copy ONLY the files in the root of AI
+          find AI -maxdepth 1 -type f -exec cp {} text_build/AI/ \;
+          
+          # 2. Explicitly copy ONLY the text folder
+          cp -r AI/text text_build/AI/
           
           cat <<EOF > text_build/Dockerfile
           FROM python:3.11-slim
@@ -72,8 +83,7 @@ jobs:
           RUN pip install --no-cache-dir -r AI/requirements.txt
           RUN pip install --no-cache-dir -r AI/text/requirements.txt
           EXPOSE 7860
-          # Make sure this matches your actual Phase 2 script name
-          CMD ["python", "AI/text/text_worker.py"] 
+          CMD ["python", "AI/text/starter/text_worker.py"] 
           EOF
           
           cat <<EOF > text_build/README.md
@@ -96,5 +106,5 @@ jobs:
           # Push to Account 1
           git push --force https://DKode02:${{ secrets.HF_TOKEN_ACC1 }}@huggingface.co/spaces/DKode02/satyamark-text-worker main
           
-          # Push to Account 2
+          # Push to Account 2 (Replace with actual account name)
           git push --force https://dhirajk02:${{ secrets.HF_TOKEN_ACC2 }}@huggingface.co/spaces/dhirajk02/satyamark-text-worker main

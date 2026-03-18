@@ -47,6 +47,7 @@ def process_job_data(job_data, source_name):
     callback_url = job_data.get("callback_url")
     text_hash = job_data.get("text_hash")
     summary_hash = job_data.get("summary_hash")
+    retry = job_data.get("retry")
 
     print(f"[{CONSUMER_NAME} | {source_name}] Processing Job: {jobId}")
 
@@ -64,6 +65,7 @@ def process_job_data(job_data, source_name):
             "confidence": result.get("confidence"),
             "urls": result.get("urls"),
             "summary": summary,
+            "retry": retry
         }
 
         requests.post(callback_url, json=payload, timeout=10)

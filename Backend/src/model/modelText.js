@@ -33,12 +33,12 @@ async function DeleteTextById(Id) {
 }
 
 async function PostText(data) {
-    const { summary_hash, text_hash, mark, reason, confidence, summary, urls } = data;
+    const { summary_hash, text_hash, mark, reason, confidence, summary, urls, retry } = data;
 
     const query = `
         INSERT INTO ${tableName}
         (text_hash, summary_hash, mark, reason, summary, confidence, urls)
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
         RETURNING *;
     `;
 
@@ -49,7 +49,8 @@ async function PostText(data) {
         reason,
         summary,
         confidence,
-        urls || null
+        urls || null,
+        retry
     ];
 
     const result = await db.query(query, values);

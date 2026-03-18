@@ -33,12 +33,12 @@ async function DeleteImageById(Id) {
 }
 
 async function PostImage(data) {
-    const { image_hash, image_url, mark, reason, confidence } = data;
-
+    const { image_hash, image_url, mark, reason, confidence, retry } = data;
+    
     const query = `
         INSERT INTO ${tableName}
-        (image_hash, image_url, mark, reason, confidence)
-        VALUES ($1, $2, $3, $4, $5)
+        (image_hash, image_url, mark, reason, confidence, retry)
+        VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING *;
     `;
 
@@ -48,6 +48,7 @@ async function PostImage(data) {
         mark,
         reason,
         confidence,
+        retry
     ];
 
     const result = await db.query(query, values);

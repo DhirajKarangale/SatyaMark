@@ -46,6 +46,7 @@ def process_job_data(job_data, source_name):
     callback_url = job_data.get("callback_url")
     image_url = job_data.get("image_url")
     image_hash = job_data.get("image_hash")
+    retry = job_data.get("retry")
 
     print(f"[{CONSUMER_NAME} | {source_name}] Processing Job: {jobId}")
 
@@ -60,6 +61,7 @@ def process_job_data(job_data, source_name):
             "mark": str(result["mark"]),
             "reason": result.get("reason"),
             "confidence": result.get("confidence"),
+            "retry": retry
         }
 
         requests.post(callback_url, json=payload, timeout=10)
@@ -192,7 +194,6 @@ def upstash_worker_loop(redis_url, check_rate_ms):
 
 
 def process_loop():
-    return
     threads = []
 
     render_thread = threading.Thread(

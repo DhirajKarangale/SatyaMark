@@ -4,3 +4,6 @@ requests
 numpy
 piexif
 exifread
+PyWavelets
+flask
+Pillow

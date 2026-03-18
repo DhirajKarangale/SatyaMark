@@ -13,7 +13,7 @@ from redis.retry import Retry
 from redis.backoff import ExponentialBackoff
 from redis.exceptions import ConnectionError, TimeoutError
 from dotenv import load_dotenv
-
+from flask import Flask
 from image_verify import verify
 
 load_dotenv()
@@ -213,6 +213,16 @@ def process_loop():
     for t in threads:
         t.join()
 
+app = Flask(__name__)
+
+@app.route("/")
+def health_check():
+    return {"status": "Satyamark image Worker is running!"}, 200
+
+def run_flask():
+    app.run(host="0.0.0.0", port=7860)
 
 if __name__ == "__main__":
+    flask_thread = threading.Thread(target=run_flask, daemon=True)
+    flask_thread.start()
     process_loop()

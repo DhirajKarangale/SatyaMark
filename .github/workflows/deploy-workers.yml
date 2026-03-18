@@ -75,7 +75,7 @@ jobs:
           
           cat <<EOF > text_build/README.md
           ---
-          title: Satyamark Phase 2 Worker
+          title: Satyamark Text Worker
           sdk: docker
           app_port: 7860
           ---
@@ -105,7 +105,7 @@ jobs:
       - name: Pipeline Delay
         run: |
           echo "Waiting 15 seconds for Account 1 to initialize before pushing Account 2..."
-          sleep 15
+          sleep 12
 
       - name: Deploy Secondary Cluster (Account 2 - dhirajk02)
         run: |

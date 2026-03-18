@@ -1,24 +1,29 @@
 require("dotenv").config();
 const redis = require("redis");
 
-const RENDER_URL = process.env.REDIS_RENDER_TEXT_URL;
-const UPSTASH_URL = process.env.REDIS_UPSTASH_TEXT_URL;
-const JANITOR_RATE_MS = parseInt(process.env.REDIS_RENDER_UPSTASH_TRANSFER_RATE);
+const RENDER_TEXT_URL = process.env.REDIS_RENDER_TEXT_URL;
+const UPSTASH_TEXT_URL = process.env.REDIS_UPSTASH_TEXT_URL;
+const RENDER_IMAGE_URL = process.env.REDIS_RENDER_IMAGE_URL;
+const UPSTASH_IMAGE_URL = process.env.REDIS_UPSTASH_IMAGE_URL;
 
-const STREAM_KEY = "stream:ai:text:jobs";
+const JANITOR_RATE_MS = parseInt(process.env.REDIS_RENDER_UPSTASH_TRANSFER_RATE) || 60000;
+
+const STREAM_KEY_TEXT = "stream:ai:text:jobs";
+const STREAM_KEY_IMAGE = "stream:ai:image:jobs";
 const GROUP_NAME = "workers";
 const JANITOR_NAME = "backend-janitor";
-const IDLE_TIME_MS = 10 * 60 * 1000;
+const IDLE_TIME_MS = 10 * 60 * 1000; // 10 minutes
+const MAX_RETRY = 3;
 
-async function cleanStuckJobs(client, clientName) {
+async function cleanStuckJobs(client, serverName, queueName, streamKey) {
   try {
     const response = await client.xAutoClaim(
-      STREAM_KEY,
+      streamKey,
       GROUP_NAME,
       JANITOR_NAME,
       IDLE_TIME_MS,
-      "0-0", 
-      { COUNT: 100 } 
+      "0-0",
+      { COUNT: 100 }
     );
 
     const messages = response.messages;
@@ -27,31 +32,51 @@ async function cleanStuckJobs(client, clientName) {
       return;
     }
 
-    console.log(`[JANITOR] Found ${messages.length} stuck jobs in ${clientName}. Re-queueing...`);
+    console.log(`[JANITOR] Found ${messages.length} stuck jobs in ${queueName} (${serverName}). Checking retries...`);
 
     for (const entry of messages) {
       const stuckMsgId = entry.id;
-      const jobData = entry.message;
+      const jobFields = entry.message;
 
       try {
-        await client.xAdd(STREAM_KEY, "*", jobData);
-        await client.xAck(STREAM_KEY, GROUP_NAME, stuckMsgId);
-        await client.xDel(STREAM_KEY, stuckMsgId);
+        const payloadStr = jobFields.data;
+        const payload = JSON.parse(payloadStr);
+
+        payload.retry = (payload.retry || 0) + 1;
+
+        if (payload.retry > MAX_RETRY) {
+          console.log(`[DLQ] Job ${payload.jobId} failed 3 times in ${queueName}. Moving to DLQ.`);
+
+          const dlqStream = `${streamKey}:dlq`;
+          await client.xAdd(dlqStream, "*", { data: JSON.stringify(payload) });
+
+          await client.xAck(streamKey, GROUP_NAME, stuckMsgId);
+          await client.xDel(streamKey, stuckMsgId);
+          continue;
+        }
+
+        jobFields.data = JSON.stringify(payload);
+
+        await client.xAdd(streamKey, "*", jobFields);
+        await client.xAck(streamKey, GROUP_NAME, stuckMsgId);
+        await client.xDel(streamKey, stuckMsgId);
 
       } catch (err) {
-        console.log(`[JANITOR ERROR] Failed to reset job ${stuckMsgId}:`, err.message);
+        console.log(`[JANITOR ERROR] Failed to reset job ${stuckMsgId} in ${queueName}:`, err.message);
       }
     }
   } catch (err) {
     if (!err.message.includes("NOGROUP")) {
-      console.log(`[JANITOR SYSTEM ERROR - ${clientName}]`, err.message);
+      console.log(`[JANITOR SYSTEM ERROR - ${queueName} ${serverName}]`, err.message);
     }
   }
 }
 
-async function runJanitorCycle() {
-  const renderClient = redis.createClient({ url: RENDER_URL });
-  const upstashClient = redis.createClient({ url: UPSTASH_URL });
+async function processJanitorForQueue(renderUrl, upstashUrl, queueName, streamKey) {
+  if (!renderUrl || !upstashUrl) return;
+
+  const renderClient = redis.createClient({ url: renderUrl });
+  const upstashClient = redis.createClient({ url: upstashUrl });
 
   renderClient.on("error", () => { });
   upstashClient.on("error", () => { });
@@ -60,15 +85,22 @@ async function runJanitorCycle() {
     await renderClient.connect();
     await upstashClient.connect();
 
-    await cleanStuckJobs(renderClient, "RENDER");
-    await cleanStuckJobs(upstashClient, "UPSTASH");
+    await cleanStuckJobs(renderClient, "RENDER", queueName, streamKey);
+    await cleanStuckJobs(upstashClient, "UPSTASH", queueName, streamKey);
 
   } catch (err) {
-    console.log("[JANITOR CONNECTION ERROR]", err.message);
+    console.log(`[JANITOR CONNECTION ERROR - ${queueName}]`, err.message);
   } finally {
     if (renderClient.isOpen) await renderClient.quit();
     if (upstashClient.isOpen) await upstashClient.quit();
   }
+}
+
+async function runJanitorCycle() {
+  await Promise.all([
+    processJanitorForQueue(RENDER_TEXT_URL, UPSTASH_TEXT_URL, "TEXT", STREAM_KEY_TEXT),
+    processJanitorForQueue(RENDER_IMAGE_URL, UPSTASH_IMAGE_URL, "IMAGE", STREAM_KEY_IMAGE)
+  ]);
 }
 
 function startJanitorCycle() {

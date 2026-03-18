@@ -48,7 +48,7 @@ async function PostImage(data) {
         mark,
         reason,
         confidence,
-        retry
+        retry,
     ];
 
     const result = await db.query(query, values);

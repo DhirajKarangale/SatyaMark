@@ -51,10 +51,10 @@ jobs:
           git add . && git commit -m "Auto-deploy Image Worker"
           
           # Push to Account 1
-          git push --force https://DKode02:${{ secrets.HF_TOKEN_ACC1 }}@huggingface.co/spaces/DKode02/image-worker main
+          git push --force https://DKode02:${{ secrets.HF_TOKEN_ACC1 }}@huggingface.co/spaces/DKode02/satyamark-image-worker main
           
           # Push to Account 2
-          git push --force https://dhirajk02:${{ secrets.HF_TOKEN_ACC2 }}@huggingface.co/spaces/dhirajk02/image-worker main
+          git push --force https://dhirajk02:${{ secrets.HF_TOKEN_ACC2 }}@huggingface.co/spaces/dhirajk02/satyamark-image-worker main
 
       # ==========================================
       # BUILD & DEPLOY: PHASE 2 (TEXT/LLM) WORKERS
@@ -94,7 +94,7 @@ jobs:
           git add . && git commit -m "Auto-deploy Phase 2 Worker"
           
           # Push to Account 1
-          git push --force https://DKode02:${{ secrets.HF_TOKEN_ACC1 }}@huggingface.co/spaces/DKode02/text-worker main
+          git push --force https://DKode02:${{ secrets.HF_TOKEN_ACC1 }}@huggingface.co/spaces/DKode02/satyamark-text-worker main
           
           # Push to Account 2
-          git push --force https://dhirajk02:${{ secrets.HF_TOKEN_ACC2 }}@huggingface.co/spaces/dhirajk02/text-worker main
+          git push --force https://dhirajk02:${{ secrets.HF_TOKEN_ACC2 }}@huggingface.co/spaces/dhirajk02/satyamark-text-worker main

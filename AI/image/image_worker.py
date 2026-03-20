@@ -217,9 +217,13 @@ def process_loop():
 
 app = Flask(__name__)
 
-@app.route("/health")
+@app.route("/")
 def health_check():
     return {"status": "Satyamark Image Worker is running!"}, 200
+
+@app.route("/health")
+def health_check():
+    return {"status": "Satyamark Image Worker Health check success!"}, 200
 
 def run_flask():
     app.run(host="0.0.0.0", port=7860)

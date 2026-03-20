@@ -221,7 +221,7 @@ def process_loop():
 
 app = Flask(__name__)
 
-@app.route("/")
+@app.route("/health")
 def health_check():
     return {"status": "Satyamark Text Worker is running!"}, 200
 

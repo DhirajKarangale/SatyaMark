@@ -222,7 +222,7 @@ def health_check():
     return {"status": "Satyamark Image Worker is running!"}, 200
 
 @app.route("/health")
-def health_check():
+def health_check_2():
     return {"status": "Satyamark Image Worker Health check success!"}, 200
 
 def run_flask():

@@ -226,7 +226,7 @@ def health_check():
     return {"status": "Satyamark Text Worker is running!"}, 200
 
 @app.route("/health")
-def health_check():
+def health_check_2():
     return {"status": "Satyamark Text Worker Health check success!"}, 200
 
 def run_flask():

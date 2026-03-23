@@ -226,7 +226,7 @@ def health_check_2():
     return {"status": "Satyamark Image Worker Health check success!"}, 200
 
 def run_flask():
-    app.run(host="0.0.0.0", port=7860)
+    app.run(host="0.0.0.0", port=7861)
 
 if __name__ == "__main__":
     flask_thread = threading.Thread(target=run_flask, daemon=True)

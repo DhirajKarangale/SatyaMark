@@ -1,9 +1,11 @@
+flask
 redis
 dotenv
 requests
 langdetect
+tokenizers 
 trafilatura
+lxml
 lxml_html_clean
 langchain_huggingface 
 langchain_community
-flask

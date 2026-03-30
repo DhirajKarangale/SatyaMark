@@ -223,11 +223,12 @@ app = Flask(__name__)
 
 @app.route("/")
 def health_check():
+    print("Satyamark Text Worker health check")
     return {"status": "Satyamark Text Worker is running!"}, 200
 
 @app.route("/health")
 def health_check_2():
-    print("Health check")
+    print("Satyamark Text Worker health check 2")
     return {"status": "Satyamark Text Worker Health check success!"}, 200
 
 def run_flask():

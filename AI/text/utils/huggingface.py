@@ -36,7 +36,7 @@ def _get_llm(name: str, token_index: int):
     endpoint = HuggingFaceEndpoint(
         task=cfg["task"],
         repo_id=cfg["model_id"],
-        provider=cfg.get("provider", "huggingface"),
+        # provider=cfg.get("provider", "huggingface"),
         do_sample=cfg.get("do_sample", False),
         temperature=cfg.get("temperature", 0.1),
         max_new_tokens=cfg.get("max_new_tokens", 512),

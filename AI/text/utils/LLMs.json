@@ -128,5 +128,37 @@
         "temperature": 0.2,
         "max_new_tokens": 512,
         "repetition_penalty": 1.05
+    },
+    {
+        "name": "qwen2_5_7b",
+        "model_id": "Qwen/Qwen2.5-7B-Instruct",
+        "task": "conversational",
+        "provider": "auto",
+        "temperature": 0.2,
+        "max_new_tokens": 512
+    },
+    {
+        "name": "phi3_mini",
+        "model_id": "microsoft/Phi-3-mini-4k-instruct",
+        "task": "conversational",
+        "provider": "auto",
+        "temperature": 0.2,
+        "max_new_tokens": 512
+    },
+    {
+        "name": "gemma_7b",
+        "model_id": "google/gemma-7b-it",
+        "task": "conversational",
+        "provider": "auto",
+        "temperature": 0.2,
+        "max_new_tokens": 512
+    },
+    {
+        "name": "zephyr",
+        "model_id": "HuggingFaceH4/zephyr-7b-beta",
+        "task": "conversational",
+        "provider": "auto",
+        "temperature": 0.2,
+        "max_new_tokens": 512
     }
 ]

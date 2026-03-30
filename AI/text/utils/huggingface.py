@@ -65,7 +65,6 @@ def invoke_llm(model_names: list[str], prompt: str, parse_as_json: bool = False)
                 llm = _get_llm(model_name, _current_token_index)
 
                 response = llm.invoke(prompt)
-                print("Response: ", response)
                 if parse_as_json:
                     return extract_json(response)
                 else:

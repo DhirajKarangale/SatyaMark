@@ -115,12 +115,9 @@ app.post("/ai-callback/text", async (req, res) => {
         let savedData = null;
         if (!isInternalError) savedData = await modelText.PostText(body);
 
-        // const dataId = savedData ? savedData.id : 123;
-
         const payload = {
             jobId: jobId,
             clientId: clientId,
-            // dataId: dataId,
             mark: mark,
             confidence: confidence,
             reason: reason,

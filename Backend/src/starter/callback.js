@@ -40,7 +40,7 @@ app.get("/getImageResult", async (req, res) => {
 });
 
 app.post("/text/remove", async (req, res) => {
-    
+
     try {
         const { id } = req.body;
         if (!id) {
@@ -106,18 +106,26 @@ app.post("/image/remove", async (req, res) => {
 app.post("/ai-callback/text", async (req, res) => {
     try {
         const body = req.body;
-        console.log(`[TEXT] Callback received → client=${body.clientId}, job=${body.jobId}`);
-        const savedData = await modelText.PostText(body);
+
+        const { jobId, clientId, mark, reason, confidence, summary, urls } = body;
+        console.log(`[TEXT] Callback received → client=${clientId}, job=${jobId}`);
+
+        const isInternalError = typeof body.reason === "string" && body.reason.toLowerCase().includes("internal error occurred");
+
+        let savedData = null;
+        if (!isInternalError) savedData = await modelText.PostText(body);
+
+        // const dataId = savedData ? savedData.id : 123;
 
         const payload = {
-            jobId: body.jobId,
-            clientId: body.clientId,
-            dataId: savedData.id,
-            mark: savedData.mark,
-            confidence: savedData.confidence,
-            reason: savedData.reason,
-            urls: savedData.urls,
-            summary: savedData.summary,
+            jobId: jobId,
+            clientId: clientId,
+            // dataId: dataId,
+            mark: mark,
+            confidence: confidence,
+            reason: reason,
+            urls: urls,
+            summary: summary,
             type: "text",
         };
 

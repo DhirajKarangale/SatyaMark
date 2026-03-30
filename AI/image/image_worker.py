@@ -18,7 +18,6 @@ from image_verify import verify
 
 load_dotenv()
 
-SELF_IMAGE_URL = os.getenv("SELF_IMAGE_URL")
 REDIS_RENDER_IMAGE_URL = os.getenv("REDIS_RENDER_IMAGE_URL")
 REDIS_UPSTASH_IMAGE_URL = os.getenv("REDIS_UPSTASH_IMAGE_URL")
 REDIS_RENDER_CHECK_RATE = int(os.getenv("REDIS_RENDER_CHECK_RATE"))
@@ -291,7 +290,7 @@ def health():
 def self_ping():
     while True:
         try:
-            requests.get(f"{SELF_IMAGE_URL}/health", timeout=5)
+            requests.get("http://127.0.0.1:7861/health", timeout=5)
         except:
             pass
         time.sleep(240)  # every 4 min

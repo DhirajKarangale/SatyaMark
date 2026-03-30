@@ -18,11 +18,11 @@ from starter.text_verify import verify_text
 
 load_dotenv()
 
-SELF_TEXT_URL = os.getenv("SELF_TEXT_URL")
 REDIS_RENDER_TEXT_URL = os.getenv("REDIS_RENDER_TEXT_URL")
 REDIS_UPSTASH_TEXT_URL = os.getenv("REDIS_UPSTASH_TEXT_URL")
 REDIS_RENDER_CHECK_RATE = int(os.getenv("REDIS_RENDER_CHECK_RATE"))
 REDIS_UPSTASH_CHECK_RATE = int(os.getenv("REDIS_UPSTASH_CHECK_RATE"))
+SELF_URL = os.getenv("SELF_URL")
 
 WORKER_ID = uuid.uuid4().hex[:6]
 CONSUMER_NAME = f"text-worker-{WORKER_ID}"
@@ -289,7 +289,7 @@ def health():
 def self_ping():
     while True:
         try:
-            requests.get(f"{SELF_TEXT_URL}/health", timeout=5)
+            requests.get("http://127.0.0.1:7861/health", timeout=5)
         except:
             pass
         time.sleep(240)  # every 4 min

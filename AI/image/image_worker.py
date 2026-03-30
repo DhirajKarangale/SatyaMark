@@ -218,10 +218,12 @@ app = Flask(__name__)
 
 @app.route("/")
 def health_check():
+    print("Satyamark Image Worker health check")
     return {"status": "Satyamark Image Worker is running!"}, 200
 
 @app.route("/health")
 def health_check_2():
+    print("Satyamark Image Worker health check 2")
     return {"status": "Satyamark Image Worker Health check success!"}, 200
 
 def run_flask():

@@ -3,8 +3,8 @@ from utils.huggingface import invoke_llm
 from summary.cleaner import clean_raw_social_text
 from summary.prompts import get_normalization_prompt
 
-NORMALIZATION_MODELS = ["qwen2_5", "llama3", "hermes"]
-SUMMARIZATION_MODELS = ["bart_large_cnn", "mistral"]
+NORMALIZATION_MODELS = ["qwen2_5", "llama3", "hermes", "deepseek_v3", "deepseek_r1_distill_llama_8b", "qwen2_5_7b", "phi3_mini", "gemma_7b", "zephyr"]
+SUMMARIZATION_MODELS = ["bart_large_cnn", "mistral", "qwen2_5", "deepseek_r1_distill_llama_8b", "llama3", "phi3_mini","gemma_7b", "zephyr"]
 
 
 def semantic_normalize(text: str) -> str:
@@ -24,7 +24,18 @@ def summarize_text(text: str) -> str:
         return ""
 
     try:
-        prompt = f"Summarize the following text in 1 or 2 objective sentences: {text}"
+        prompt = f"""
+Summarize the text into exactly 1 or 2 clear, objective sentences.
+
+Rules:
+- No prefixes like "Summary:"
+- No opinions
+- No extra text
+- Keep factual meaning unchanged
+
+Text:
+{text}
+"""
 
         result = invoke_llm(SUMMARIZATION_MODELS, prompt, parse_as_json=False)
         if not result:

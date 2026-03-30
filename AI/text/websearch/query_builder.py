@@ -1,6 +1,6 @@
 from utils.huggingface import invoke_llm
 
-QUERY_MODELS = ["deepseek_r1", "deepseek_v3", "qwen2_5", "llama3"]
+QUERY_MODELS = ["deepseek_r1", "deepseek_v3", "qwen2_5", "llama3", "qwen2_5_7b", "phi3_mini", "gemma_7b", "zephyr", "hermes", "mistral"]
 
 prompt_template = """
 Convert the following claim into a highly effective Google search query to verify its authenticity.

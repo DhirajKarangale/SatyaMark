@@ -3,7 +3,7 @@ import json
 from typing import List, Dict, Any
 from utils.huggingface import invoke_llm
 
-MODELS = ["deepseek_v3", "qwen2_5", "deepseek_r1"]
+MODELS = ["deepseek_v3", "qwen2_5", "deepseek_r1", "qwen2_5_7b", "phi3_mini", "gemma_7b", "zephyr", "hermes", "llama3", "mistral"]
 
 FORBIDDEN_PHRASES = (
     "provided web evidence",

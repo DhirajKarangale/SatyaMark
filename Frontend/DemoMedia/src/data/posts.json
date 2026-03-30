@@ -8,15 +8,15 @@
     },
     {
         "id": "2",
-        "title": "I Love MS Dhoni",
-        "description": "I have been a huge fan of MS Dhoni since childhood. His calm attitude inspires me every day.",
+        "title": "Tech",
+        "description": "Python was developed in india",
         "userName": "dkcodes",
         "date": "2025-11-28"
     },
     {
         "id": "3",
         "title": "Global Population Numbers",
-        "description": "The world population has crossed 8.1 billion.",
+        "description": "The world population has crossed 8.1 billion according to the latest UN report.",
         "userName": "frontend_dev",
         "date": "2025-10-12"
     },

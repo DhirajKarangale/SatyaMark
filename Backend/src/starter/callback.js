@@ -110,10 +110,14 @@ app.post("/ai-callback/text", async (req, res) => {
         const { jobId, clientId, mark, reason, confidence, summary, urls } = body;
         console.log(`[TEXT] Callback received → client=${clientId}, job=${jobId}`);
 
-        const isInternalError = typeof body.reason === "string" && body.reason.toLowerCase().includes("internal error occurred");
+        const reasonText = (reason || "").toLowerCase();
 
-        let savedData = null;
-        if (!isInternalError) savedData = await modelText.PostText(body);
+        const isInternalError =
+            reasonText.includes("internal error occurred") ||
+            reasonText.includes("failed to generate") ||
+            reasonText.includes("models and tokens failed");
+
+        if (!isInternalError) await modelText.PostText(body);
 
         const payload = {
             jobId: jobId,
@@ -138,17 +142,26 @@ app.post("/ai-callback/text", async (req, res) => {
 app.post("/ai-callback/image", async (req, res) => {
     try {
         const body = req.body;
-        console.log(`[IMAGE] Callback received → client=${body.clientId}, job=${body.jobId}`);
-        const savedData = await modelImage.PostImage(body);
+        const { jobId, clientId, image_hash, image_url, mark, reason, confidence } = body;
+
+        console.log(`[IMAGE] Callback received → client=${clientId}, job=${jobId}`);
+
+        const reasonText = (reason || "").toLowerCase();
+
+        const isInternalError =
+            reasonText.includes("internal error occurred") ||
+            reasonText.includes("failed to generate") ||
+            reasonText.includes("models and tokens failed");
+
+        if (!isInternalError) await modelImage.PostImage(body);
 
         const payload = {
-            jobId: body.jobId,
-            clientId: body.clientId,
-            dataId: savedData.id,
-            mark: savedData.mark,
-            confidence: savedData.confidence,
-            reason: savedData.reason,
-            image_url: savedData.image_url,
+            jobId: jobId,
+            clientId: clientId,
+            mark: mark,
+            confidence: confidence,
+            reason: reason,
+            image_url: image_url,
             type: "image",
         };
 

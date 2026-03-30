@@ -34,7 +34,6 @@ async function DeleteTextById(Id) {
 
 async function PostText(data) {
     const { summary_hash, text_hash, mark, reason, confidence, summary, urls, retry } = data;
-    console.log("Retry: ", retry);
     
     const query = `
     INSERT INTO ${tableName}

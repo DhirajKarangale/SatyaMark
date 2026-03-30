@@ -15,7 +15,7 @@ from text.starter.text_verify import verify_text
 
 # Text Data
 statements = [
-  "python was developed by guido van rossum",
+  "python was developed in india",
   "is recent water in india is because of chemtrail project",
   "i like goku ui",
   "hi i think dk is don",
@@ -34,7 +34,7 @@ statements = [
 ]
 
 
-statement = statements[12]
+statement = statements[0]
 
 # Image Data
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__)))

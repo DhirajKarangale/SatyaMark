@@ -192,117 +192,42 @@ def upstash_worker_loop(redis_url, check_rate_ms):
 
         time.sleep(sleep_seconds)
 
-
-
-
-# def process_loop():
-#     threads = []
-
-#     render_thread = threading.Thread(
-#         target=render_worker_loop,
-#         args=(REDIS_RENDER_IMAGE_URL, REDIS_RENDER_CHECK_RATE),
-#         daemon=True,
-#     )
-#     render_thread.start()
-#     threads.append(render_thread)
-
-#     upstash_thread = threading.Thread(
-#         target=upstash_worker_loop,
-#         args=(REDIS_UPSTASH_IMAGE_URL, REDIS_UPSTASH_CHECK_RATE),
-#         daemon=True,
-#     )
-#     upstash_thread.start()
-#     threads.append(upstash_thread)
-
-#     for t in threads:
-#         t.join()
-
-# app = Flask(__name__)
-
-# @app.route("/")
-# def health_check():
-#     return {"status": "Satyamark Image Worker is running!"}, 200
-
-# @app.route("/health")
-# def health_check_2():
-#     return {"status": "Satyamark Image Worker Health check success!"}, 200
-
-# def run_flask():
-#     app.run(host="0.0.0.0", port=7861)
-
-# if __name__ == "__main__":
-#     flask_thread = threading.Thread(target=run_flask, daemon=True)
-#     flask_thread.start()
-#     process_loop()
-
-
-
-
-
-
-
-
-
-
-
 def process_loop():
-    while True:  # FIX: prevent thread death
-        try:
-            threads = []
+    threads = []
 
-            t1 = threading.Thread(
-                target=render_worker_loop,
-                args=(REDIS_RENDER_IMAGE_URL, REDIS_RENDER_CHECK_RATE),
-                daemon=True,
-            )
+    render_thread = threading.Thread(
+        target=render_worker_loop,
+        args=(REDIS_RENDER_IMAGE_URL, REDIS_RENDER_CHECK_RATE),
+        daemon=True,
+    )
+    render_thread.start()
+    threads.append(render_thread)
 
-            t2 = threading.Thread(
-                target=upstash_worker_loop,
-                args=(REDIS_UPSTASH_IMAGE_URL, REDIS_UPSTASH_CHECK_RATE),
-                daemon=True,
-            )
+    upstash_thread = threading.Thread(
+        target=upstash_worker_loop,
+        args=(REDIS_UPSTASH_IMAGE_URL, REDIS_UPSTASH_CHECK_RATE),
+        daemon=True,
+    )
+    upstash_thread.start()
+    threads.append(upstash_thread)
 
-            t1.start()
-            t2.start()
+    for t in threads:
+        t.join()
 
-            threads.extend([t1, t2])
-
-            for t in threads:
-                t.join()
-
-        except Exception as e:
-            print(f"[PROCESS LOOP CRASH] {e}")
-            time.sleep(5)
-
-
-# -------- Flask --------
 app = Flask(__name__)
 
 @app.route("/")
-def root():
-    return {"status": "running"}, 200
+def health_check():
+    return {"status": "Satyamark Image Worker is running!"}, 200
 
 @app.route("/health")
-def health():
-    return {"status": "healthy"}, 200
+def health_check_2():
+    return {"status": "Satyamark Image Worker Health check success!"}, 200
 
-
-def self_ping():
-    while True:
-        try:
-            requests.get("http://127.0.0.1:7861/health", timeout=5)
-        except:
-            pass
-        time.sleep(240)  # every 4 min
-
-
-# -------- Main --------
-if __name__ == "__main__":
-    # start worker in background
-    threading.Thread(target=process_loop, daemon=True).start()
-
-    # start self ping
-    threading.Thread(target=self_ping, daemon=True).start()
-
-    # run flask in MAIN thread (important)
+def run_flask():
     app.run(host="0.0.0.0", port=7861)
+
+if __name__ == "__main__":
+    flask_thread = threading.Thread(target=run_flask, daemon=True)
+    flask_thread.start()
+    process_loop()

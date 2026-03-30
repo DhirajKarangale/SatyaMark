@@ -34,7 +34,7 @@ statements = [
 ]
 
 
-statement = statements[0]
+statement = statements[12]
 
 # Image Data
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__)))

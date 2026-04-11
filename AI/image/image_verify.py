@@ -64,5 +64,5 @@ def verify(image_url):
 
 
 # image_url_1 = "https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png"
-image_url_2 = "https://res.cloudinary.com/dfamljkyo/image/upload/v1766424802/jqb9jtdecfetvkzgegqz.png"
-print(verify(image_url_2))
+# image_url_2 = "https://res.cloudinary.com/dfamljkyo/image/upload/v1766424802/jqb9jtdecfetvkzgegqz.png"
+# print(verify(image_url_2))

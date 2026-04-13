@@ -1,4 +1,4 @@
-import json
+import human_translator
 
 def detect(data):
     ai_score = 0
@@ -149,14 +149,19 @@ def detect(data):
     else:
         mark = "UNCERTAIN"
 
-    # Select the top 3 reasons to give a more detailed explanation
-    reason = ", ".join(reasons[:3]) if reasons else "consistent forensic signals"
+    human_friendly_reason = human_translator.translate_forensics(
+        mark=mark, 
+        confidence=round(confidence, 2), 
+        ai_score=ai_score, 
+        real_score=real_score, 
+        all_reasons=reasons, 
+        raw_data=data 
+    )
 
     return {
         "mark": mark,
         "confidence": round(confidence, 2),
-        "reason": reason,
-        "signals": {"ai": ai_score, "real": real_score}
+        "reason": human_friendly_reason,
     }
 
 def process(data):

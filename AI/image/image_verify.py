@@ -55,11 +55,11 @@ def verify(image_url):
             "diffusion_latent_analysis": img_diffusion_latent_analysis
         }
 
-        return data
+        # return data
         
         img_decision_engine = decision_engine.process(data) 
-
         return img_decision_engine
+
     except Exception as e:
         print(e)
 

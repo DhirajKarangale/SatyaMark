@@ -8,86 +8,128 @@ def detect(data):
     # -------------------
     # Existing Forensic Checks (Metadata, C2PA, SPN, GAN, etc.)
     # -------------------
-    meta = data["metadata"]["analysis"]
-    if meta["has_exif"] and meta["camera_valid"]:
+    meta = data.get("metadata", {}).get("analysis", {})
+    if meta.get("has_exif") and meta.get("camera_valid"):
         real_score += 2
     else:
         ai_score += 1
         reasons.append("missing camera metadata")
 
-    if data["c2pa"]["c2pa_present"] and data["c2pa"]["valid_signature"]:
+    c2pa_data = data.get("c2pa", {})
+    if c2pa_data.get("c2pa_present") and c2pa_data.get("valid_signature"):
         real_score += 5
         reasons.append("verified provenance signature")
 
-    spn = data["sensor_pattern_noise"]["spn_metrics"]
-    if spn["horizontal_correlation"] > 0.75 and spn["vertical_correlation"] > 0.75:
+    spn = data.get("sensor_pattern_noise", {}).get("spn_metrics", {})
+    if spn.get("horizontal_correlation", 0) > 0.75 and spn.get("vertical_correlation", 0) > 0.75:
         real_score += 3
     else:
         ai_score += 2
         reasons.append("weak sensor noise pattern")
 
-    gan = data["gan"]["gan_checkerboard_artifacts"]
-    if gan["mean_checker_peaks"] > 10:
+    gan = data.get("gan", {}).get("gan_checkerboard_artifacts", {})
+    if gan.get("mean_checker_peaks", 0) > 10:
         ai_score += 2
         reasons.append("checkerboard GAN artifacts")
 
-    diff = data["gan"]["diffusion_sampling_artifacts"]
-    if diff["radial_peak_density"] > 0.35:
+    diff = data.get("gan", {}).get("diffusion_sampling_artifacts", {})
+    if diff.get("radial_peak_density", 0) > 0.35:
         ai_score += 2
         reasons.append("diffusion sampling artifacts")
 
     # -------------------
-    # NEW: Physics & Geometry
+    # Physics & Geometry
     # -------------------
-    physics = data["physics_geometry"]["physics_and_geometry"]
-    if physics["illumination"]["lighting_consistency_score"] > 0.9:
+    physics = data.get("physics_geometry", {}).get("physics_and_geometry", {})
+    illumination = physics.get("illumination", {})
+    perspective = physics.get("perspective", {})
+    
+    if illumination.get("lighting_consistency_score", 0) > 0.9:
         real_score += 2
-    elif physics["illumination"]["lighting_angle_variance"] > 1.2:
+    elif illumination.get("lighting_angle_variance", 0) > 1.2:
         ai_score += 2
         reasons.append("inconsistent lighting geometry")
 
     # -------------------
-    # NEW: ELA (Error Level Analysis)
+    # ELA (Error Level Analysis)
     # -------------------
-    ela = data["ela_analysis"]
-    if ela["is_suspicious"]:
+    ela = data.get("ela_analysis", {})
+    if ela.get("is_suspicious"):
         ai_score += 3
         reasons.append("inconsistent compression levels")
     else:
         real_score += 1
 
     # -------------------
-    # NEW: Autoencoder Reconstruction
+    # Autoencoder Reconstruction
     # -------------------
-    ae = data["autoencoder_reconstruction"]
-    if ae["is_suspiciously_simple"]:
+    ae = data.get("autoencoder_reconstruction", {})
+    if ae.get("is_suspiciously_simple"):
         ai_score += 3
         reasons.append("low latent complexity")
     else:
         real_score += 2
 
     # -------------------
-    # NEW: Diffusion Latent Analysis
+    # Diffusion Latent Analysis
     # -------------------
-    latent = data["diffusion_latent_analysis"]
-    # Real photos have high Kurtosis (spiky noise), AI is Gaussian (Kurtosis ~3)
-    if latent["is_diffusion_aligned"]:
+    latent = data.get("diffusion_latent_analysis", {})
+    if latent.get("is_diffusion_aligned"):
         ai_score += 4
         reasons.append("Gaussian noise alignment (Diffusion)")
-    elif latent["latent_kurtosis"] > 50:
+    elif latent.get("latent_kurtosis", 0) > 50:
         real_score += 3
         reasons.append("natural high-kurtosis noise")
 
     # -------------------
-    # Frequency & Perturbation (Existing)
+    # NEW: Benford's Law Analysis
     # -------------------
-    freq = data["frequency_domain_analysis"]["frequency_analysis"]
-    if freq["spectral_flatness"] > 0.995:
+    benford = data.get("benfords_law", {})
+    if "benford_chi_square" in benford:
+        chi_val = benford.get("benford_chi_square", 1.0)
+        if chi_val < 0.05:
+            real_score += 3
+        elif chi_val > 0.15:
+            ai_score += 3
+            reasons.append("unnatural Benford's Law statistical distribution")
+
+    # -------------------
+    # NEW: Chromatic Aberration
+    # -------------------
+    ca = data.get("chromatic_aberration", {})
+    if ca.get("has_natural_lens_dispersion"):
+        real_score += 3
+    elif ca.get("aberration_shift", 1.0) < 0.005:
+        ai_score += 2
+        reasons.append("unnatural edge-to-edge optical perfection")
+
+    # -------------------
+    # NEW: Patch Analysis (Texture Tiling)
+    # -------------------
+    patch = data.get("patch_analysis", {})
+    if patch.get("is_suspicious"):
+        ai_score += 2
+        reasons.append("suspicious repeating texture patches detected")
+
+    # -------------------
+    # NEW: Copy-Move Forgery Detection
+    # -------------------
+    copy_move_data = data.get("copy_move", {})
+    if copy_move_data.get("is_copy_move_detected"):
+        ai_score += 3
+        matches = copy_move_data.get("patch_matches_found", 0)
+        reasons.append(f"copy-move forgery detected ({matches} cloned blocks)")
+
+    # -------------------
+    # Frequency & Perturbation
+    # -------------------
+    freq = data.get("frequency_domain_analysis", {}).get("frequency_analysis", {})
+    if freq.get("spectral_flatness", 0) > 0.995:
         ai_score += 1
         reasons.append("flat frequency spectrum")
 
-    pert = data["perturbation"]["perturbation_robustness"]
-    if pert["std_similarity"] < 0.001:
+    pert = data.get("perturbation", {}).get("perturbation_robustness", {})
+    if pert.get("std_similarity", 1) < 0.001:
         ai_score += 1
         reasons.append("overly stable perturbation embedding")
 
@@ -107,8 +149,8 @@ def detect(data):
     else:
         mark = "UNCERTAIN"
 
-    # Select the top 2 reasons for the verdict
-    reason = ", ".join(reasons[:2]) if reasons else "consistent forensic signals"
+    # Select the top 3 reasons to give a more detailed explanation
+    reason = ", ".join(reasons[:3]) if reasons else "consistent forensic signals"
 
     return {
         "mark": mark,

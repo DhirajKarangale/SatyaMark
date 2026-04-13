@@ -13,6 +13,10 @@ import physics_geometry
 import ela_analysis
 import autoencoder_reconstruction
 import diffusion_latent_analysis
+import benfords_law
+import chromatic_aberration
+import patch_analyzer
+import copy_move
 import decision_engine
 
 
@@ -37,6 +41,10 @@ def verify(image_url):
         img_ela_analysis = ela_analysis.process(image_bytes)
         img_autoencoder_reconstruction = autoencoder_reconstruction.process(image_bytes)
         img_diffusion_latent_analysis = diffusion_latent_analysis.process(image_bytes)
+        img_benfords_law = benfords_law.process(image_bytes)
+        img_chromatic_aberration = chromatic_aberration.process(image_bytes)
+        img_patch_analysis = patch_analyzer.process(image_bytes)
+        img_copy_move = copy_move.process(image_bytes)
 
         data = {
             "metadata": img_metadata,
@@ -52,10 +60,14 @@ def verify(image_url):
             "physics_geometry": img_physics_geometry,
             "ela_analysis": img_ela_analysis,
             "autoencoder_reconstruction": img_autoencoder_reconstruction,
-            "diffusion_latent_analysis": img_diffusion_latent_analysis
+            "diffusion_latent_analysis": img_diffusion_latent_analysis,
+            "benfords_law": img_benfords_law,
+            "chromatic_aberration": img_chromatic_aberration,
+            "patch_analysis": img_patch_analysis,
+            "copy_move": img_copy_move
         }
 
-        # return data
+        return data
         
         img_decision_engine = decision_engine.process(data) 
         return img_decision_engine
@@ -64,7 +76,7 @@ def verify(image_url):
         print(e)
 
 
-# image_url_1 = "https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png"
+image_url_1 = "https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png"
 image_url_2 = "https://res.cloudinary.com/dfamljkyo/image/upload/v1766424802/jqb9jtdecfetvkzgegqz.png"
-print(verify(image_url_2))
+print(verify(image_url_1))
 

@@ -45,7 +45,7 @@ def verify(image_url):
         img_chromatic_aberration = chromatic_aberration.process(image_bytes)
         img_patch_analysis = patch_analyzer.process(image_bytes)
         img_copy_move = copy_move.process(image_bytes)
-
+    
         data = {
             "metadata": img_metadata,
             "c2pa": img_c2pa,
@@ -75,7 +75,7 @@ def verify(image_url):
         print(e)
 
 
-# image_url_1 = "https://res.cloudinary.com/dfamljkyo/image/upload/v1768325441/ai_dlykbo.png"
-# image_url_2 = "https://res.cloudinary.com/dfamljkyo/image/upload/v1766424802/jqb9jtdecfetvkzgegqz.png"
-# print(verify(image_url_1))
+# image_url = "https://res.cloudinary.com/dfamljkyo/image/upload/v1768325441/ai_dlykbo.png"
+# image_url = "https://res.cloudinary.com/dfamljkyo/image/upload/v1766424802/jqb9jtdecfetvkzgegqz.png"
+# print(verify(image_url))
 

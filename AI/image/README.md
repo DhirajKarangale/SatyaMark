@@ -1,80 +1,173 @@
-# Image Verification Using Forensics Methods 
+# Image Verification Forensic Engine
+
+> **Status:** Active Development — Results may not always be accurate.
+
+---
 
 ## Overview
-This system verifies whether an image is **AI-generated or real** by combining multiple forensic signals. Unlike single-model detectors, it evaluates camera noise, metadata, GAN fingerprints, semantic realism, and editing traces, then merges all results using a weighted LLM-based decision model.
+The **Image Verification Forensic Engine** is a multi-stage system that determines whether an image is:
 
-## How It Works
-1. **Image Validation**  
-   Ensures the input (path or URL) is a valid, readable image.
+- Real (unaltered photograph)
+- AI-generated
+- Manipulated / tampered
 
-2. **Forensic Analysis (6 Layers)**
-   - **Watermark / Signature Detection**  
-     Searches for C2PA, SynthID, SDXL, or other embedded AI identifiers.
-   - **Sensor Fingerprint (PRNU/CFA)**  
-     Extracts camera hardware noise patterns. Real cameras have strong PRNU; AI does not.
-   - **GAN Artifact Detection**  
-     Classical FFT-based checks + ML-based artifact models (FatFormer, MantraNet, NoisePrint).
-   - **Local Manipulation Detection**  
-     Uses ELA, noise residue, shadow/reflection mismatch, and region inconsistency.
-   - **Metadata / EXIF Analysis**  
-     Reads camera model, timestamp, GPS, and software tags. AI images often lack valid EXIF.
-   - **Semantic & Physical Consistency**  
-     Checks depth, lighting, pose, reflections, object physics, and material realism.
+It combines **cryptography, optical physics, statistical analysis, and AI fingerprint detection** to produce:
 
-3. **Signal Summarization**  
-   Extracted forensic values are compressed into meaningful numeric and boolean indicators.
+- Final classification (AI / NONAI / UNCERTAIN)
+- Confidence score (0–100%)
+- Human-readable explanation
 
-4. **LLM-Based Reasoning**  
-   A lightweight LLM evaluates signals using fixed weights:
-   ```
-   Sensor: 35%
-   Metadata: 25%
-   Semantic: 20%
-   Manipulation: 10%
-   Watermark: 7%
-   GAN: 3%
-   ```
-   Produces:
-   ```json
-   { "mark": "AI", "reason": "...", "confidence": 0.0–1.0 }
-   ```
+Unlike black-box detectors, this system relies on **measurable physical and mathematical properties**.
 
-## Architecture
-```
-Input Image (path or URL)
-        │
-        ▼
- Six Forensic Modules
-        │
-        ▼
-LLM Weighted Decision Engine
-        │
-        ▼
- Final Classification (AI / NONAI)
+---
+
+## Usage
+
+```python
+from main import verify
+
+image_url = "https://example.com/image.png"
+
+result = verify(image_url)
+print(result)
 ```
 
-## Module Roles
-- **Watermark Signature**  
-  Detects built‑in AI or authenticity metadata.
+---
 
-- **Sensor Fingerprint**  
-  Measures camera PRNU noise, CFA patterns, and patch correlations.
+## Processing Pipeline
 
-- **GAN Artifacts**  
-  Finds frequency anomalies, texture repetition, and diffusion patterns.
+```
+Input Image (URL/File)
+        |
+        v
+[ downloader ]
+        |
+        v
+[ Forensic Modules ]
+ ├── metadata
+ ├── c2pa
+ ├── watermark
+ ├── visual_artifacts
+ ├── frequency_domain_analysis
+ ├── pixel_level_analysis
+ ├── sensor_pattern_noise
+ ├── compression_artifact_analysis
+ ├── gan
+ ├── perturbation_robustness_testing
+ ├── physics_geometry
+ ├── ela_analysis
+ ├── autoencoder_reconstruction
+ ├── diffusion_latent_analysis
+ ├── benfords_law
+ ├── chromatic_aberration
+ ├── patch_analyzer
+ ├── copy_move
+        |
+        v
+[ decision_engine ]
+        |
+        v
+Final Output
+```
 
-- **Local Manipulation**  
-  Identifies tampering: pasted regions, ELA spikes, shadow mismatch.
+---
 
-- **Metadata**  
-  Validates EXIF: camera details, timestamps, software history.
+## Module Categories
 
-- **Semantic Consistency**  
-  Tests lighting, depth, anatomy, reflections, and object physics.
+### 1. Cryptography & Provenance
+- metadata (EXIF extraction)
+- c2pa (content authenticity)
+- watermark (AI watermark detection)
 
-- **Decision Engine**  
-  Merges all signals into a single consistent result.
+### 2. Optical Physics
+- sensor_pattern_noise (camera hardware fingerprint)
+- chromatic_aberration (lens distortion)
+- physics_geometry (lighting, shadows, perspective)
 
-## Final Notes
-This multi-layer forensic system provides **robust and explainable image verification**.  
-Each module contributes a different dimension of evidence, and the weighted LLM ensures reliable final classification.
+### 3. Statistical & Frequency Analysis
+- benfords_law (pixel distribution validation)
+- frequency_domain_analysis (FFT/DCT patterns)
+- pixel_level_analysis (pixel anomalies)
+
+### 4. Forgery Detection
+- ela_analysis (error level analysis)
+- compression_artifact_analysis
+- copy_move
+- patch_analyzer
+
+### 5. AI Fingerprints
+- gan (GAN artifacts)
+- diffusion_latent_analysis
+- autoencoder_reconstruction
+- perturbation_robustness_testing
+
+---
+
+## Decision Engine
+
+All module outputs are aggregated into:
+
+- `ai_score`
+- `real_score`
+
+### Logic
+- Strong real signals:
+  - Valid sensor noise (SPN)
+  - Authentic metadata / C2PA
+
+- Strong AI signals:
+  - Synthetic noise
+  - Missing metadata
+  - Physical inconsistencies
+
+### Output
+- AI / NONAI / UNCERTAIN
+- Confidence score
+
+---
+
+## Output Format
+
+```json
+{
+  "mark": "AI | NONAI | UNCERTAIN",
+  "confidence": 0,
+  "reason": "Human-readable explanation",
+  "signals": {
+    "ai_score": 0,
+    "real_score": 0
+  }
+}
+```
+
+---
+
+## Design Principles
+
+- Multi-layer verification
+- Physics-based validation
+- No single-point failure
+- Explainable results
+- Modular architecture
+
+---
+
+## Production Notes
+
+Recommended improvement for robustness:
+
+```python
+except Exception as e:
+    return {
+        "mark": "ERROR",
+        "confidence": 0,
+        "reason": str(e)
+    }
+```
+
+---
+
+## Disclaimer
+
+This system is under active development.
+Results are not guaranteed to be 100% accurate and should not be treated as definitive proof.

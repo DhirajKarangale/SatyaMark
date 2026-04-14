@@ -3,3 +3,7 @@ dotenv
 requests
 numpy
 exifread
+piexif
+PyWavelets
+Pillow
+opencv-python-headless

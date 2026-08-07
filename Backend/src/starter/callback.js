@@ -4,7 +4,7 @@ const helmet = require("helmet");
 const cors = require("cors");
 const modelText = require('../model/modelText');
 const modelImage = require('../model/modelImage');
-const eventBus = require("../starter/eventBus");
+const redisEventBus = require("./redisEventBus");
 
 const app = express();
 
@@ -117,7 +117,15 @@ app.post("/ai-callback/text", async (req, res) => {
             reasonText.includes("failed to generate") ||
             reasonText.includes("models and tokens failed");
 
-        if (!isInternalError) await modelText.PostText(body);
+        let dbId = null;
+        if (!isInternalError) {
+            try {
+                const dbResult = await modelText.PostText(body);
+                dbId = dbResult?.id;
+            } catch (dbErr) {
+                console.log("[TEXT] DB Insert Error:", dbErr.message);
+            }
+        }
 
         const payload = {
             jobId: jobId,
@@ -128,9 +136,10 @@ app.post("/ai-callback/text", async (req, res) => {
             urls: urls,
             summary: summary,
             type: "text",
+            dataId: dbId,
         };
 
-        eventBus.emit("sendData", { clientId: body.clientId, payload: payload });
+        await redisEventBus.publishData({ clientId: body.clientId, payload: payload });
         res.json({ ok: true });
 
     } catch (err) {
@@ -153,7 +162,15 @@ app.post("/ai-callback/image", async (req, res) => {
             reasonText.includes("failed to generate") ||
             reasonText.includes("models and tokens failed");
 
-        if (!isInternalError) await modelImage.PostImage(body);
+        let dbId = null;
+        if (!isInternalError) {
+            try {
+                const dbResult = await modelImage.PostImage(body);
+                dbId = dbResult?.id;
+            } catch (dbErr) {
+                console.log("[IMAGE] DB Insert Error:", dbErr.message);
+            }
+        }
 
         const payload = {
             jobId: jobId,
@@ -163,9 +180,10 @@ app.post("/ai-callback/image", async (req, res) => {
             reason: reason,
             image_url: image_url,
             type: "image",
+            dataId: dbId,
         };
 
-        eventBus.emit("sendData", { clientId: body.clientId, payload: payload });
+        await redisEventBus.publishData({ clientId: body.clientId, payload: payload });
         res.json({ ok: true });
 
     } catch (err) {

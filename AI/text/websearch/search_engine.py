@@ -1,4 +1,5 @@
 import os
+import time
 from dotenv import load_dotenv
 from langchain_community.utilities import GoogleSerperAPIWrapper
 
@@ -52,34 +53,45 @@ def serper_search(query: str, tbs: str | None = None) -> dict:
 
     while attempts < len(SERPER_API_KEYS):
         current_key = SERPER_API_KEYS[_current_serper_key_index]
-        try:
-            search = GoogleSerperAPIWrapper(
-                serper_api_key=current_key,
-                search_params={"tbs": tbs} if tbs else None,
-            )
-            results = search.results(query, n=SEARCH_COUNT)
-
-            if isinstance(results, dict) and results.get("message") == "Unauthorized.":
-                raise ValueError("Unauthorized. Likely out of credits.")
-
-            return results
-
-        except Exception as e:
-            error_msg = str(e).lower()
-            if any(
-                k in error_msg
-                for k in ["unauthorized", "credit", "403", "429", "limit", "forbidden"]
-            ):
-                print(
-                    f"[Warning] Serper API key index {_current_serper_key_index} failed. Rotating key..."
+        network_retries = 0
+        
+        while network_retries < 3:
+            try:
+                search = GoogleSerperAPIWrapper(
+                    serper_api_key=current_key,
+                    search_params={"tbs": tbs} if tbs else None,
                 )
-                _current_serper_key_index = (_current_serper_key_index + 1) % len(
-                    SERPER_API_KEYS
-                )
-                attempts += 1
-            else:
-                print(f"[Error] Search failed: {e}")
-                return {}
+                results = search.results(query, n=SEARCH_COUNT)
+
+                if isinstance(results, dict) and results.get("message") == "Unauthorized.":
+                    raise ValueError("Unauthorized. Likely out of credits.")
+
+                return results
+
+            except Exception as e:
+                error_msg = str(e).lower()
+                if any(
+                    k in error_msg
+                    for k in ["unauthorized", "credit", "403", "429", "limit", "forbidden"]
+                ):
+                    print(
+                        f"[Warning] Serper API key index {_current_serper_key_index} failed. Rotating key..."
+                    )
+                    _current_serper_key_index = (_current_serper_key_index + 1) % len(
+                        SERPER_API_KEYS
+                    )
+                    attempts += 1
+                    break # Break inner loop, try with new key
+                else:
+                    network_retries += 1
+                    if network_retries < 3:
+                        delay = 2 ** network_retries
+                        print(f"[Warning] Serper search network error: {e}. Retrying in {delay}s...")
+                        time.sleep(delay)
+                    else:
+                        print(f"[Error] Serper search failed after 3 network retries: {e}")
+                        attempts = len(SERPER_API_KEYS) # Force fail
+                        break
 
     return {}
 

@@ -15,7 +15,7 @@ def extract_article_text(url: str, snippet: str) -> str:
     try:
         r = requests.get(
             url,
-            timeout=10,
+            timeout=25,
             headers={
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
             },

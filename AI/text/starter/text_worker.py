@@ -68,13 +68,39 @@ def process_job_data(job_data, source_name):
             "retry": retry
         }
 
-        requests.post(callback_url, json=payload, timeout=10)
+        requests.post(callback_url, json=payload, timeout=25)
         print(f"[{CONSUMER_NAME} | {source_name}] Job completed successfully: {jobId}")
         return True
 
     except Exception as e:
         print(f"[{CONSUMER_NAME} | {source_name}] AI/Callback ERROR for {jobId}: {e}")
         return False
+
+def process_pel(client, source_name):
+    """Processes any abandoned jobs left in the PEL due to network drops."""
+    try:
+        entries = client.xreadgroup(GROUP, CONSUMER_NAME, {STREAM_KEY: "0"}, count=1)
+        if not entries:
+            return
+
+        stream, messages = entries[0]
+        if not messages:
+            return
+
+        msg_id, fields = messages[0]
+        job_data = json.loads(fields["data"])
+        
+        print(f"[{source_name}] Recovered job {job_data.get('jobId')} from PEL.")
+
+        success = process_job_data(job_data, source_name)
+        if success:
+            client.xack(STREAM_KEY, GROUP, msg_id)
+            client.xdel(STREAM_KEY, msg_id)
+
+    except (ConnectionError, TimeoutError, ConnectionResetError) as e:
+        raise e
+    except Exception as e:
+        print(f"[{source_name}] PEL Read Error: {e}")
 
 
 def fetch_and_process(client, source_name):
@@ -132,6 +158,7 @@ def render_worker_loop(redis_url, check_rate_ms):
 
     while True:
         try:
+            process_pel(client, "RENDER")
             status = fetch_and_process(client, "RENDER")
             if status == "PROCESSED":
                 continue
@@ -155,46 +182,38 @@ def upstash_worker_loop(redis_url, check_rate_ms):
     if not redis_url:
         return
 
-    print(f"[{CONSUMER_NAME}] Started UPSTASH thread (Ephemeral Connection).")
+    print(f"[{CONSUMER_NAME}] Started UPSTASH thread (Persistent Connection).")
 
-    temp_client = redis.from_url(redis_url, decode_responses=True)
-    ensure_consumer_group(temp_client, "UPSTASH")
-    temp_client.close()
+    retry_strategy = Retry(ExponentialBackoff(), 3)
+    client = redis.from_url(
+        redis_url,
+        decode_responses=True,
+        health_check_interval=30,
+        socket_keepalive=True,
+        socket_connect_timeout=10,
+        socket_timeout=10,
+        retry_on_timeout=True,
+        retry_on_error=[ConnectionError, TimeoutError, ConnectionResetError],
+        retry=retry_strategy,
+    )
+
+    ensure_consumer_group(client, "UPSTASH")
 
     while True:
-        client = None
-        status = "ERROR"
-
         try:
-            client = redis.from_url(
-                redis_url,
-                decode_responses=True,
-                socket_connect_timeout=10,
-                socket_timeout=10,
-            )
-
+            process_pel(client, "UPSTASH")
             status = fetch_and_process(client, "UPSTASH")
+            if status == "PROCESSED":
+                continue
 
-        except (
-            ConnectionError,
-            TimeoutError,
-            ConnectionResetError,
-        ) as e:
-            print(f"[UPSTASH] Ephemeral Network Error: {e}.")
+            time.sleep(sleep_seconds)
+
+        except (ConnectionError, TimeoutError, ConnectionResetError) as e:
+            print(f"[UPSTASH] Network Drop Detected: {e}. Retrying in 5s...")
+            time.sleep(5)
         except Exception as e:
             print(f"[UPSTASH] Critical Thread Error: {e}")
-
-        finally:
-            if client:
-                try:
-                    client.close()
-                except:
-                    pass
-
-        if status == "PROCESSED":
-            continue
-
-        time.sleep(sleep_seconds)
+            time.sleep(sleep_seconds)
 
 def process_loop():
     threads = []

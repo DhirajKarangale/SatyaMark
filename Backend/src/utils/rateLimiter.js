@@ -1,61 +1,39 @@
-const eventBus = require("../starter/eventBus");
+const redisEventBus = require("../starter/redisEventBus");
+const { getClients } = require("../redis/redisClient");
 
 const LIMIT = 5;
-const WINDOW = 15_000;
-const CLEANUP_INTERVAL = 60 * 60 * 1000;
+const WINDOW_SEC = 15; // 15 seconds
 
-const requests = new Map();
+async function isAllowed(id) {
+  const { rateLimiter } = getClients();
+  if (!rateLimiter) return true; // Fail open if no redis
 
-function isAllowed(id) {
+  const key = `rate_limit:${id}`;
   const now = Date.now();
-  const windowStart = now - WINDOW;
-
-  if (!requests.has(id)) {
-    requests.set(id, { timestamps: [], start: 0 });
-  }
-
-  const data = requests.get(id);
-
-  while (
-    data.start < data.timestamps.length &&
-    data.timestamps[data.start] <= windowStart
-  ) {
-    data.start++;
-  }
-
-  const activeRequests = data.timestamps.length - data.start;
-
-  if (activeRequests >= LIMIT) {
-    return false;
-  }
-
-  data.timestamps.push(now);
-  return true;
-}
-
-function cleanup() {
-  const now = Date.now();
-  const windowStart = now - WINDOW;
-
-  for (const [id, data] of requests.entries()) {
-    while (
-      data.start < data.timestamps.length &&
-      data.timestamps[data.start] <= windowStart
-    ) {
-      data.start++;
-    }
-
-    if (data.start >= data.timestamps.length) {
-      requests.delete(id);
-    } else if (data.start > 0) {
-      data.timestamps = data.timestamps.slice(data.start);
-      data.start = 0;
-    }
+  const windowStart = now - (WINDOW_SEC * 1000);
+  
+  try {
+    // Add current timestamp
+    await rateLimiter.zAdd(key, { score: now, value: `${now}-${Math.random()}` });
+    
+    // Remove older timestamps
+    await rateLimiter.zRemRangeByScore(key, 0, windowStart);
+    
+    // Get count
+    const count = await rateLimiter.zCard(key);
+    
+    // Set expiry to window size so it cleans up itself
+    await rateLimiter.expire(key, WINDOW_SEC);
+    
+    return count <= LIMIT;
+  } catch (err) {
+    console.log("[RateLimiter Error]", err.message);
+    return true; // fail open
   }
 }
 
-function emitRateLimitEvent(clientId, msg) {
-  eventBus.emit("sendData", {
+async function emitRateLimitEvent(clientId, msg) {
+  await redisEventBus.publishData({
     clientId,
     payload: {
       type: "RateLimiter",
@@ -64,19 +42,20 @@ function emitRateLimitEvent(clientId, msg) {
   });
 }
 
-function checkRateLimiter(clientId, dataSessionId, socketSessionId) {
+async function checkRateLimiter(clientId, dataSessionId, socketSessionId) {
   if (!socketSessionId || !dataSessionId) {
-    emitRateLimitEvent(clientId, "Session not established");
+    await emitRateLimitEvent(clientId, "Session not established");
     return false;
   }
   
   if (dataSessionId !== socketSessionId) {
-    emitRateLimitEvent(clientId, "Invalid session");
+    await emitRateLimitEvent(clientId, "Invalid session");
     return false;
   }
 
-  if (!isAllowed(socketSessionId)) {
-    emitRateLimitEvent(clientId, "Rate limit exceeded");
+  const allowed = await isAllowed(socketSessionId);
+  if (!allowed) {
+    await emitRateLimitEvent(clientId, "Rate limit exceeded");
     return false;
   }
 
@@ -84,7 +63,7 @@ function checkRateLimiter(clientId, dataSessionId, socketSessionId) {
 }
 
 function startRateLimiterCleanup() {
-  setInterval(cleanup, CLEANUP_INTERVAL);
+  console.log("[RateLimiter] Cleanup is now handled natively by Redis expiration.");
 }
 
 module.exports = { checkRateLimiter, startRateLimiterCleanup };

@@ -1,7 +1,11 @@
 const WebSocket = require("ws");
-const eventBus = require("./eventBus");
+const redisEventBus = require("./redisEventBus");
 const process_task = require("../utils/process_task");
 const { generateSessionId } = require("../utils/generateIds");
+
+function heartbeat() {
+  this.isAlive = true;
+}
 
 let wss = null;
 const clients = new Map();
@@ -12,6 +16,8 @@ function startws(server) {
   wss = new WebSocket.Server({ server });
 
   wss.on("connection", (socket) => {
+    socket.isAlive = true;
+    socket.on('pong', heartbeat);
     socket.on("message", (msg) => {
       
       let data;
@@ -42,7 +48,29 @@ function startws(server) {
     });
   });
 
-  eventBus.on("sendData", ({ clientId, payload }) => {
+  const interval = setInterval(function ping() {
+    wss.clients.forEach(function each(ws) {
+      if (ws.isAlive === false) {
+        // Find and remove from clients map if it exists
+        for (const [id, s] of clients.entries()) {
+          if (s === ws) {
+            clients.delete(id);
+            break;
+          }
+        }
+        return ws.terminate();
+      }
+
+      ws.isAlive = false;
+      ws.ping();
+    });
+  }, 30000);
+
+  wss.on('close', function close() {
+    clearInterval(interval);
+  });
+
+  redisEventBus.on("sendData", ({ clientId, payload }) => {
     const socket = clients.get(String(clientId));
     if (socket && socket.readyState === WebSocket.OPEN) {
       socket.send(JSON.stringify(payload));

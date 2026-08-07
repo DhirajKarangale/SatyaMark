@@ -58,10 +58,9 @@ export function updateIcon(containerRef: HTMLDivElement, data: any) {
     if (isClickable) {
         icon.style.cursor = "pointer";
         icon.onclick = () => {
-            window.open(
-                `${satyamark_url}/${type}/${data.dataId}`,
-                "_blank"
-            );
+            const routeUrl = `${satyamark_url}/${type}/${data.dataId}`;
+            console.log("SatyaMark Status Click - Routing to:", routeUrl);
+            window.open(routeUrl, "_blank");
         };
     } else {
         icon.style.cursor = "default";

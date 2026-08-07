@@ -1,5 +1,6 @@
 import os
 import json
+import time
 from dotenv import load_dotenv
 from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
 
@@ -61,40 +62,53 @@ def invoke_llm(model_names: list[str], prompt: str, parse_as_json: bool = False)
         attempts_with_different_tokens = 0
 
         while attempts_with_different_tokens < len(HF_TOKENS):
-            try:
-                llm = _get_llm(model_name, _current_token_index)
+            network_retries = 0
+            
+            while network_retries < 3:
+                try:
+                    llm = _get_llm(model_name, _current_token_index)
 
-                response = llm.invoke(prompt)
-                if parse_as_json:
-                    return extract_json(response)
-                else:
-                    return clean_text(response)
+                    response = llm.invoke(prompt)
+                    if parse_as_json:
+                        return extract_json(response)
+                    else:
+                        return clean_text(response)
 
-            except Exception as e:
-                error_msg = str(e).lower()
+                except Exception as e:
+                    error_msg = str(e).lower()
 
-                limit_keywords = [
-                    "rate limit",
-                    "quota",
-                    "upgrade",
-                    "429",
-                    "too many requests",
-                    "402",
-                    "payment required",
-                    "depleted",
-                    "credits",
-                ]
+                    limit_keywords = [
+                        "rate limit",
+                        "quota",
+                        "upgrade",
+                        "429",
+                        "too many requests",
+                        "402",
+                        "payment required",
+                        "depleted",
+                        "credits",
+                    ]
 
-                if any(keyword in error_msg for keyword in limit_keywords):
-                    print(
-                        f"[Warning] Huggingface Token index {_current_token_index} hit a limit. Rotating token..."
-                    )
-                    _current_token_index = (_current_token_index + 1) % len(HF_TOKENS)
-                    attempts_with_different_tokens += 1
-                else:
-                    print(
-                        f"[Error] Model {model_name} failed: {e}. Trying next model..."
-                    )
-                    break
+                    if any(keyword in error_msg for keyword in limit_keywords):
+                        print(
+                            f"[Warning] Huggingface Token index {_current_token_index} hit a limit. Rotating token..."
+                        )
+                        _current_token_index = (_current_token_index + 1) % len(HF_TOKENS)
+                        attempts_with_different_tokens += 1
+                        break # Break inner loop, try with new token
+                    else:
+                        network_retries += 1
+                        if network_retries < 3:
+                            delay = 2 ** network_retries
+                            print(
+                                f"[Warning] Model {model_name} network/timeout error: {e}. Retrying in {delay}s..."
+                            )
+                            time.sleep(delay)
+                        else:
+                            print(
+                                f"[Error] Model {model_name} failed after 3 network retries: {e}. Trying next model..."
+                            )
+                            attempts_with_different_tokens = len(HF_TOKENS) # Force skip to next model
+                            break
 
     raise RuntimeError("All models and tokens failed to generate a valid response.")

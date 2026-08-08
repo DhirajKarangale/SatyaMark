@@ -1,6 +1,6 @@
 from utils.huggingface import invoke_llm
 
-MODELS = ["deepseek_r1", "deepseek_v3", "qwen2_5", "deepseek_r1_distill_llama_8b", "qwen2_5_7b", "phi3_mini", "gemma_7b", "zephyr", "hermes", "llama3", "mistral"]
+MODELS = ["deepseek_v3", "llama3_3_70b", "qwen2_5_72b", "deepseek_r1", "veritas_8b_fact_checker"]
 
 PROMPT_TEMPLATE = """
 You are a factual verification assistant.
@@ -19,19 +19,22 @@ Rules:
 - If unsure, choose Insufficient.
 - Insufficient is valid.
 
-TEMPORAL SAFETY RULE (MANDATORY):
+EDGE CASE RULES (MANDATORY):
 
-If the statement involves:
-- Future events
-- Scheduled matches, announcements, or bookings
-- Current status of titles, leadership, rosters, or organizations
-- Anything that could change after your knowledge cutoff
+1. TEMPORAL SAFETY: 
+   If the statement involves future events, scheduled matches, current leadership, or anything that could change after your knowledge cutoff, you MUST treat the claim as "Insufficient". DO NOT use outdated status as evidence of incorrectness.
 
-You MUST treat the claim as "Insufficient" unless the fact is
-historically fixed and universally known.
+2. PRECISION RULE:
+   If a claim relies on hyper-specific data (e.g., exact statistics, highly specific dates, exact attendee numbers) and you do not have that exact number perfectly memorized, you MUST mark it "Insufficient". Do not guess that it is "Incorrect" just because the number looks unfamiliar.
 
-DO NOT assume your internal knowledge is current.
-DO NOT use outdated status as evidence of incorrectness.
+3. AMBIGUITY RULE:
+   If a claim is technically true but highly misleading without context, or relies on missing conditions (e.g., "Water boils at 100°C" is missing "at sea level"), or is too broad (e.g., "The US has the highest taxes"), you MUST mark it "Insufficient".
+
+4. MYTH-BUSTING RULE:
+   Be highly skeptical of common internet myths, pseudoscientific claims, and widely repeated falsehoods (e.g., "Humans only use 10% of their brains", "Chemtrails are real"). Mark them definitively as "Incorrect".
+
+5. SUBJECTIVITY RULE:
+   If the statement contains subjective opinions or value judgments (e.g., "The Matrix is the best movie") that slipped past the verifyability check, you MUST mark it "Insufficient".
 
 Return a JSON object with:
 mark, confidence (0-100), and a VERY DETAILED reason.

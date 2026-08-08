@@ -23,11 +23,12 @@ statements = [
   "i like cation america",
   "i like when goku goes in ultra instinct",
   "did iran drops 10 bombs on america?",
-  "goku defeated friza"
+  "goku defeated friza",
+  "hackwith infy is indias biggest hackthon with over 1 lakhs + participants"
 ]
 
 
-statement = statements[0]
+statement = statements[16]
 
 # Image Data
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__)))

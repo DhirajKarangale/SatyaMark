@@ -214,5 +214,25 @@
         "model_id": "prithivMLmods/Deep-Fake-Detector-v2-Model",
         "task": "image-classification",
         "provider": "auto"
+    },
+    {
+        "name": "llama3_3_70b",
+        "model_id": "meta-llama/Llama-3.3-70B-Instruct",
+        "task": "conversational",
+        "provider": "auto",
+        "do_sample": false,
+        "temperature": 0.2,
+        "max_new_tokens": 512,
+        "repetition_penalty": 1.05
+    },
+    {
+        "name": "qwen2_5_72b",
+        "model_id": "Qwen/Qwen2.5-72B-Instruct",
+        "task": "conversational",
+        "provider": "auto",
+        "do_sample": false,
+        "temperature": 0.2,
+        "max_new_tokens": 512,
+        "repetition_penalty": 1.05
     }
 ]

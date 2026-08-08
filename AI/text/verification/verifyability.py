@@ -1,8 +1,7 @@
 from typing import Dict
 from utils.huggingface import invoke_llm
 
-MODELS = ["deepseek_r1", "deepseek_v3", "qwen2_5", "minicheck", "qwen2_5_7b", "phi3_mini", "gemma_7b", "zephyr", "hermes", "llama3", "mistral"]
-
+MODELS = ["deepseek_v3", "llama3_3_70b", "deepseek_r1", "qwen2_5_72b"]
 
 def check_verifyability(text: str) -> Dict:
     prompt = f"""
@@ -30,11 +29,18 @@ AND
   internal records, or self-reporting.
 - Claims about public events, known facts, physical properties,
   scientific phenomena, or documented history are VERIFYABLE.
+- **Corporate & Event Claims**: Claims about company size, event participants, sales, or public announcements are VERIFYABLE.
+- **Facts about Fiction / Pop Culture**: Statements regarding the established canon of books, movies, or games.
+- **Broad Statistical/Demographic Claims**: Generalizations that can be measured via polls or studies.
+- **Legal & Regulatory Claims**: Statements about rules or laws.
 
 Examples:
 - "Water boils at 100°C at sea level." → VERIFYABLE
 - "The Eiffel Tower is in Paris." → VERIFYABLE
 - "COVID-19 vaccines were approved in 2020." → VERIFYABLE
+- "Most Americans own a smartphone." → VERIFYABLE (Checkable via stats)
+- "Murder is illegal in France." → VERIFYABLE (Legal claim)
+- "Batman lives in Gotham." → VERIFYABLE (Checkable canon fact)
 
 A statement is UNVERIFYABLE if:
 - It describes a private personal action, habit, or behavior
@@ -43,12 +49,20 @@ A statement is UNVERIFYABLE if:
 - It refers to internal mental states.
 - It lacks sufficient identifiers to locate evidence.
 - It is abstract, philosophical, or subjective.
+- **Future Predictions & Speculation**: Claims about events that have not yet occurred (since evidence does not exist yet).
+- **Moral & Ethical Judgements**: Subjective evaluations of right and wrong.
+- **Figures of Speech, Hyperbole & Sarcasm**: Statements not meant to be taken literally.
+- **Unfalsifiable Historical Minutiae**: Claims about the distant past involving ordinary people with no possible paper trail.
 
 Examples:
 - "I eat bread at night." → UNVERIFYABLE
 - "I drank coffee yesterday." → UNVERIFYABLE
 - "I like apples." → UNVERIFYABLE
 - "He won an award." → UNVERIFYABLE (unclear subject)
+- "The stock market will crash in 2030." → UNVERIFYABLE (Future prediction)
+- "It is evil to eat meat." → UNVERIFYABLE (Moral judgement)
+- "I'm literally dying of laughter right now." → UNVERIFYABLE (Figure of speech)
+- "My great-grandfather sneezed on a Tuesday in 1902." → UNVERIFYABLE (Unfalsifiable minutiae)
 
 ====================
 IMPORTANT RULE
@@ -61,6 +75,7 @@ it MUST be classified as UNVERIFYABLE.
 Do NOT classify something as VERIFYABLE merely because it could be
 observed in theory or under hypothetical surveillance.
 
+====================
 CRITICAL DISTINCTION:
 
 You are classifying the TYPE of claim, not its credibility.

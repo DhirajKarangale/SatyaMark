@@ -26,8 +26,24 @@ def extract_json(raw_text: Any) -> Dict[str, Any]:
 
     cleaned = re.sub(r"```(?:json)?", "", cleaned, flags=re.IGNORECASE).strip()
 
-    start = cleaned.find("{")
-    end = cleaned.rfind("}")
+    start_obj = cleaned.find("{")
+    end_obj = cleaned.rfind("}")
+    start_arr = cleaned.find("[")
+    end_arr = cleaned.rfind("]")
+
+    start = -1
+    end = -1
+
+    # Find the outermost structure (object or array)
+    valid_obj = start_obj != -1 and end_obj > start_obj
+    valid_arr = start_arr != -1 and end_arr > start_arr
+
+    if valid_obj and (not valid_arr or start_obj < start_arr):
+        start = start_obj
+        end = end_obj
+    elif valid_arr:
+        start = start_arr
+        end = end_arr
 
     if start == -1 or end == -1 or end <= start:
         if "UNVERIFYABLE" in cleaned.upper():

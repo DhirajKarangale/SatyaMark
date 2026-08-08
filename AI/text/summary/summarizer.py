@@ -1,42 +1,43 @@
 import re
 from utils.huggingface import invoke_llm
 from summary.cleaner import clean_raw_social_text
-from summary.prompts import get_normalization_prompt
+from summary.prompts import (
+    get_cleaning_prompt,
+    get_semantic_normalization_prompt,
+    get_contextual_summarization_prompt,
+)
 
-NORMALIZATION_MODELS = ["qwen2_5", "llama3", "hermes", "deepseek_v3", "deepseek_r1_distill_llama_8b", "qwen2_5_7b", "phi3_mini", "gemma_7b", "zephyr"]
-SUMMARIZATION_MODELS = ["bart_large_cnn", "mistral", "qwen2_5", "deepseek_r1_distill_llama_8b", "llama3", "phi3_mini","gemma_7b", "zephyr"]
+CLEANING_MODELS = ["llama3_1_8b", "qwen2_5_7b", "mistral"]
+NORMALIZATION_MODELS = ["deepseek_v3", "qwen2_5_72b", "llama3_3_70b", "deepseek_r1_distill_llama_8b"]
+SUMMARIZATION_MODELS = ["deepseek_r1", "deepseek_v3", "llama3_3_70b", "qwen3_32b"]
 
-
-def semantic_normalize(text: str) -> str:
+def llm_clean_text(text: str) -> str:
     if not text:
         return ""
-    prompt = get_normalization_prompt(text)
+    prompt = get_cleaning_prompt(text)
+    try:
+        result = invoke_llm(CLEANING_MODELS, prompt, parse_as_json=False)
+        return result.strip() if result else text
+    except Exception as e:
+        print(f"LLM Cleaning failed: {e}")
+        return text
+
+def llm_normalize_text(text: str) -> str:
+    if not text:
+        return ""
+    prompt = get_semantic_normalization_prompt(text)
     try:
         result = invoke_llm(NORMALIZATION_MODELS, prompt, parse_as_json=False)
         return result.strip() if result else text
     except Exception as e:
-        print(f"Normalization failed: {e}")
+        print(f"LLM Normalization failed: {e}")
         return text
 
-
-def summarize_text(text: str) -> str:
+def llm_summarize_text(text: str) -> str:
     if not text:
         return ""
-
+    prompt = get_contextual_summarization_prompt(text)
     try:
-        prompt = f"""
-Summarize the text into exactly 1 or 2 clear, objective sentences.
-
-Rules:
-- No prefixes like "Summary:"
-- No opinions
-- No extra text
-- Keep factual meaning unchanged
-
-Text:
-{text}
-"""
-
         result = invoke_llm(SUMMARIZATION_MODELS, prompt, parse_as_json=False)
         if not result:
             return text
@@ -54,23 +55,37 @@ Text:
 
         return result
     except Exception as e:
-        print(f"Summarization failed: {e}")
+        print(f"LLM Summarization failed: {e}")
         return text.strip()
 
-
 def summarize(raw_input: str) -> str:
-    cleaned_text = clean_raw_social_text(raw_input)
-    if not cleaned_text:
+    # Stage 0: Regex based formatting & URL removal
+    cleaned_regex = clean_raw_social_text(raw_input)
+    if not cleaned_regex:
         return ""
 
-    normalized_text = semantic_normalize(cleaned_text)
+    # Short-circuit logic for very short text (e.g., just a single word)
+    if len(cleaned_regex.split()) < 3:
+        return cleaned_regex
 
-    if not normalized_text or normalized_text == cleaned_text:
-        return "" if not normalized_text else normalized_text
+    # Stage 1: LLM Cleaning & Noise Removal
+    cleaned_llm = llm_clean_text(cleaned_regex)
+    
+    if not cleaned_llm or cleaned_llm == cleaned_regex:
+        cleaned_llm = cleaned_regex
 
-    if len(normalized_text.split()) < 25:
+    # Stage 2: LLM Semantic Normalization & Canonicalization
+    normalized_text = llm_normalize_text(cleaned_llm)
+    
+    if not normalized_text or normalized_text == cleaned_llm:
+        normalized_text = cleaned_llm
+
+    # If the text is short enough after normalization, we don't need a heavy summarization step
+    # Context Preservation and Ambiguity Reduction is still useful, but if it's <10 words, it's likely already fine.
+    if len(normalized_text.split()) < 10:
         return normalized_text
-
-    final_summary = summarize_text(normalized_text)
+        
+    # Stage 3: LLM Context-Preserving Summarization
+    final_summary = llm_summarize_text(normalized_text)
 
     return final_summary

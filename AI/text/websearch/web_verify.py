@@ -9,8 +9,20 @@ MAX_URLS_TO_VERIFY = 10
 
 
 def web_verify(claim: str):
-    query = generate_search_query(claim)
-    search_results = get_urls_with_meta(query)
+    queries = generate_search_query(claim)
+    
+    if isinstance(queries, str):
+        queries = [queries]
+        
+    search_results = []
+    seen_urls = set()
+    
+    for query in queries:
+        results = get_urls_with_meta(query)
+        for res in results:
+            if res["url"] not in seen_urls:
+                search_results.append(res)
+                seen_urls.add(res["url"])
 
     if not search_results:
         print("[Warning] No search results found. Returning insufficient.")

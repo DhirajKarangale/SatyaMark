@@ -14,7 +14,6 @@ if not SERPER_API_KEYS:
 _current_serper_key_index = 0
 
 SEARCH_COUNT = 20
-MAX_DAYS_OLD = 14
 
 EXCLUDED_DOMAINS = [
     "youtube.com",
@@ -117,13 +116,12 @@ def extract_urls_with_meta(result: dict) -> list:
 
 def get_urls_with_meta(query: str) -> list:
     """
-    Fetches the most relevant search results strictly within the MAX_DAYS_OLD window.
+    Fetches the most relevant search results.
     """
     results = []
     seen_urls = set()
 
-    time_filter = f"qdr:d{MAX_DAYS_OLD}"
-    search_data = serper_search(query, tbs=time_filter)
+    search_data = serper_search(query)
     valid_urls = extract_urls_with_meta(search_data)
 
     for item in valid_urls:

@@ -136,12 +136,12 @@ def fetch_and_process(client, source_name):
         return "ERROR"
 
 
-def render_worker_loop(redis_url, check_rate_ms):
+def worker_loop(redis_url, check_rate_ms, source_name):
     sleep_seconds = check_rate_ms / 1000.0
     if not redis_url:
         return
 
-    logger.info(f"[{CONSUMER_NAME}] Started RENDER thread (Persistent Connection).")
+    logger.info(f"[{CONSUMER_NAME}] Started {source_name} thread (Persistent Connection).")
 
     retry_strategy = Retry(ExponentialBackoff(), 3)
     client = redis.from_url(
@@ -156,77 +156,38 @@ def render_worker_loop(redis_url, check_rate_ms):
         retry=retry_strategy,
     )
 
-    ensure_consumer_group(client, "RENDER")
+    ensure_consumer_group(client, source_name)
 
     while True:
         try:
-            process_pel(client, "RENDER")
-            status = fetch_and_process(client, "RENDER")
+            process_pel(client, source_name)
+            status = fetch_and_process(client, source_name)
             if status == "PROCESSED":
                 continue
 
             time.sleep(sleep_seconds)
 
         except (ConnectionError, TimeoutError, ConnectionResetError) as e:
-            logger.warning(f"[RENDER] Network Drop Detected: {e}. Retrying in 5s...")
+            logger.warning(f"[{source_name}] Network Drop Detected: {e}. Retrying in 5s...")
             time.sleep(5)
         except Exception as e:
-            logger.error(f"[RENDER] Critical Thread Error: {e}", exc_info=True)
-            time.sleep(sleep_seconds)
-
-
-def upstash_worker_loop(redis_url, check_rate_ms):
-    sleep_seconds = check_rate_ms / 1000.0
-    if not redis_url:
-        return
-
-    logger.info(f"[{CONSUMER_NAME}] Started UPSTASH thread (Persistent Connection).")
-
-    retry_strategy = Retry(ExponentialBackoff(), 3)
-    client = redis.from_url(
-        redis_url,
-        decode_responses=True,
-        health_check_interval=30,
-        socket_keepalive=True,
-        socket_connect_timeout=10,
-        socket_timeout=10,
-        retry_on_timeout=True,
-        retry_on_error=[ConnectionError, TimeoutError, ConnectionResetError],
-        retry=retry_strategy,
-    )
-
-    ensure_consumer_group(client, "UPSTASH")
-
-    while True:
-        try:
-            process_pel(client, "UPSTASH")
-            status = fetch_and_process(client, "UPSTASH")
-            if status == "PROCESSED":
-                continue
-
-            time.sleep(sleep_seconds)
-
-        except (ConnectionError, TimeoutError, ConnectionResetError) as e:
-            logger.warning(f"[UPSTASH] Network Drop Detected: {e}. Retrying in 5s...")
-            time.sleep(5)
-        except Exception as e:
-            logger.error(f"[UPSTASH] Critical Thread Error: {e}", exc_info=True)
+            logger.error(f"[{source_name}] Critical Thread Error: {e}", exc_info=True)
             time.sleep(sleep_seconds)
 
 def process_loop():
     threads = []
 
     render_thread = threading.Thread(
-        target=render_worker_loop,
-        args=(REDIS_RENDER_TEXT_URL, REDIS_RENDER_CHECK_RATE),
+        target=worker_loop,
+        args=(REDIS_RENDER_TEXT_URL, REDIS_RENDER_CHECK_RATE, "RENDER"),
         daemon=True,
     )
     render_thread.start()
     threads.append(render_thread)
 
     upstash_thread = threading.Thread(
-        target=upstash_worker_loop,
-        args=(REDIS_UPSTASH_TEXT_URL, REDIS_UPSTASH_CHECK_RATE),
+        target=worker_loop,
+        args=(REDIS_UPSTASH_TEXT_URL, REDIS_UPSTASH_CHECK_RATE, "UPSTASH"),
         daemon=True,
     )
     upstash_thread.start()
@@ -234,7 +195,6 @@ def process_loop():
 
     for t in threads:
         t.join()
-
 
 if __name__ == "__main__":
     process_loop()

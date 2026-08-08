@@ -1,7 +1,13 @@
 import json
-from utils.huggingface import invoke_llm
+from utils.llm import invoke_llm
+import logging
 
-QUERY_MODELS = ["deepseek_v3", "llama3_3_70b", "qwen2_5_72b", "deepseek_r1_distill_llama_8b"]
+logger = logging.getLogger(__name__)
+
+QUERY_MODELS = {
+    "huggingface": ["deepseek_v3", "llama3_3_70b", "qwen2_5_72b", "deepseek_r1_distill_llama_8b"],
+    "claude": ["claude_haiku", "claude_sonnet"]
+}
 
 prompt_template = """
 Convert the following claim into TWO highly effective Google search queries to verify its authenticity.
@@ -26,5 +32,5 @@ def generate_search_query(text: str) -> list:
             return [str(q) for q in raw[:2]]
         return [text]
     except Exception as e:
-        print(f"[Warning] Query generation failed: {e}")
+        logger.warning(f"Query generation failed: {e}", exc_info=True)
         return [text]

@@ -2,10 +2,19 @@ import re
 import json
 import concurrent.futures
 from typing import List, Dict, Any
-from utils.huggingface import invoke_llm
+from utils.llm import invoke_llm
+import logging
 
-MODELS = ["deepseek_r1", "deepseek_v3", "qwen2_5_72b", "llama3_3_70b"]
-MAP_MODELS = ["deepseek_v3", "llama3_3_70b", "qwen2_5_72b", "deepseek_r1_distill_llama_8b"]
+logger = logging.getLogger(__name__)
+
+MODELS = {
+    "huggingface": ["deepseek_r1", "deepseek_v3", "qwen2_5_72b", "llama3_3_70b"],
+    "claude": ["claude_haiku", "claude_sonnet"]
+}
+MAP_MODELS = {
+    "huggingface": ["deepseek_v3", "llama3_3_70b", "qwen2_5_72b", "deepseek_r1_distill_llama_8b"],
+    "claude": ["claude_haiku", "claude_sonnet"]
+}
 
 FORBIDDEN_PHRASES = (
     "provided web evidence",
@@ -52,14 +61,13 @@ If there is NO relevant information, output exactly the word "NONE" and nothing 
 Do not explain your reasoning. Just output the extracted evidence or "NONE".
 """
     try:
-        # We use MAP_MODELS which are faster and strictly follow instructions
         result = invoke_llm(MAP_MODELS, prompt, parse_as_json=False)
         result = result.strip()
         if result.upper() == "NONE" or result == "":
             return ""
         return result
     except Exception as e:
-        print(f"[Warning] Map extraction failed on a chunk: {e}")
+        logger.warning(f"Map extraction failed on a chunk: {e}", exc_info=True)
         return ""
 
 
@@ -72,10 +80,9 @@ def fact_check(statement: str, web_data: List[Dict[str, Any]]) -> dict:
     }
 
     if not statement or not str(statement).strip() or not web_data:
-        print("[Warning] Missing statement or web data. Returning default insufficient response.")
+        logger.warning("Missing statement or web data. Returning default insufficient response.")
         return fallback_response
 
-    # Prepare chunks for the Map phase with URLs attached
     all_chunks = []
     for item in web_data:
         data = item.get("data", "")
@@ -86,11 +93,10 @@ def fact_check(statement: str, web_data: List[Dict[str, Any]]) -> dict:
                 all_chunks.append({"url": url, "text": c})
 
     if not all_chunks:
-        print("[Warning] No valid evidence remained after filtering. Returning default insufficient response.")
+        logger.warning("No valid evidence remained after filtering. Returning default insufficient response.")
         return fallback_response
 
-    # 1. MAP PHASE: Run extractions in parallel
-    print(f"Running Map phase across {len(all_chunks)} chunk(s)...")
+    logger.info(f"Running Map phase across {len(all_chunks)} chunk(s)...")
     condensed_evidence = []
     
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
@@ -105,7 +111,7 @@ def fact_check(statement: str, web_data: List[Dict[str, Any]]) -> dict:
                 if extracted:
                     condensed_evidence.append(extracted)
             except Exception as e:
-                print(f"[Warning] Thread execution failed during Map phase: {e}")
+                logger.warning(f"Thread execution failed during Map phase: {e}", exc_info=True)
 
     if not condensed_evidence:
         return {
@@ -115,8 +121,7 @@ def fact_check(statement: str, web_data: List[Dict[str, Any]]) -> dict:
             "urls": [item.get("url") for item in web_data if item.get("url")],
         }
 
-    # 2. REDUCE PHASE: Final Verification
-    print("Running Reduce phase for final verification...")
+    logger.info("Running Reduce phase for final verification...")
     prompt = f"""
 You are a professional fact-checking system. 
 
@@ -156,5 +161,5 @@ OUTPUT STRICT JSON ONLY. Do not use Markdown formatting blocks (like ```json).
         return parsed
 
     except Exception as e:
-        print(f"[Error] Verification failed during Reduce phase: {e}")
+        logger.error(f"Verification failed during Reduce phase: {e}", exc_info=True)
         return fallback_response

@@ -1,0 +1,14 @@
+[
+    {
+        "name": "claude_haiku",
+        "model_id": "claude-haiku-4-5-20251001",
+        "task": "conversational",
+        "max_new_tokens": 4096
+    },
+    {
+        "name": "claude_sonnet",
+        "model_id": "claude-sonnet-5",
+        "task": "conversational",
+        "max_new_tokens": 4096
+    }
+]

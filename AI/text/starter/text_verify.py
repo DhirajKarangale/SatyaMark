@@ -9,8 +9,7 @@ from websearch.web_verify import web_verify
 
 logger = logging.getLogger(__name__)
 
-# Set this to stop the graph execution early for testing.
-# Options: "summarize", "verifyability", "fact_check", None
+
 TEST_STOP_AFTER = None
 
 class GraphState(TypedDict):
@@ -54,7 +53,7 @@ def should_continue_fact_check(state: GraphState):
     logger.info("Fact check sufficient. Ending pipeline.")
     return END
 
-# Build the LangGraph workflow
+
 builder = StateGraph(GraphState)
 builder.add_node("summarize", summarize_node)
 builder.add_node("verifyability", verifyability_node)

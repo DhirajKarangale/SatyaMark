@@ -1,7 +1,10 @@
 from typing import Dict
-from utils.huggingface import invoke_llm
+from utils.llm import invoke_llm
 
-MODELS = ["deepseek_v3", "llama3_3_70b", "deepseek_r1", "qwen2_5_72b"]
+MODELS = {
+    "huggingface": ["deepseek_v3", "llama3_3_70b", "deepseek_r1", "qwen2_5_72b"],
+    "claude": ["claude_haiku", "claude_sonnet"]
+}
 
 def check_verifyability(text: str) -> Dict:
     prompt = f"""

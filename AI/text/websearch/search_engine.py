@@ -2,6 +2,9 @@ import os
 import time
 from dotenv import load_dotenv
 from langchain_community.utilities import GoogleSerperAPIWrapper
+import logging
+
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
@@ -9,7 +12,7 @@ serper_api_keys_env = os.getenv("SERPER_API_KEYS", "")
 SERPER_API_KEYS = [t.strip() for t in serper_api_keys_env.split(",") if t.strip()]
 
 if not SERPER_API_KEYS:
-    print("[Warning] No Serper API keys found. Please set SERPER_API_KEYS in .env")
+    logger.warning("No Serper API keys found. Please set SERPER_API_KEYS in .env")
 
 _current_serper_key_index = 0
 
@@ -73,23 +76,23 @@ def serper_search(query: str, tbs: str | None = None) -> dict:
                     k in error_msg
                     for k in ["unauthorized", "credit", "403", "429", "limit", "forbidden"]
                 ):
-                    print(
-                        f"[Warning] Serper API key index {_current_serper_key_index} failed. Rotating key..."
+                    logger.warning(
+                        f"Serper API key index {_current_serper_key_index} failed. Rotating key..."
                     )
                     _current_serper_key_index = (_current_serper_key_index + 1) % len(
                         SERPER_API_KEYS
                     )
                     attempts += 1
-                    break # Break inner loop, try with new key
+                    break
                 else:
                     network_retries += 1
                     if network_retries < 3:
                         delay = 2 ** network_retries
-                        print(f"[Warning] Serper search network error: {e}. Retrying in {delay}s...")
+                        logger.warning(f"Serper search network error: {e}. Retrying in {delay}s...")
                         time.sleep(delay)
                     else:
-                        print(f"[Error] Serper search failed after 3 network retries: {e}")
-                        attempts = len(SERPER_API_KEYS) # Force fail
+                        logger.error(f"Serper search failed after 3 network retries: {e}", exc_info=True)
+                        attempts = len(SERPER_API_KEYS)
                         break
 
     return {}

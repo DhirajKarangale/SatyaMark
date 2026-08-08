@@ -34,7 +34,6 @@ def extract_json(raw_text: Any) -> Dict[str, Any]:
     start = -1
     end = -1
 
-    # Find the outermost structure (object or array)
     valid_obj = start_obj != -1 and end_obj > start_obj
     valid_arr = start_arr != -1 and end_arr > start_arr
 

@@ -6,7 +6,7 @@
         "provider": "auto",
         "do_sample": false,
         "temperature": 0.1,
-        "max_new_tokens": 512
+        "max_new_tokens": 1024
     },
     {
         "name": "mistral",
@@ -15,7 +15,7 @@
         "provider": "auto",
         "do_sample": false,
         "temperature": 0.1,
-        "max_new_tokens": 512
+        "max_new_tokens": 1024
     },
     {
         "name": "deepseek_r1",
@@ -24,7 +24,7 @@
         "provider": "auto",
         "do_sample": false,
         "temperature": 0.1,
-        "max_new_tokens": 2048
+        "max_new_tokens": 1024
     },
     {
         "name": "deepseek_v3",
@@ -42,7 +42,7 @@
         "provider": "auto",
         "do_sample": false,
         "temperature": 0.1,
-        "max_new_tokens": 512
+        "max_new_tokens": 1024
     },
     {
         "name": "qwen3_32b",
@@ -51,16 +51,16 @@
         "provider": "auto",
         "do_sample": false,
         "temperature": 0.1,
-        "max_new_tokens": 512
+        "max_new_tokens": 1024
     },
     {
         "name": "flux_dev",
         "model_id": "black-forest-labs/FLUX.1-dev",
         "task": "text-generation",
         "provider": "auto",
-        "do_sample": false,
-        "temperature": 0.1,
-        "max_new_tokens": 512
+        "do_sample": true,
+        "temperature": 0.2,
+        "max_new_tokens": 1024
     },
     {
         "name": "hermes",
@@ -69,7 +69,7 @@
         "provider": "auto",
         "do_sample": false,
         "temperature": 0.1,
-        "max_new_tokens": 512
+        "max_new_tokens": 1024
     },
     {
         "name": "qwen2_5",
@@ -78,7 +78,7 @@
         "provider": "auto",
         "do_sample": false,
         "temperature": 0.1,
-        "max_new_tokens": 512
+        "max_new_tokens": 1024
     },
     {
         "name": "openchat",
@@ -87,16 +87,16 @@
         "provider": "auto",
         "do_sample": false,
         "temperature": 0.1,
-        "max_new_tokens": 512
+        "max_new_tokens": 1024
     },
     {
         "name": "minicheck",
         "model_id": "BespokeLabs/Bespoke-MiniCheck-7B",
         "task": "text-generation",
         "provider": "auto",
-        "do_sample": false,
-        "temperature": 0.1,
-        "max_new_tokens": 512
+        "do_sample": true,
+        "temperature": 0.2,
+        "max_new_tokens": 1024
     },
     {
         "name": "flan_t5_xl",
@@ -105,7 +105,7 @@
         "provider": "auto",
         "do_sample": false,
         "temperature": 0.1,
-        "max_new_tokens": 512
+        "max_new_tokens": 1024
     },
     {
         "name": "bart_large_cnn",
@@ -123,7 +123,7 @@
         "provider": "auto",
         "do_sample": false,
         "temperature": 0.1,
-        "max_new_tokens": 2048
+        "max_new_tokens": 1024
     },
     {
         "name": "qwen2_5_7b",
@@ -131,7 +131,7 @@
         "task": "conversational",
         "provider": "auto",
         "temperature": 0.1,
-        "max_new_tokens": 512,
+        "max_new_tokens": 1024,
         "do_sample": false
     },
     {
@@ -140,7 +140,7 @@
         "task": "conversational",
         "provider": "auto",
         "temperature": 0.1,
-        "max_new_tokens": 512,
+        "max_new_tokens": 1024,
         "do_sample": false
     },
     {
@@ -149,7 +149,7 @@
         "task": "conversational",
         "provider": "auto",
         "temperature": 0.1,
-        "max_new_tokens": 512,
+        "max_new_tokens": 1024,
         "do_sample": false
     },
     {
@@ -158,7 +158,7 @@
         "task": "conversational",
         "provider": "auto",
         "temperature": 0.1,
-        "max_new_tokens": 512,
+        "max_new_tokens": 1024,
         "do_sample": false
     },
     {
@@ -186,7 +186,7 @@
         "provider": "auto",
         "do_sample": false,
         "temperature": 0.1,
-        "max_new_tokens": 512
+        "max_new_tokens": 1024
     },
     {
         "name": "llama3_1_8b",

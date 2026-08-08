@@ -1,6 +1,9 @@
-from utils.huggingface import invoke_llm
+from utils.llm import invoke_llm
 
-MODELS = ["deepseek_v3", "llama3_3_70b", "qwen2_5_72b", "deepseek_r1", "veritas_8b_fact_checker"]
+MODELS = {
+    "huggingface": ["deepseek_v3", "llama3_3_70b", "qwen2_5_72b", "deepseek_r1", "veritas_8b_fact_checker"],
+    "claude": ["claude_haiku", "claude_sonnet"]
+}
 
 PROMPT_TEMPLATE = """
 You are a factual verification assistant.

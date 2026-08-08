@@ -3,6 +3,9 @@ from websearch.query_builder import generate_search_query
 from websearch.search_engine import get_urls_with_meta
 from websearch.scraper import extract_article_text
 from websearch.verifier import fact_check
+import logging
+
+logger = logging.getLogger(__name__)
 
 MAX_WORKERS = 5
 MAX_URLS_TO_VERIFY = 10
@@ -25,7 +28,7 @@ def web_verify(claim: str):
                 seen_urls.add(res["url"])
 
     if not search_results:
-        print("[Warning] No search results found. Returning insufficient.")
+        logger.warning("No search results found. Returning insufficient.")
         return fact_check(claim, [])
 
     scraped_dict = {}
@@ -42,7 +45,7 @@ def web_verify(claim: str):
                 text = future.result()
                 scraped_dict[item["url"]] = text
             except Exception as e:
-                print(f"[Error] Failed to process {item['url']}: {e}")
+                logger.error(f"Failed to process {item['url']}: {e}", exc_info=True)
 
     ordered_scraped_data = []
     for item in search_results:

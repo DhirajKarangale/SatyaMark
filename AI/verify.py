@@ -1,17 +1,10 @@
 import sys, os
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "text"))
-sys.path.append(os.path.join(os.path.dirname(__file__), "img_ml"))
-sys.path.append(os.path.join(os.path.dirname(__file__), "img_forensic"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "image"))
 
 from text.starter.text_verify import verify_text
-
-# from img_ml_verify import verify_img_ml, evaluate_img_ml, verify_img_ml_url
-# from img_forensic_verify import (
-#     verify_img_forensic,
-#     evaluate_img_forensic,
-#     verify_img_forensic_url,
-# )
+from image.image_verify import verify as verify_image
 
 # Text Data
 statements = [
@@ -53,9 +46,7 @@ image_url = "https://res.cloudinary.com/dfamljkyo/image/upload/v1765866848/v4fh8
 # Text
 print("\n\n\n Text: \n", verify_text(statement))
 
-# Image Forensic
-# print(verify_img_forensic(path_real_2))
-# print(evaluate_img_forensic(TEST_AI_PATH, TEST_REAL_PATH))
-# print(verify_img_forensic_url(image_url))
+# Image Verification
+# print("\n\n\n Image: \n", verify_image(image_url))
 
 print("\n \n \n")

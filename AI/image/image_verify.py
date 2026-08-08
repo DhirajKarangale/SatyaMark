@@ -1,3 +1,4 @@
+import logging
 import downloader
 import metadata
 import c2pa
@@ -19,6 +20,7 @@ import patch_analyzer
 import copy_move
 import decision_engine
 
+logger = logging.getLogger(__name__)
 
 def verify(image_url):
     try:
@@ -72,10 +74,14 @@ def verify(image_url):
         return img_decision_engine
 
     except Exception as e:
-        print(e)
+        logger.error(f"Image verification failed for {image_url}: {e}", exc_info=True)
+        return {
+            "mark": "ERROR",
+            "confidence": 0,
+            "reason": f"Verification pipeline failed: {str(e)}"
+        }
 
 
 # image_url = "https://res.cloudinary.com/dfamljkyo/image/upload/v1768325441/ai_dlykbo.png"
 # image_url = "https://res.cloudinary.com/dfamljkyo/image/upload/v1766424802/jqb9jtdecfetvkzgegqz.png"
 # print(verify(image_url))
-

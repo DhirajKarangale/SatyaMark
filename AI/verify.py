@@ -1,61 +1,80 @@
-import sys, os
+import sys
+import os
+import json
+import time
+import argparse
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "text"))
-sys.path.append(os.path.join(os.path.dirname(__file__), "img_ml"))
-sys.path.append(os.path.join(os.path.dirname(__file__), "img_forensic"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "image"))
 
 from text.starter.text_verify import verify_text
+from image.image_verify import verify as verify_image
 
-# from img_ml_verify import verify_img_ml, evaluate_img_ml, verify_img_ml_url
-# from img_forensic_verify import (
-#     verify_img_forensic,
-#     evaluate_img_forensic,
-#     verify_img_forensic_url,
-# )
-
-# Text Data
-statements = [
-  "python was developed in india",
-  "is recent water in india is because of chemtrail project",
-  "i like goku ui",
-  "hi i think dk is don",
-  "i like to watch comedy movies",
-  "I like to eat apples with milk",
-  "I like to drink bannana milk with apple shake",
-  "I am dkode",
-  "i like to watch comedy movies",
-  "hi i am don",
-  "i like iron name",
-  "i like hulk",
-  "i like cation america",
-  "i like when goku goes in ultra instinct",
-  "did iran drops 10 bombs on america?",
-  "goku defeated friza"
-]
-
-
-statement = statements[0]
-
-# Image Data
-ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
 TEST_PATH = os.path.join(ROOT_DIR, "dataset", "test")
-TRAIN_PATH = os.path.join(ROOT_DIR, "dataset", "train")
-TEST_AI_PATH = os.path.join(TEST_PATH, "ai")
-TEST_REAL_PATH = os.path.join(TEST_PATH, "real")
 
-path_ai_1 = os.path.join(TEST_AI_PATH, "1.jpg")
-path_ai_2 = os.path.join(TEST_AI_PATH, "2.jpg")
-path_real_1 = os.path.join(TEST_REAL_PATH, "2.jpg")
-path_real_2 = os.path.join(TEST_REAL_PATH, "2.jpg")
+def print_result(title, result, duration):
+    print(f"\n{'-'*60}")
+    print(f"{title} (Took {duration:.2f}s)")
+    print(f"{'-'*60}")
+    print(json.dumps(result, indent=2))
+    print(f"{'-'*60}")
 
-image_url = "https://res.cloudinary.com/dfamljkyo/image/upload/v1765866848/v4fh8c9xhegyx2havzar.png"
+text_1 = "OpenAI released GPT-4o in May 2024."
+text_2 = "Apple acquired Microsoft in early 2025 to dominate the AI market."
+text_3 = "Python was created by Guido van Rossum and first released in 1991."
+text_4 = "HTML is a popular programming language used to write backend server logic."
+text_5 = "In my opinion, Python is a much more elegant language than JavaScript."
+text_6 = "Claude 3.5 Sonnet was released by Anthropic as a major upgrade in AI capabilities."
+text_7 = "Devfolio is a popular platform used for hosting and managing hackathons globally."
+text_8 = "Elevation Capital is a venture capital firm that focuses on early-stage investments in India."
 
-# Text
-print("\n\n\n Text: \n", verify_text(statement))
+img_1 = os.path.join(TEST_PATH, "real", "2.jpg")
+img_2 = os.path.join(TEST_PATH, "ai", "1.jpg")
+img_3 = "https://res.cloudinary.com/dfamljkyo/image/upload/v1765866848/v4fh8c9xhegyx2havzar.png"
 
-# Image Forensic
-# print(verify_img_forensic(path_real_2))
-# print(evaluate_img_forensic(TEST_AI_PATH, TEST_REAL_PATH))
-# print(verify_img_forensic_url(image_url))
+ACTIVE_TEXT = None
+ACTIVE_IMAGE = None
 
-print("\n \n \n")
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="SatyaMark Unified Testing Entry Point")
+    parser.add_argument("--test", choices=["text", "image", "both"], default="both", help="Which pipeline to test (default: both)")
+    args = parser.parse_args()
+
+    if args.test in ["text", "both"]:
+        if ACTIVE_TEXT:
+            print("\n" + "="*60)
+            print("RUNNING SINGLE TEXT VERIFICATION TEST")
+            print("="*60)
+            print(f"\nTesting Statement: '{ACTIVE_TEXT}'")
+            
+            start_time = time.time()
+            try:
+                result = verify_text(ACTIVE_TEXT)
+            except Exception as e:
+                result = {"error": str(e)}
+            duration = time.time() - start_time
+            
+            print_result("Text Verdict", result, duration)
+        else:
+            print("\nACTIVE_TEXT is empty or None. Skipping Text Verification.")
+
+    if args.test in ["image", "both"]:
+        if ACTIVE_IMAGE:
+            print("\n" + "="*60)
+            print("RUNNING SINGLE IMAGE VERIFICATION TEST")
+            print("="*60)
+            print(f"\nTesting Image: '{ACTIVE_IMAGE}'")
+            
+            start_time = time.time()
+            try:
+                result = verify_image(ACTIVE_IMAGE)
+            except Exception as e:
+                result = {"error": str(e)}
+            duration = time.time() - start_time
+            
+            print_result("Image Verdict", result, duration)
+        else:
+            print("\nACTIVE_IMAGE is empty or None. Skipping Image Verification.")
+            
+    print("\nTesting Complete!\n")

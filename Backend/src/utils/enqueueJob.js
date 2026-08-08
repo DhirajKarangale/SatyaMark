@@ -1,17 +1,13 @@
-const redis = require("redis");
+const { getClients } = require("../redis/redisClient");
 require("dotenv").config();
 
-const JOB_ENQUEUE_RATE = parseInt(process.env.JOB_ENQUEUE_RATE);
-const REDIS_RENDER_TEXT_URL = process.env.REDIS_RENDER_TEXT_URL;
-const REDIS_UPSTASH_TEXT_URL = process.env.REDIS_UPSTASH_TEXT_URL;
-const REDIS_RENDER_IMAGE_URL = process.env.REDIS_RENDER_IMAGE_URL;
-const REDIS_UPSTASH_IMAGE_URL = process.env.REDIS_UPSTASH_IMAGE_URL;
+const JOB_ENQUEUE_RATE = parseInt(process.env.JOB_ENQUEUE_RATE) || 1000;
 
 class RedisQueueManager {
-    constructor(queueName, renderUrl, upstashUrl, maxMemoryMB = 23) {
+    constructor(queueName, renderClientName, upstashClientName, maxMemoryMB = 23) {
         this.queueName = queueName;
-        this.renderUrl = renderUrl;
-        this.upstashUrl = upstashUrl;
+        this.renderClientName = renderClientName;
+        this.upstashClientName = upstashClientName;
         this.maxMemoryMB = maxMemoryMB;
 
         this.localJobQueue = [];
@@ -46,18 +42,16 @@ class RedisQueueManager {
         if (this.isProcessing || this.localJobQueue.length === 0) return;
 
         this.isProcessing = true;
-        let renderClient = null;
-        let upstashClient = null;
+        
+        const clients = getClients();
+        const renderClient = clients[this.renderClientName];
+        const upstashClient = clients[this.upstashClientName];
 
         try {
-            if (!this.renderUrl) {
-                console.log(`Missing Render URL for ${this.queueName}`);
+            if (!renderClient) {
+                console.log(`Missing Render client for ${this.queueName}`);
                 return;
-            };
-
-            renderClient = redis.createClient({ url: this.renderUrl });
-            renderClient.on("error", (e) => console.log(`[${this.queueName} RENDER ERROR]`, e.message));
-            await renderClient.connect();
+            }
 
             let usedMB = await this.getRenderMemoryMB(renderClient);
 
@@ -71,13 +65,8 @@ class RedisQueueManager {
                     console.log(`[${this.queueName} ROUTER] Job ${currentJob.jobId} -> RENDER (${usedMB.toFixed(2)} MB used)`);
                 } else {
                     if (!upstashClient) {
-                        if (!this.upstashUrl) {
-                            console.log(`Missing Upstash URL for ${this.queueName}`);
-                            return;
-                        }
-                        upstashClient = redis.createClient({ url: this.upstashUrl });
-                        upstashClient.on("error", (e) => console.log(`[${this.queueName} UPSTASH ERROR]`, e.message));
-                        await upstashClient.connect();
+                        console.log(`Missing Upstash client for ${this.queueName}`);
+                        return;
                     }
 
                     await upstashClient.xAdd(streamKey, "*", jobPayload);
@@ -90,12 +79,6 @@ class RedisQueueManager {
         } catch (error) {
             console.log(`[${this.queueName} PROCESSOR ERROR]`, error.message);
         } finally {
-            try {
-                if (renderClient && renderClient.isOpen) await renderClient.quit();
-                if (upstashClient && upstashClient.isOpen) await upstashClient.quit();
-            } catch (closeErr) {
-                console.log(`[${this.queueName} CLOSE ERROR]`, closeErr.message);
-            }
             this.isProcessing = false;
         }
     }
@@ -107,14 +90,14 @@ class RedisQueueManager {
 
 const textQueue = new RedisQueueManager(
     "TEXT",
-    REDIS_RENDER_TEXT_URL,
-    REDIS_UPSTASH_TEXT_URL
+    "renderText",
+    "upstashText"
 );
 
 const imageQueue = new RedisQueueManager(
     "IMAGE",
-    REDIS_RENDER_IMAGE_URL,
-    REDIS_UPSTASH_IMAGE_URL
+    "renderImage",
+    "upstashImage"
 );
 
 async function enqueueJob(jobData) {

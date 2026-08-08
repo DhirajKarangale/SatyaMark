@@ -1,10 +1,5 @@
 require("dotenv").config();
-const redis = require("redis");
-
-const RENDER_TEXT_URL = process.env.REDIS_RENDER_TEXT_URL;
-const UPSTASH_TEXT_URL = process.env.REDIS_UPSTASH_TEXT_URL;
-const RENDER_IMAGE_URL = process.env.REDIS_RENDER_IMAGE_URL;
-const UPSTASH_IMAGE_URL = process.env.REDIS_UPSTASH_IMAGE_URL;
+const { getClients } = require("./redisClient");
 
 const JANITOR_RATE_MS = parseInt(process.env.REDIS_RENDER_UPSTASH_TRANSFER_RATE) || 60000;
 
@@ -16,6 +11,7 @@ const IDLE_TIME_MS = 10 * 60 * 1000; // 10 minutes
 const MAX_RETRY = 3;
 
 async function cleanStuckJobs(client, serverName, queueName, streamKey) {
+  if (!client) return;
   try {
     const response = await client.xAutoClaim(
       streamKey,
@@ -72,34 +68,14 @@ async function cleanStuckJobs(client, serverName, queueName, streamKey) {
   }
 }
 
-async function processJanitorForQueue(renderUrl, upstashUrl, queueName, streamKey) {
-  if (!renderUrl || !upstashUrl) return;
-
-  const renderClient = redis.createClient({ url: renderUrl });
-  const upstashClient = redis.createClient({ url: upstashUrl });
-
-  renderClient.on("error", () => { });
-  upstashClient.on("error", () => { });
-
-  try {
-    await renderClient.connect();
-    await upstashClient.connect();
-
-    await cleanStuckJobs(renderClient, "RENDER", queueName, streamKey);
-    await cleanStuckJobs(upstashClient, "UPSTASH", queueName, streamKey);
-
-  } catch (err) {
-    console.log(`[JANITOR CONNECTION ERROR - ${queueName}]`, err.message);
-  } finally {
-    if (renderClient.isOpen) await renderClient.quit();
-    if (upstashClient.isOpen) await upstashClient.quit();
-  }
-}
-
 async function runJanitorCycle() {
+  const { renderText, upstashText, renderImage, upstashImage } = getClients();
+
   await Promise.all([
-    processJanitorForQueue(RENDER_TEXT_URL, UPSTASH_TEXT_URL, "TEXT", STREAM_KEY_TEXT),
-    processJanitorForQueue(RENDER_IMAGE_URL, UPSTASH_IMAGE_URL, "IMAGE", STREAM_KEY_IMAGE)
+    cleanStuckJobs(renderText, "RENDER", "TEXT", STREAM_KEY_TEXT),
+    cleanStuckJobs(upstashText, "UPSTASH", "TEXT", STREAM_KEY_TEXT),
+    cleanStuckJobs(renderImage, "RENDER", "IMAGE", STREAM_KEY_IMAGE),
+    cleanStuckJobs(upstashImage, "UPSTASH", "IMAGE", STREAM_KEY_IMAGE)
   ]);
 }
 

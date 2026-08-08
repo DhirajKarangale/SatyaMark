@@ -1,6 +1,9 @@
 import re
 import requests
 import trafilatura
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def clean_raw_text(raw_text: str) -> str:
@@ -15,7 +18,7 @@ def extract_article_text(url: str, snippet: str) -> str:
     try:
         r = requests.get(
             url,
-            timeout=10,
+            timeout=25,
             headers={
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
             },
@@ -28,8 +31,8 @@ def extract_article_text(url: str, snippet: str) -> str:
                 combined_text = f"{extracted} \n\n[search engine snippet: {snippet}]"
                 return clean_raw_text(combined_text)
 
-    except Exception:
-        pass
+    except Exception as e:
+        logger.error(f"Scraping failed for URL: {url}", exc_info=True)
 
     clean_snippet = clean_raw_text(snippet)
     return f"scraping blocked or failed. search engine snippet: {clean_snippet}"

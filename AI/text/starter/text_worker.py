@@ -9,18 +9,22 @@ import threading
 import uuid
 import redis
 import requests
+import logging
 from redis.retry import Retry
 from redis.backoff import ExponentialBackoff
 from redis.exceptions import ConnectionError, TimeoutError
 from dotenv import load_dotenv
 from starter.text_verify import verify_text
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
 load_dotenv()
 
 REDIS_RENDER_TEXT_URL = os.getenv("REDIS_RENDER_TEXT_URL")
 REDIS_UPSTASH_TEXT_URL = os.getenv("REDIS_UPSTASH_TEXT_URL")
-REDIS_RENDER_CHECK_RATE = int(os.getenv("REDIS_RENDER_CHECK_RATE"))
-REDIS_UPSTASH_CHECK_RATE = int(os.getenv("REDIS_UPSTASH_CHECK_RATE"))
+REDIS_RENDER_CHECK_RATE = int(os.getenv("REDIS_RENDER_CHECK_RATE", 1000))
+REDIS_UPSTASH_CHECK_RATE = int(os.getenv("REDIS_UPSTASH_CHECK_RATE", 1000))
 SELF_URL = os.getenv("SELF_URL")
 
 WORKER_ID = uuid.uuid4().hex[:6]
@@ -36,7 +40,7 @@ def ensure_consumer_group(client, source_name):
         client.xgroup_create(STREAM_KEY, GROUP, id="$", mkstream=True)
     except redis.exceptions.ResponseError as e:
         if "BUSYGROUP" not in str(e):
-            print(f"[{source_name}] Group creation issue: {e}")
+            logger.warning(f"[{source_name}] Group creation issue: {e}")
 
 
 def process_job_data(job_data, source_name):
@@ -49,7 +53,7 @@ def process_job_data(job_data, source_name):
     summary_hash = job_data.get("summary_hash")
     retry = job_data.get("retry")
 
-    print(f"[{CONSUMER_NAME} | {source_name}] Processing Job: {jobId}")
+    logger.info(f"[{CONSUMER_NAME} | {source_name}] Processing Job: {jobId}")
 
     try:
         output = verify_text(text)
@@ -68,13 +72,39 @@ def process_job_data(job_data, source_name):
             "retry": retry
         }
 
-        requests.post(callback_url, json=payload, timeout=10)
-        print(f"[{CONSUMER_NAME} | {source_name}] Job completed successfully: {jobId}")
+        requests.post(callback_url, json=payload, timeout=25)
+        logger.info(f"[{CONSUMER_NAME} | {source_name}] Job completed successfully: {jobId}")
         return True
 
     except Exception as e:
-        print(f"[{CONSUMER_NAME} | {source_name}] AI/Callback ERROR for {jobId}: {e}")
+        logger.error(f"[{CONSUMER_NAME} | {source_name}] AI/Callback ERROR for {jobId}: {e}", exc_info=True)
         return False
+
+def process_pel(client, source_name):
+    """Processes any abandoned jobs left in the PEL due to network drops."""
+    try:
+        entries = client.xreadgroup(GROUP, CONSUMER_NAME, {STREAM_KEY: "0"}, count=1)
+        if not entries:
+            return
+
+        stream, messages = entries[0]
+        if not messages:
+            return
+
+        msg_id, fields = messages[0]
+        job_data = json.loads(fields["data"])
+        
+        logger.info(f"[{source_name}] Recovered job {job_data.get('jobId')} from PEL.")
+
+        success = process_job_data(job_data, source_name)
+        if success:
+            client.xack(STREAM_KEY, GROUP, msg_id)
+            client.xdel(STREAM_KEY, msg_id)
+
+    except (ConnectionError, TimeoutError, ConnectionResetError) as e:
+        raise e
+    except Exception as e:
+        logger.error(f"[{source_name}] PEL Read Error: {e}", exc_info=True)
 
 
 def fetch_and_process(client, source_name):
@@ -96,24 +126,22 @@ def fetch_and_process(client, source_name):
             client.xdel(STREAM_KEY, msg_id)
             return "PROCESSED"
         else:
-            print(
-                f"[{source_name}] Job {job_data.get('jobId')} failed. Leaving in PEL."
-            )
+            logger.warning(f"[{source_name}] Job {job_data.get('jobId')} failed. Leaving in PEL.")
             return "FAILED"
 
     except (ConnectionError, TimeoutError, ConnectionResetError) as e:
         raise e
     except Exception as e:
-        print(f"[{source_name}] Stream Read Error: {e}")
+        logger.error(f"[{source_name}] Stream Read Error: {e}", exc_info=True)
         return "ERROR"
 
 
-def render_worker_loop(redis_url, check_rate_ms):
+def worker_loop(redis_url, check_rate_ms, source_name):
     sleep_seconds = check_rate_ms / 1000.0
     if not redis_url:
         return
 
-    print(f"[{CONSUMER_NAME}] Started RENDER thread (Persistent Connection).")
+    logger.info(f"[{CONSUMER_NAME}] Started {source_name} thread (Persistent Connection).")
 
     retry_strategy = Retry(ExponentialBackoff(), 3)
     client = redis.from_url(
@@ -128,88 +156,38 @@ def render_worker_loop(redis_url, check_rate_ms):
         retry=retry_strategy,
     )
 
-    ensure_consumer_group(client, "RENDER")
+    ensure_consumer_group(client, source_name)
 
     while True:
         try:
-            status = fetch_and_process(client, "RENDER")
+            process_pel(client, source_name)
+            status = fetch_and_process(client, source_name)
             if status == "PROCESSED":
                 continue
 
             time.sleep(sleep_seconds)
 
-        except (
-            ConnectionError,
-            TimeoutError,
-            ConnectionResetError,
-        ) as e:
-            print(f"[RENDER] Network Drop Detected: {e}. Retrying in 5s...")
+        except (ConnectionError, TimeoutError, ConnectionResetError) as e:
+            logger.warning(f"[{source_name}] Network Drop Detected: {e}. Retrying in 5s...")
             time.sleep(5)
         except Exception as e:
-            print(f"[RENDER] Critical Thread Error: {e}")
+            logger.error(f"[{source_name}] Critical Thread Error: {e}", exc_info=True)
             time.sleep(sleep_seconds)
-
-
-def upstash_worker_loop(redis_url, check_rate_ms):
-    sleep_seconds = check_rate_ms / 1000.0
-    if not redis_url:
-        return
-
-    print(f"[{CONSUMER_NAME}] Started UPSTASH thread (Ephemeral Connection).")
-
-    temp_client = redis.from_url(redis_url, decode_responses=True)
-    ensure_consumer_group(temp_client, "UPSTASH")
-    temp_client.close()
-
-    while True:
-        client = None
-        status = "ERROR"
-
-        try:
-            client = redis.from_url(
-                redis_url,
-                decode_responses=True,
-                socket_connect_timeout=10,
-                socket_timeout=10,
-            )
-
-            status = fetch_and_process(client, "UPSTASH")
-
-        except (
-            ConnectionError,
-            TimeoutError,
-            ConnectionResetError,
-        ) as e:
-            print(f"[UPSTASH] Ephemeral Network Error: {e}.")
-        except Exception as e:
-            print(f"[UPSTASH] Critical Thread Error: {e}")
-
-        finally:
-            if client:
-                try:
-                    client.close()
-                except:
-                    pass
-
-        if status == "PROCESSED":
-            continue
-
-        time.sleep(sleep_seconds)
 
 def process_loop():
     threads = []
 
     render_thread = threading.Thread(
-        target=render_worker_loop,
-        args=(REDIS_RENDER_TEXT_URL, REDIS_RENDER_CHECK_RATE),
+        target=worker_loop,
+        args=(REDIS_RENDER_TEXT_URL, REDIS_RENDER_CHECK_RATE, "RENDER"),
         daemon=True,
     )
     render_thread.start()
     threads.append(render_thread)
 
     upstash_thread = threading.Thread(
-        target=upstash_worker_loop,
-        args=(REDIS_UPSTASH_TEXT_URL, REDIS_UPSTASH_CHECK_RATE),
+        target=worker_loop,
+        args=(REDIS_UPSTASH_TEXT_URL, REDIS_UPSTASH_CHECK_RATE, "UPSTASH"),
         daemon=True,
     )
     upstash_thread.start()
@@ -218,6 +196,5 @@ def process_loop():
     for t in threads:
         t.join()
 
-
 if __name__ == "__main__":
-    process_loop()
+    process_loop()

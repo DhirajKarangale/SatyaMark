@@ -79,3 +79,13 @@ def process(url):
     result = prepare_pipeline_image(image, image_bytes, image_type)
         
     return result
+
+def process_local(file_path):
+    with open(file_path, "rb") as f:
+        image_bytes = f.read()
+
+    image, image_type = validate_image_bytes(image_bytes)
+
+    result = prepare_pipeline_image(image, image_bytes, image_type)
+        
+    return result

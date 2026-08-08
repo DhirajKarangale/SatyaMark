@@ -7,7 +7,7 @@ import { process_data } from "../utils/process_data";
 let isConnected = false;
 let isSendingJobs = false;
 
-const jobMap = new Map<string, HTMLDivElement>();
+const jobMap = new Map<string, { containerRef: HTMLDivElement, dataId: string }>();
 
 type ProcessQueueItem = {
     containerRef: HTMLDivElement;
@@ -49,7 +49,7 @@ async function sendJobs(): Promise<void> {
             const { text, image_url } = await process_data(containerRef, dataId);
             const jobId: string = await sendJob(text, image_url, dataId);
 
-            jobMap.set(jobId, containerRef);
+            jobMap.set(jobId, { containerRef, dataId });
             process_queue.shift();
             updateIcon(containerRef, null);
         } catch (error) {
@@ -63,7 +63,9 @@ async function sendJobs(): Promise<void> {
                 return;
             }
 
-            throw error;
+            // Catch all other processing errors, log, and move to next item
+            console.error("Satyamark: Failed to process item:", error);
+            process_queue.shift();
         }
     }
 
@@ -71,14 +73,26 @@ async function sendJobs(): Promise<void> {
 }
 
 onMessage((data) => {
+    console.log("SatyaMark WebSocket received data:", data);
+    
     if (!data || !data.jobId) return;
 
-    const containerRef = jobMap.get(data.jobId);
+    const jobInfo = jobMap.get(data.jobId);
 
-    if (!containerRef) return;
+    if (!jobInfo) return;
 
     jobMap.delete(data.jobId);
-    updateIcon(containerRef, data);
+    
+    const { containerRef, dataId: fallbackDataId } = jobInfo;
+
+    // Check if the element is still in the DOM before updating
+    if (document.body.contains(containerRef)) {
+        // Ensure data.dataId takes precedence, otherwise fallback to the initial dataId
+        const finalDataId = data.dataId || fallbackDataId;
+        console.log("SatyaMark process.ts - Final dataId used for updateIcon:", finalDataId);
+        
+        updateIcon(containerRef, { ...data, dataId: finalDataId });
+    }
 });
 
 onConnected((data: any) => {

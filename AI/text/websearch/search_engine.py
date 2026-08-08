@@ -1,6 +1,10 @@
 import os
+import time
 from dotenv import load_dotenv
 from langchain_community.utilities import GoogleSerperAPIWrapper
+import logging
+
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
@@ -8,12 +12,11 @@ serper_api_keys_env = os.getenv("SERPER_API_KEYS", "")
 SERPER_API_KEYS = [t.strip() for t in serper_api_keys_env.split(",") if t.strip()]
 
 if not SERPER_API_KEYS:
-    print("[Warning] No Serper API keys found. Please set SERPER_API_KEYS in .env")
+    logger.warning("No Serper API keys found. Please set SERPER_API_KEYS in .env")
 
 _current_serper_key_index = 0
 
 SEARCH_COUNT = 20
-MAX_DAYS_OLD = 14
 
 EXCLUDED_DOMAINS = [
     "youtube.com",
@@ -52,34 +55,45 @@ def serper_search(query: str, tbs: str | None = None) -> dict:
 
     while attempts < len(SERPER_API_KEYS):
         current_key = SERPER_API_KEYS[_current_serper_key_index]
-        try:
-            search = GoogleSerperAPIWrapper(
-                serper_api_key=current_key,
-                search_params={"tbs": tbs} if tbs else None,
-            )
-            results = search.results(query, n=SEARCH_COUNT)
-
-            if isinstance(results, dict) and results.get("message") == "Unauthorized.":
-                raise ValueError("Unauthorized. Likely out of credits.")
-
-            return results
-
-        except Exception as e:
-            error_msg = str(e).lower()
-            if any(
-                k in error_msg
-                for k in ["unauthorized", "credit", "403", "429", "limit", "forbidden"]
-            ):
-                print(
-                    f"[Warning] Serper API key index {_current_serper_key_index} failed. Rotating key..."
+        network_retries = 0
+        
+        while network_retries < 3:
+            try:
+                search = GoogleSerperAPIWrapper(
+                    serper_api_key=current_key,
+                    search_params={"tbs": tbs} if tbs else None,
                 )
-                _current_serper_key_index = (_current_serper_key_index + 1) % len(
-                    SERPER_API_KEYS
-                )
-                attempts += 1
-            else:
-                print(f"[Error] Search failed: {e}")
-                return {}
+                results = search.results(query, n=SEARCH_COUNT)
+
+                if isinstance(results, dict) and results.get("message") == "Unauthorized.":
+                    raise ValueError("Unauthorized. Likely out of credits.")
+
+                return results
+
+            except Exception as e:
+                error_msg = str(e).lower()
+                if any(
+                    k in error_msg
+                    for k in ["unauthorized", "credit", "403", "429", "limit", "forbidden"]
+                ):
+                    logger.warning(
+                        f"Serper API key index {_current_serper_key_index} failed. Rotating key..."
+                    )
+                    _current_serper_key_index = (_current_serper_key_index + 1) % len(
+                        SERPER_API_KEYS
+                    )
+                    attempts += 1
+                    break
+                else:
+                    network_retries += 1
+                    if network_retries < 3:
+                        delay = 2 ** network_retries
+                        logger.warning(f"Serper search network error: {e}. Retrying in {delay}s...")
+                        time.sleep(delay)
+                    else:
+                        logger.error(f"Serper search failed after 3 network retries: {e}", exc_info=True)
+                        attempts = len(SERPER_API_KEYS)
+                        break
 
     return {}
 
@@ -105,13 +119,12 @@ def extract_urls_with_meta(result: dict) -> list:
 
 def get_urls_with_meta(query: str) -> list:
     """
-    Fetches the most relevant search results strictly within the MAX_DAYS_OLD window.
+    Fetches the most relevant search results.
     """
     results = []
     seen_urls = set()
 
-    time_filter = f"qdr:d{MAX_DAYS_OLD}"
-    search_data = serper_search(query, tbs=time_filter)
+    search_data = serper_search(query)
     valid_urls = extract_urls_with_meta(search_data)
 
     for item in valid_urls:

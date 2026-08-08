@@ -16,6 +16,7 @@ let socketClient: SocketClient | null = null;
 let isConnecting = false;
 let isConnected = false;
 let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+let reconnectAttempts = 0;
 
 /* -------------------------------------------------------------------------- */
 /*                          WebSocket URL Resolution                          */
@@ -54,10 +55,19 @@ async function connect() {
 
   isConnecting = true;
 
-  const url = await resolveWsUrl();
+  let url;
+  try {
+    url = await resolveWsUrl();
+  } catch (error) {
+    console.error("Satyamark: Failed to resolve WebSocket URL", error);
+    isConnecting = false;
+    scheduleReconnect();
+    return;
+  }
 
   socketClient = new SocketClient(url, {
     onOpen: async () => {
+      reconnectAttempts = 0;
       const ctx = getContext();
       const sessionId = await getSessionId();
 
@@ -108,16 +118,28 @@ async function connect() {
     },
   });
 
-  socketClient.connect();
+  try {
+    socketClient.connect();
+  } catch (error) {
+    console.error("Satyamark: Failed to connect WebSocket", error);
+    isConnecting = false;
+    scheduleReconnect();
+  }
 }
 
 function scheduleReconnect() {
   if (reconnectTimer || !context) return;
 
+  const baseDelay = 2000;
+  const maxDelay = 30000;
+  const delay = Math.min(baseDelay * Math.pow(2, reconnectAttempts), maxDelay);
+
+  reconnectAttempts++;
+
   reconnectTimer = setTimeout(() => {
     reconnectTimer = null;
-    connect();
-  }, 2000);
+    void connect();
+  }, delay);
 }
 
 function getContext(): ConnectionContext {

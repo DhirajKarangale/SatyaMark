@@ -1,8 +1,17 @@
 import re
 import json
-from utils.huggingface import invoke_llm
+import logging
+from .utils.huggingface import invoke_llm
 
-TRANSLATION_MODELS = ["llama3", "qwen2_5", "mistral", "gemma_7b"]
+logger = logging.getLogger(__name__)
+
+TRANSLATION_MODELS = [
+    "llama3_3_70b",
+    "qwen2_5_72b",
+    "deepseek_v3",
+    "llama3",
+    "qwen2_5"
+]
 
 def translate_forensics(mark, confidence, ai_score, real_score, all_reasons, raw_data):
     """
@@ -51,5 +60,5 @@ def translate_forensics(mark, confidence, ai_score, real_score, all_reasons, raw
         return cleaned_result
 
     except Exception as e:
-        print(f"Translation LLM failed: {e}")
+        logger.error(f"Translation LLM failed: {e}", exc_info=True)
         return ", ".join(all_reasons[:3]) 

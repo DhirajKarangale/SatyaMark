@@ -1,13 +1,11 @@
-import human_translator
+from . import human_translator
 
 def detect(data):
     ai_score = 0
     real_score = 0
     reasons = []
 
-    # -------------------
-    # Existing Forensic Checks (Metadata, C2PA, SPN, GAN, etc.)
-    # -------------------
+
     meta = data.get("metadata", {}).get("analysis", {})
     if meta.get("has_exif") and meta.get("camera_valid"):
         real_score += 2
@@ -37,9 +35,7 @@ def detect(data):
         ai_score += 2
         reasons.append("diffusion sampling artifacts")
 
-    # -------------------
-    # Physics & Geometry
-    # -------------------
+
     physics = data.get("physics_geometry", {}).get("physics_and_geometry", {})
     illumination = physics.get("illumination", {})
     perspective = physics.get("perspective", {})
@@ -50,9 +46,7 @@ def detect(data):
         ai_score += 2
         reasons.append("inconsistent lighting geometry")
 
-    # -------------------
-    # ELA (Error Level Analysis)
-    # -------------------
+
     ela = data.get("ela_analysis", {})
     if ela.get("is_suspicious"):
         ai_score += 3
@@ -60,9 +54,7 @@ def detect(data):
     else:
         real_score += 1
 
-    # -------------------
-    # Autoencoder Reconstruction
-    # -------------------
+
     ae = data.get("autoencoder_reconstruction", {})
     if ae.get("is_suspiciously_simple"):
         ai_score += 3
@@ -70,9 +62,7 @@ def detect(data):
     else:
         real_score += 2
 
-    # -------------------
-    # Diffusion Latent Analysis
-    # -------------------
+
     latent = data.get("diffusion_latent_analysis", {})
     if latent.get("is_diffusion_aligned"):
         ai_score += 4
@@ -81,9 +71,7 @@ def detect(data):
         real_score += 3
         reasons.append("natural high-kurtosis noise")
 
-    # -------------------
-    # NEW: Benford's Law Analysis
-    # -------------------
+
     benford = data.get("benfords_law", {})
     if "benford_chi_square" in benford:
         chi_val = benford.get("benford_chi_square", 1.0)
@@ -93,9 +81,7 @@ def detect(data):
             ai_score += 3
             reasons.append("unnatural Benford's Law statistical distribution")
 
-    # -------------------
-    # NEW: Chromatic Aberration
-    # -------------------
+
     ca = data.get("chromatic_aberration", {})
     if ca.get("has_natural_lens_dispersion"):
         real_score += 3
@@ -103,26 +89,20 @@ def detect(data):
         ai_score += 2
         reasons.append("unnatural edge-to-edge optical perfection")
 
-    # -------------------
-    # NEW: Patch Analysis (Texture Tiling)
-    # -------------------
+
     patch = data.get("patch_analysis", {})
     if patch.get("is_suspicious"):
         ai_score += 2
         reasons.append("suspicious repeating texture patches detected")
 
-    # -------------------
-    # NEW: Copy-Move Forgery Detection
-    # -------------------
+
     copy_move_data = data.get("copy_move", {})
     if copy_move_data.get("is_copy_move_detected"):
         ai_score += 3
         matches = copy_move_data.get("patch_matches_found", 0)
         reasons.append(f"copy-move forgery detected ({matches} cloned blocks)")
 
-    # -------------------
-    # Frequency & Perturbation
-    # -------------------
+
     freq = data.get("frequency_domain_analysis", {}).get("frequency_analysis", {})
     if freq.get("spectral_flatness", 0) > 0.995:
         ai_score += 1
@@ -133,9 +113,7 @@ def detect(data):
         ai_score += 1
         reasons.append("overly stable perturbation embedding")
 
-    # -------------------
-    # Final scoring
-    # -------------------
+
     total = ai_score + real_score
     if total == 0:
         return {"mark": "UNCERTAIN", "confidence": 0.0, "reason": "insufficient signals"}

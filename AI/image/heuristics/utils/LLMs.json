@@ -1,0 +1,224 @@
+[
+    {
+        "name": "llama3",
+        "model_id": "meta-llama/Meta-Llama-3-8B-Instruct",
+        "task": "conversational",
+        "provider": "auto",
+        "do_sample": false,
+        "temperature": 0.1,
+        "max_new_tokens": 1024
+    },
+    {
+        "name": "mistral",
+        "model_id": "mistralai/Mistral-7B-Instruct-v0.2",
+        "task": "conversational",
+        "provider": "auto",
+        "do_sample": false,
+        "temperature": 0.1,
+        "max_new_tokens": 1024
+    },
+    {
+        "name": "deepseek_r1",
+        "model_id": "deepseek-ai/DeepSeek-R1",
+        "task": "conversational",
+        "provider": "auto",
+        "do_sample": false,
+        "temperature": 0.1,
+        "max_new_tokens": 1024
+    },
+    {
+        "name": "deepseek_v3",
+        "model_id": "deepseek-ai/DeepSeek-V3",
+        "task": "conversational",
+        "provider": "auto",
+        "do_sample": false,
+        "temperature": 0.1,
+        "max_new_tokens": 1024
+    },
+    {
+        "name": "gpt_oss_20b",
+        "model_id": "openai/gpt-oss-20b",
+        "task": "conversational",
+        "provider": "auto",
+        "do_sample": false,
+        "temperature": 0.1,
+        "max_new_tokens": 1024
+    },
+    {
+        "name": "qwen3_32b",
+        "model_id": "Qwen/Qwen3-32B",
+        "task": "conversational",
+        "provider": "auto",
+        "do_sample": false,
+        "temperature": 0.1,
+        "max_new_tokens": 1024
+    },
+    {
+        "name": "flux_dev",
+        "model_id": "black-forest-labs/FLUX.1-dev",
+        "task": "text-generation",
+        "provider": "auto",
+        "do_sample": true,
+        "temperature": 0.2,
+        "max_new_tokens": 1024
+    },
+    {
+        "name": "hermes",
+        "model_id": "NousResearch/Hermes-3-Llama-3.1-8B",
+        "task": "conversational",
+        "provider": "auto",
+        "do_sample": false,
+        "temperature": 0.1,
+        "max_new_tokens": 1024
+    },
+    {
+        "name": "qwen2_5",
+        "model_id": "Qwen/Qwen2.5-14B-Instruct",
+        "task": "conversational",
+        "provider": "auto",
+        "do_sample": false,
+        "temperature": 0.1,
+        "max_new_tokens": 1024
+    },
+    {
+        "name": "openchat",
+        "model_id": "openchat/openchat-3.5",
+        "task": "conversational",
+        "provider": "auto",
+        "do_sample": false,
+        "temperature": 0.1,
+        "max_new_tokens": 1024
+    },
+    {
+        "name": "minicheck",
+        "model_id": "BespokeLabs/Bespoke-MiniCheck-7B",
+        "task": "text-generation",
+        "provider": "auto",
+        "do_sample": true,
+        "temperature": 0.2,
+        "max_new_tokens": 1024
+    },
+    {
+        "name": "flan_t5_xl",
+        "model_id": "google/flan-t5-xl",
+        "task": "text2text-generation",
+        "provider": "auto",
+        "do_sample": false,
+        "temperature": 0.1,
+        "max_new_tokens": 1024
+    },
+    {
+        "name": "bart_large_cnn",
+        "model_id": "facebook/bart-large-cnn",
+        "task": "summarization",
+        "provider": "auto",
+        "do_sample": false,
+        "temperature": 0.1,
+        "max_new_tokens": 512
+    },
+    {
+        "name": "deepseek_r1_distill_llama_8b",
+        "model_id": "deepseek-ai/DeepSeek-R1-Distill-Llama-8B",
+        "task": "conversational",
+        "provider": "auto",
+        "do_sample": false,
+        "temperature": 0.1,
+        "max_new_tokens": 1024
+    },
+    {
+        "name": "qwen2_5_7b",
+        "model_id": "Qwen/Qwen2.5-7B-Instruct",
+        "task": "conversational",
+        "provider": "auto",
+        "temperature": 0.1,
+        "max_new_tokens": 1024,
+        "do_sample": false
+    },
+    {
+        "name": "phi3_mini",
+        "model_id": "microsoft/Phi-3-mini-4k-instruct",
+        "task": "conversational",
+        "provider": "auto",
+        "temperature": 0.1,
+        "max_new_tokens": 1024,
+        "do_sample": false
+    },
+    {
+        "name": "gemma_7b",
+        "model_id": "google/gemma-7b-it",
+        "task": "conversational",
+        "provider": "auto",
+        "temperature": 0.1,
+        "max_new_tokens": 1024,
+        "do_sample": false
+    },
+    {
+        "name": "zephyr",
+        "model_id": "HuggingFaceH4/zephyr-7b-beta",
+        "task": "conversational",
+        "provider": "auto",
+        "temperature": 0.1,
+        "max_new_tokens": 1024,
+        "do_sample": false
+    },
+    {
+        "name": "sdxl_detector",
+        "model_id": "Organika/sdxl-detector",
+        "task": "image-classification",
+        "provider": "auto"
+    },
+    {
+        "name": "deepfake_detector_v1",
+        "model_id": "prithivMLmods/deepfake-detector-model-v1",
+        "task": "image-classification",
+        "provider": "auto"
+    },
+    {
+        "name": "ai_vs_real_image",
+        "model_id": "dima806/ai_vs_real_image_detection",
+        "task": "image-classification",
+        "provider": "auto"
+    },
+    {
+        "name": "veritas_8b_fact_checker",
+        "model_id": "resect-ai/veritas-8B-fact-checker-non-thinking-1.0",
+        "task": "conversational",
+        "provider": "auto",
+        "do_sample": false,
+        "temperature": 0.1,
+        "max_new_tokens": 1024
+    },
+    {
+        "name": "llama3_1_8b",
+        "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+        "task": "conversational",
+        "provider": "auto",
+        "do_sample": false,
+        "temperature": 0.1,
+        "max_new_tokens": 1024
+    },
+    {
+        "name": "deepfake_detector_v2",
+        "model_id": "prithivMLmods/Deep-Fake-Detector-v2-Model",
+        "task": "image-classification",
+        "provider": "auto"
+    },
+    {
+        "name": "llama3_3_70b",
+        "model_id": "meta-llama/Llama-3.3-70B-Instruct",
+        "task": "conversational",
+        "provider": "auto",
+        "do_sample": false,
+        "temperature": 0.1,
+        "max_new_tokens": 1024
+    },
+    {
+        "name": "qwen2_5_72b",
+        "model_id": "Qwen/Qwen2.5-72B-Instruct",
+        "task": "conversational",
+        "provider": "auto",
+        "do_sample": false,
+        "temperature": 0.1,
+        "max_new_tokens": 1024
+    }
+]

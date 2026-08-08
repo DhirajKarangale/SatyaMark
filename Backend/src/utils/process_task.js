@@ -5,7 +5,7 @@ const { enqueueJob } = require("../utils/enqueueJob");
 const { generateTextHashes } = require('../hash/text_hash');
 const { generateImageHash } = require('../hash/image_hash');
 const { checkRateLimiter } = require("./rateLimiter");
-const eventBus = require("../starter/eventBus");
+const redisEventBus = require("../starter/redisEventBus");
 
 const callback_url_text = process.env.RESULT_RECEIVER_TEXT;
 const callback_url_image = process.env.RESULT_RECEIVER_IMG;
@@ -55,11 +55,12 @@ async function process_text(clientId, jobId, text, dataSessionId, socketSessionI
             type: "text",
         };
 
-        eventBus.emit("sendData", { clientId, payload });
+        redisEventBus.publishData({ clientId, payload });
         return;
     }
 
-    if (!checkRateLimiter(clientId, dataSessionId, socketSessionId)) return;
+    const allowed = await checkRateLimiter(clientId, dataSessionId, socketSessionId);
+    if (!allowed) return;
 
     console.log(`[TEXT] Task enqueued → job=${jobId}`);
 
@@ -96,11 +97,12 @@ async function process_image(clientId, jobId, image_url, dataSessionId, socketSe
             type: "image",
         };
 
-        eventBus.emit("sendData", { clientId, payload });
+        redisEventBus.publishData({ clientId, payload });
         return;
     }
 
-    if (!checkRateLimiter(clientId, dataSessionId, socketSessionId)) return;
+    const allowed = await checkRateLimiter(clientId, dataSessionId, socketSessionId);
+    if (!allowed) return;
 
     console.log(`[IMAGE] Task enqueued → job=${jobId}`);
     await enqueueJob({

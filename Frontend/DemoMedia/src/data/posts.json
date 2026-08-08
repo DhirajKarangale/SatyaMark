@@ -1,8 +1,8 @@
 [
     {
         "id": "1",
-        "title": "Tech fact",
-        "description": "India's digital payments crossed 130 billion transactions this year, making it the highest globally.",
+        "title": "India News",
+        "description": "I like to play god of war",
         "userName": "facts_daily",
         "date": "2025-12-07"
     },
@@ -69,4 +69,4 @@
         "userName": "ts_ninja",
         "date": "2025-04-11"
     }
-  ]
+]

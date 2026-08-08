@@ -1,20 +1,27 @@
 import os
 import json
+import time
 from dotenv import load_dotenv
 from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
 
 from utils.parser import clean_text, extract_json
+import logging
+
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
 BASE_DIR = os.path.dirname(__file__)
-JSON_PATH = os.path.join(BASE_DIR, "LLMs.json")
+JSON_PATH = os.path.join(BASE_DIR, "LLMs_huggingface.json")
 
 with open(JSON_PATH, "r") as file:
     LLMs = json.load(file)
 
 hf_tokens_env = os.getenv("HF_TOKENS", "")
 HF_TOKENS = [t.strip() for t in hf_tokens_env.split(",") if t.strip()]
+
+MAX_RETRIES = int(os.getenv("EXPONENTIAL_BACKOFF_MAX_RETRIES", "3"))
+BASE_TIME = int(os.getenv("EXPONENTIAL_BACKOFF_BASE_TIME", "2"))
 
 _current_token_index = 0
 _connected_llms = {}
@@ -54,13 +61,14 @@ def _get_llm(name: str, token_index: int):
     return llm
 
 
-def invoke_llm(model_names: list[str], prompt: str, parse_as_json: bool = False):
+def invoke_hf_llm_single_model(model_name: str, prompt: str, parse_as_json: bool = False):
     global _current_token_index
+    attempts_with_different_tokens = 0
 
-    for model_name in model_names:
-        attempts_with_different_tokens = 0
-
-        while attempts_with_different_tokens < len(HF_TOKENS):
+    while attempts_with_different_tokens < len(HF_TOKENS):
+        network_retries = 0
+        
+        while network_retries <= MAX_RETRIES:
             try:
                 llm = _get_llm(model_name, _current_token_index)
 
@@ -83,18 +91,31 @@ def invoke_llm(model_names: list[str], prompt: str, parse_as_json: bool = False)
                     "payment required",
                     "depleted",
                     "credits",
+                    "401",
+                    "unauthorized",
+                    "expired",
+                    "invalid token",
                 ]
 
                 if any(keyword in error_msg for keyword in limit_keywords):
-                    print(
-                        f"[Warning] Huggingface Token index {_current_token_index} hit a limit. Rotating token..."
+                    logger.warning(
+                        f"Huggingface Token index {_current_token_index} hit a limit or expired. Rotating token..."
                     )
                     _current_token_index = (_current_token_index + 1) % len(HF_TOKENS)
                     attempts_with_different_tokens += 1
-                else:
-                    print(
-                        f"[Error] Model {model_name} failed: {e}. Trying next model..."
-                    )
                     break
+                else:
+                    network_retries += 1
+                    if network_retries <= MAX_RETRIES:
+                        delay = BASE_TIME ** network_retries
+                        logger.warning(
+                            f"Model {model_name} network/timeout error: {e}. Retrying in {delay}s..."
+                        )
+                        time.sleep(delay)
+                    else:
+                        logger.error(
+                            f"Model {model_name} failed after {MAX_RETRIES} network retries: {e}.", exc_info=True
+                        )
+                        raise RuntimeError(f"Model {model_name} failed after {MAX_RETRIES} network retries: {e}")
 
-    raise RuntimeError("All models and tokens failed to generate a valid response.")
+    raise RuntimeError(f"All Hugging Face tokens exhausted for model {model_name}.")

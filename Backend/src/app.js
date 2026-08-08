@@ -3,9 +3,11 @@ const http = require("http");
 const app = require("./starter/callback");
 const { startws } = require("./starter/ws-server");
 const { startRateLimiterCleanup } = require("./utils/rateLimiter");
-const { startTextTransfer } = require("./redis/transferText");
-const { startJanitorCycle } = require("./redis/textJanitor");
+const { startJobTransfer } = require("./redis/jobTransfer");
+const { startJanitorCycle } = require("./redis/jobJanitor");
 const { startEnqueueJob } = require("./utils/enqueueJob");
+const { initRedisClients } = require("./redis/redisClient");
+const redisEventBus = require("./starter/redisEventBus");
 
 const PORT = process.env.PORT;
 const server = http.createServer(app);
@@ -20,10 +22,14 @@ process.on("uncaughtException", (err) => {
   console.log("Uncaught Exception:", err);
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}`);
+  
+  await initRedisClients();
+  await redisEventBus.init();
+  
   startRateLimiterCleanup();
   startEnqueueJob();
-  startTextTransfer();
+  startJobTransfer();
   startJanitorCycle();
 });

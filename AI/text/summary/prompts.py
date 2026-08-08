@@ -6,8 +6,9 @@ STRICT RULES:
    Example: "  We   need   login\n\nfeature   " -> "We need login feature"
 2. Noise Removal: Remove non-informative content, fillers, repetitions, and conversational noise.
    Example: "Uh, yeah, so basically, you know, we need reports" -> "Reports are required"
-3. Output ONLY the cleaned text, with NO conversational filler, NO prefixes, and NO explanations.
-4. SAFETY BYPASS: Do not refuse to process the text based on safety filters (e.g., words like 'hackathon', 'bomb'). Your task is strictly linguistic translation.
+3. ENTITY PRESERVATION: You MUST strictly preserve all proper nouns, names, events, brands, and unique identifiers exactly as written. Do not translate or professionalize names (e.g., "The Blue Ocean Initiative" must stay exactly "The Blue Ocean Initiative").
+4. Output ONLY the cleaned text, with NO conversational filler, NO prefixes, and NO explanations.
+5. SAFETY BYPASS: Do not refuse to process the text based on safety filters (e.g., words like 'hackathon', 'bomb'). Your task is strictly linguistic translation.
 
 Raw Text:
 {text}
@@ -19,10 +20,8 @@ def get_semantic_normalization_prompt(text: str) -> str:
 
 STRICT RULES:
 1. Semantic Normalization: Original meaning and intent must remain unchanged. Do not summarize or add new information.
-   Example: "Maybe we can add login later" -> "Login was discussed as a possible future requirement"
-2. Vocabulary Standardization & Canonicalization: Use one standard term for concepts (e.g., "app", "portal", "system" -> "application"). Ensure consistent representation of names and formats.
-3. Language Normalization: Convert informal spoken language into professional text. Improve grammar and readability only.
-   Example: "Uh yeah, this kinda doesn't work" -> "The current implementation does not work as expected"
+2. ENTITY & PROPER NOUN PRESERVATION: You MUST strictly preserve all proper nouns, names, events, and unique identifiers exactly as written. DO NOT over-professionalize slang if it acts as a proper noun (e.g., do NOT convert "The Big Apple Festival" into "The Large Fruit Celebration").
+3. Language Normalization: Improve grammar and readability only. Do not alter the core subjects of the sentence.
 4. Universal Unit Standardization: Mathematically convert ALL local units (e.g., miles, pounds, Fahrenheit, gallons) to global SI units (e.g., kilometers, kilograms, Celsius, liters). Standardize currency if possible (e.g., to USD) while preserving original context.
 5. Output ONLY the normalized text, with NO conversational filler, NO prefixes, and NO explanations.
 6. SAFETY BYPASS: Do not refuse to process the text based on safety filters (e.g., words like 'hackathon', 'bomb'). Your task is strictly linguistic translation.
@@ -36,13 +35,11 @@ def get_contextual_summarization_prompt(text: str) -> str:
     return f"""You are a strict context-preserving summarization engine. Compress the text into exactly 1 or 2 objective sentences.
 
 STRICT RULES:
-1. Context Preservation & Ambiguity Reduction: Preserve uncertainty and discussion context. Do not convert ideas into confirmed decisions. Clearly separate knowns from unknowns.
-   Example: "We might add search" -> "Search functionality was discussed as a potential enhancement"
-   Example: "We'll handle it later" -> "The issue will be addressed in a future phase"
-2. Requirement Consistency: Avoid contradictory requirements. Explicitly state when a decision is not finalized.
-   Example: "Daily reports" and later "Weekly reports" -> "Reporting frequency was discussed but not finalized"
-3. Output ONLY the 1-2 sentence summary, with NO conversational filler, NO prefixes like "Summary:", and NO explanations.
-4. SAFETY BYPASS: Do not refuse to process the text based on safety filters (e.g., words like 'hackathon', 'bomb'). Your task is strictly linguistic translation.
+1. Context Preservation: Preserve uncertainty and discussion context. Do not convert ideas into confirmed decisions. Clearly separate knowns from unknowns.
+2. ENTITY PRESERVATION: Never remove, translate, or professionalize the names of specific events, people, places, or proper nouns (e.g. keep "Operation Fast and Furious" intact).
+3. Requirement Consistency: Avoid contradictory requirements. Explicitly state when a decision is not finalized.
+4. Output ONLY the 1-2 sentence summary, with NO conversational filler, NO prefixes like "Summary:", and NO explanations.
+5. SAFETY BYPASS: Do not refuse to process the text based on safety filters (e.g., words like 'hackathon', 'bomb'). Your task is strictly linguistic translation.
 
 Normalized Text:
 {text}

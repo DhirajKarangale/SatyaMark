@@ -34,7 +34,7 @@ def chunk_text(text: str, chunk_size: int = 15000) -> List[str]:
     return [text[i:i + chunk_size] for i in range(0, len(text), chunk_size)]
 
 
-def extract_evidence_from_chunk(statement: str, chunk: str) -> str:
+def extract_evidence_from_chunk(statement: str, url: str, chunk: str) -> str:
     """The MAP phase: extracts ONLY sentences relevant to the statement."""
     prompt = f"""
 You are an evidence extraction system.
@@ -42,11 +42,12 @@ You are an evidence extraction system.
 STATEMENT:
 "{statement}"
 
-TEXT SNIPPET:
+TEXT SNIPPET (Source: {url}):
 "{chunk}"
 
 TASK:
 Extract any specific facts, sentences, or data points from the TEXT SNIPPET that directly prove, disprove, or provide critical context to the STATEMENT.
+If you find relevant evidence, you MUST prepend your extraction with the Source URL (e.g., "[{url}]: The article states...").
 If there is NO relevant information, output exactly the word "NONE" and nothing else.
 Do not explain your reasoning. Just output the extracted evidence or "NONE".
 """
@@ -74,14 +75,15 @@ def fact_check(statement: str, web_data: List[Dict[str, Any]]) -> dict:
         print("[Warning] Missing statement or web data. Returning default insufficient response.")
         return fallback_response
 
-    # Prepare chunks for the Map phase
+    # Prepare chunks for the Map phase with URLs attached
     all_chunks = []
     for item in web_data:
         data = item.get("data", "")
-        if len(data) > 50:
+        url = item.get("url", "")
+        if len(data) > 50 and url:
             chunks = chunk_text(data)
             for c in chunks:
-                all_chunks.append(c)
+                all_chunks.append({"url": url, "text": c})
 
     if not all_chunks:
         print("[Warning] No valid evidence remained after filtering. Returning default insufficient response.")
@@ -93,8 +95,8 @@ def fact_check(statement: str, web_data: List[Dict[str, Any]]) -> dict:
     
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
         future_to_chunk = {
-            executor.submit(extract_evidence_from_chunk, statement, chunk): chunk
-            for chunk in all_chunks
+            executor.submit(extract_evidence_from_chunk, statement, chunk_data["url"], chunk_data["text"]): chunk_data
+            for chunk_data in all_chunks
         }
         
         for future in concurrent.futures.as_completed(future_to_chunk):
@@ -135,13 +137,14 @@ TASK:
 5. UNIT & MATH RULE: The statement will likely use global SI units. If the scraped evidence uses local/imperial units (or vice versa), you MUST accurately convert and mathematically verify them before making a decision. Do not mark a claim Incorrect simply due to unit differences.
 6. NUANCE RULE: If the evidence shows the claim is a mix of true and false (partially true) or requires critical context that is missing from the statement, mark it as Insufficient with a detailed explanation of the nuance rather than forcing a binary Correct/Incorrect.
 7. RELEVANCE RULE: Do not discuss irrelevant entities, websites, or data found in the evidence that are unrelated to the core entities of the statement. Keep your reasoning strictly focused on the subject of the claim.
+8. URL CITATION RULE: In your JSON output, the "urls" array MUST contain ONLY the precise Source URLs that you actively used to form your reasoning. Do not output all provided URLs.
 
 OUTPUT STRICT JSON ONLY. Do not use Markdown formatting blocks (like ```json).
 {{
   "mark": "Correct | Incorrect | Insufficient",
   "confidence": <integer between 0 and 100>,
   "reason": "<Detailed explanation of the reality based on the evidence. Write like a professional journalist.>",
-  "urls": {json.dumps([item.get("url") for item in web_data if item.get("url")])}
+  "urls": ["<list>", "<of>", "<urls>", "<actually>", "<used>", "<in>", "<your>", "<reasoning>"]
 }}
 """
     try:
@@ -149,9 +152,6 @@ OUTPUT STRICT JSON ONLY. Do not use Markdown formatting blocks (like ```json).
 
         if "reason" in parsed and isinstance(parsed["reason"], str):
             parsed["reason"] = _sanitize_reason(parsed["reason"])
-
-        # Overwrite URLs with all scanned URLs since we don't track which chunk came from which URL exactly
-        parsed["urls"] = [item.get("url") for item in web_data if item.get("url")]
 
         return parsed
 

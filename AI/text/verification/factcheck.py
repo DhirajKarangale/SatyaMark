@@ -36,6 +36,9 @@ EDGE CASE RULES (MANDATORY):
 5. SUBJECTIVITY RULE:
    If the statement contains subjective opinions or value judgments (e.g., "The Matrix is the best movie") that slipped past the verifyability check, you MUST mark it "Insufficient".
 
+6. FAST-PATH FILTER RULE (MOST IMPORTANT):
+   You must only output 'Correct' or 'Incorrect' for universally known, undeniable, trivial facts (e.g. 'Water is wet', 'The sun is a star', '1+1=2'). If the claim involves specific statistics, recent events, obscure trivia, or ANY level of nuance, you MUST output 'Insufficient'. This ensures complex claims are safely deferred to the live web search.
+
 Return a JSON object with:
 mark, confidence (0-100), and a VERY DETAILED reason.
 

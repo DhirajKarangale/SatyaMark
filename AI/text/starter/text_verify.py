@@ -9,6 +9,10 @@ from websearch.web_verify import web_verify
 
 logger = logging.getLogger(__name__)
 
+# Set this to stop the graph execution early for testing.
+# Options: "summarize", "verifyability", "fact_check", None
+TEST_STOP_AFTER = None
+
 class GraphState(TypedDict):
     statement: str
     summary: str
@@ -58,10 +62,22 @@ builder.add_node("fact_check", fact_check_node)
 builder.add_node("web_verify", web_verify_node)
 
 builder.add_edge(START, "summarize")
-builder.add_edge("summarize", "verifyability")
-builder.add_conditional_edges("verifyability", should_continue_verifyability)
-builder.add_conditional_edges("fact_check", should_continue_fact_check)
-builder.add_edge("web_verify", END)
+
+if TEST_STOP_AFTER == "summarize":
+    builder.add_edge("summarize", END)
+else:
+    builder.add_edge("summarize", "verifyability")
+    
+    if TEST_STOP_AFTER == "verifyability":
+        builder.add_edge("verifyability", END)
+    else:
+        builder.add_conditional_edges("verifyability", should_continue_verifyability)
+        
+        if TEST_STOP_AFTER == "fact_check":
+            builder.add_edge("fact_check", END)
+        else:
+            builder.add_conditional_edges("fact_check", should_continue_fact_check)
+            builder.add_edge("web_verify", END)
 
 workflow = builder.compile()
 

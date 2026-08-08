@@ -64,8 +64,9 @@ def summarize(raw_input: str) -> str:
     if not cleaned_regex:
         return ""
 
-    # Short-circuit logic for very short text (e.g., just a single word)
-    if len(cleaned_regex.split()) < 3:
+    # Short-circuit logic: If the text is a single concise claim (< 50 words), 
+    # DO NOT pass it through LLM summarization. Summarizing short claims destroys proper nouns, grammar context, and precision.
+    if len(cleaned_regex.split()) < 50:
         return cleaned_regex
 
     # Stage 1: LLM Cleaning & Noise Removal

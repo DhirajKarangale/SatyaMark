@@ -5,9 +5,8 @@
         "task": "conversational",
         "provider": "auto",
         "do_sample": false,
-        "temperature": 0.3,
-        "max_new_tokens": 512,
-        "repetition_penalty": 1.03
+        "temperature": 0.1,
+        "max_new_tokens": 512
     },
     {
         "name": "mistral",
@@ -15,9 +14,8 @@
         "task": "conversational",
         "provider": "auto",
         "do_sample": false,
-        "temperature": 0.3,
-        "max_new_tokens": 512,
-        "repetition_penalty": 1.03
+        "temperature": 0.1,
+        "max_new_tokens": 512
     },
     {
         "name": "deepseek_r1",
@@ -25,9 +23,8 @@
         "task": "conversational",
         "provider": "auto",
         "do_sample": false,
-        "temperature": 0.2,
-        "max_new_tokens": 512,
-        "repetition_penalty": 1.05
+        "temperature": 0.1,
+        "max_new_tokens": 2048
     },
     {
         "name": "deepseek_v3",
@@ -35,9 +32,8 @@
         "task": "conversational",
         "provider": "auto",
         "do_sample": false,
-        "temperature": 0.2,
-        "max_new_tokens": 512,
-        "repetition_penalty": 1.05
+        "temperature": 0.1,
+        "max_new_tokens": 1024
     },
     {
         "name": "gpt_oss_20b",
@@ -45,9 +41,8 @@
         "task": "conversational",
         "provider": "auto",
         "do_sample": false,
-        "temperature": 0.3,
-        "max_new_tokens": 512,
-        "repetition_penalty": 1.05
+        "temperature": 0.1,
+        "max_new_tokens": 512
     },
     {
         "name": "qwen3_32b",
@@ -55,9 +50,8 @@
         "task": "conversational",
         "provider": "auto",
         "do_sample": false,
-        "temperature": 0.2,
-        "max_new_tokens": 512,
-        "repetition_penalty": 1.05
+        "temperature": 0.1,
+        "max_new_tokens": 512
     },
     {
         "name": "flux_dev",
@@ -65,9 +59,8 @@
         "task": "text-generation",
         "provider": "auto",
         "do_sample": false,
-        "temperature": 0.3,
-        "max_new_tokens": 512,
-        "repetition_penalty": 1.05
+        "temperature": 0.1,
+        "max_new_tokens": 512
     },
     {
         "name": "hermes",
@@ -75,9 +68,8 @@
         "task": "conversational",
         "provider": "auto",
         "do_sample": false,
-        "temperature": 0.2,
-        "max_new_tokens": 512,
-        "repetition_penalty": 1.04
+        "temperature": 0.1,
+        "max_new_tokens": 512
     },
     {
         "name": "qwen2_5",
@@ -85,9 +77,8 @@
         "task": "conversational",
         "provider": "auto",
         "do_sample": false,
-        "temperature": 0.2,
-        "max_new_tokens": 512,
-        "repetition_penalty": 1.04
+        "temperature": 0.1,
+        "max_new_tokens": 512
     },
     {
         "name": "openchat",
@@ -95,9 +86,8 @@
         "task": "conversational",
         "provider": "auto",
         "do_sample": false,
-        "temperature": 0.25,
-        "max_new_tokens": 512,
-        "repetition_penalty": 1.04
+        "temperature": 0.1,
+        "max_new_tokens": 512
     },
     {
         "name": "minicheck",
@@ -105,9 +95,8 @@
         "task": "text-generation",
         "provider": "auto",
         "do_sample": false,
-        "temperature": 0.2,
-        "max_new_tokens": 512,
-        "repetition_penalty": 1.05
+        "temperature": 0.1,
+        "max_new_tokens": 512
     },
     {
         "name": "flan_t5_xl",
@@ -115,9 +104,8 @@
         "task": "text2text-generation",
         "provider": "auto",
         "do_sample": false,
-        "temperature": 0.2,
-        "max_new_tokens": 64,
-        "repetition_penalty": 1.05
+        "temperature": 0.1,
+        "max_new_tokens": 512
     },
     {
         "name": "bart_large_cnn",
@@ -125,9 +113,8 @@
         "task": "summarization",
         "provider": "auto",
         "do_sample": false,
-        "temperature": 0.2,
-        "max_new_tokens": 256,
-        "repetition_penalty": 1.05
+        "temperature": 0.1,
+        "max_new_tokens": 512
     },
     {
         "name": "deepseek_r1_distill_llama_8b",
@@ -135,41 +122,44 @@
         "task": "conversational",
         "provider": "auto",
         "do_sample": false,
-        "temperature": 0.2,
-        "max_new_tokens": 512,
-        "repetition_penalty": 1.05
+        "temperature": 0.1,
+        "max_new_tokens": 2048
     },
     {
         "name": "qwen2_5_7b",
         "model_id": "Qwen/Qwen2.5-7B-Instruct",
         "task": "conversational",
         "provider": "auto",
-        "temperature": 0.2,
-        "max_new_tokens": 512
+        "temperature": 0.1,
+        "max_new_tokens": 512,
+        "do_sample": false
     },
     {
         "name": "phi3_mini",
         "model_id": "microsoft/Phi-3-mini-4k-instruct",
         "task": "conversational",
         "provider": "auto",
-        "temperature": 0.2,
-        "max_new_tokens": 512
+        "temperature": 0.1,
+        "max_new_tokens": 512,
+        "do_sample": false
     },
     {
         "name": "gemma_7b",
         "model_id": "google/gemma-7b-it",
         "task": "conversational",
         "provider": "auto",
-        "temperature": 0.2,
-        "max_new_tokens": 512
+        "temperature": 0.1,
+        "max_new_tokens": 512,
+        "do_sample": false
     },
     {
         "name": "zephyr",
         "model_id": "HuggingFaceH4/zephyr-7b-beta",
         "task": "conversational",
         "provider": "auto",
-        "temperature": 0.2,
-        "max_new_tokens": 512
+        "temperature": 0.1,
+        "max_new_tokens": 512,
+        "do_sample": false
     },
     {
         "name": "sdxl_detector",
@@ -195,9 +185,8 @@
         "task": "conversational",
         "provider": "auto",
         "do_sample": false,
-        "temperature": 0.2,
-        "max_new_tokens": 512,
-        "repetition_penalty": 1.05
+        "temperature": 0.1,
+        "max_new_tokens": 512
     },
     {
         "name": "llama3_1_8b",
@@ -205,9 +194,8 @@
         "task": "conversational",
         "provider": "auto",
         "do_sample": false,
-        "temperature": 0.2,
-        "max_new_tokens": 512,
-        "repetition_penalty": 1.04
+        "temperature": 0.1,
+        "max_new_tokens": 1024
     },
     {
         "name": "deepfake_detector_v2",
@@ -221,9 +209,8 @@
         "task": "conversational",
         "provider": "auto",
         "do_sample": false,
-        "temperature": 0.2,
-        "max_new_tokens": 512,
-        "repetition_penalty": 1.05
+        "temperature": 0.1,
+        "max_new_tokens": 1024
     },
     {
         "name": "qwen2_5_72b",
@@ -231,8 +218,7 @@
         "task": "conversational",
         "provider": "auto",
         "do_sample": false,
-        "temperature": 0.2,
-        "max_new_tokens": 512,
-        "repetition_penalty": 1.05
+        "temperature": 0.1,
+        "max_new_tokens": 1024
     }
 ]

@@ -13,6 +13,10 @@
   </a>
 </p>
 
+<p align="center">
+  <img src="Assets/Video/Satyamark_gif.gif" alt="SatyaMark Demo GIF" width="850" />
+</p>
+
 ---
 
 ## ⚠️ Project Status

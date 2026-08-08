@@ -1,72 +1,72 @@
 [
     {
         "id": "1",
-        "title": "India News",
-        "description": "I like to play god of war",
-        "userName": "facts_daily",
+        "title": "Claude 3.5 Sonnet Released",
+        "description": "Anthropic's Claude 3.5 Sonnet has been released, showing impressive capabilities in coding, reasoning, and visual tasks compared to previous models.",
+        "userName": "tech_insider",
         "date": "2025-12-07"
     },
     {
         "id": "2",
-        "title": "No Charger Laptop",
-        "description": "A company announced an infinite battery laptop that charges itself using Wi-Fi signals in the air.",
-        "userName": "dkcodes",
+        "title": "Google Android Shutdown",
+        "description": "Google announced today that they are shutting down the Android operating system permanently next month to focus exclusively on building smart toasters.",
+        "userName": "news_fake",
         "date": "2025-11-28"
     },
     {
         "id": "3",
-        "title": "Global Population Numbers",
-        "description": "The world population has crossed 8.1 billion according to the latest UN report.",
-        "userName": "frontend_dev",
+        "title": "The First Computer Bug",
+        "description": "The term 'bug' in computer science was popularized when a real moth was found trapped in a relay of the Harvard Mark II computer in 1947.",
+        "userName": "history_nerd",
         "date": "2025-10-12"
     },
     {
         "id": "4",
-        "title": "Indigo Flight Turbulence",
-        "description": "A recent Indigo flight experienced heavy turbulence, leading to temporary delays and safety inspections.",
-        "userName": "news_update",
+        "title": "Claude Origins",
+        "description": "The Claude AI model was originally written entirely in HTML and CSS back in 1995 before being ported to Python.",
+        "userName": "false_facts",
         "date": "2025-12-05"
     },
     {
         "id": "5",
-        "title": "Image Post",
-        "imageURL": "https://res.cloudinary.com/dfamljkyo/image/upload/v1766069146/mwqjj0fds0rqpvky555g.png",
-        "userName": "admin",
+        "title": "The Future of Quantum Teleportation",
+        "description": "Secret labs are currently researching quantum teleportation that will fundamentally alter how we commute by 2030, making traditional cars completely obsolete.",
+        "userName": "future_predictor",
         "date": "2025-12-01"
     },
     {
         "id": "6",
-        "title": "Wrestling Fan Moment",
-        "description": "I have always admired Roman Reigns; his persona and dominance in the ring are unmatched.",
-        "userName": "realtime_guy",
+        "title": "Solid-State Battery Breakthroughs",
+        "description": "Recent advances in solid-state batteries have allowed researchers to double energy density, opening new doors for much longer-lasting consumer electronics.",
+        "userName": "science_daily",
         "date": "2025-08-15"
     },
     {
         "id": "7",
-        "title": "Tech Layoffs Report",
-        "description": "More than 250 tech companies have conducted layoffs this year, affecting over 85,000 employees globally.",
-        "userName": "cleanCoder",
+        "title": "Apple Acquires Hologram Inc.",
+        "description": "Apple has just confirmed the acquisition of Hologram Inc., a secretive startup building holographic smartphones, for a record-breaking $50 billion.",
+        "userName": "rumor_mill",
         "date": "2025-07-04"
     },
     {
         "id": "8",
-        "title": "Recent Apple Store Theft",
-        "description": "A group of thieves raided an Apple Store in California, stealing devices worth thousands within minutes.",
-        "userName": "db_pro",
+        "title": "Server Infrastructure",
+        "imageURL": "https://res.cloudinary.com/dfamljkyo/image/upload/v1766069146/mwqjj0fds0rqpvky555g.png",
+        "userName": "sysadmin_bob",
         "date": "2025-06-21"
     },
     {
         "id": "9",
-        "title": "Image Post",
+        "title": "Data Center View",
         "imageURL": "https://res.cloudinary.com/dfamljkyo/image/upload/v1754751870/fuse/m2jrqr3a2fteuc4zkxal.jpg",
-        "userName": "devops",
+        "userName": "cloud_guru",
         "date": "2025-05-02"
     },
     {
         "id": "10",
-        "title": "Image Post",
+        "title": "Tech Setup",
         "imageURL": "https://res.cloudinary.com/dfamljkyo/image/upload/v1765866684/jnosohvjltegdoufkvef.png",
-        "userName": "ts_ninja",
+        "userName": "dev_workspace",
         "date": "2025-04-11"
     }
 ]

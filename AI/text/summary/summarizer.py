@@ -75,8 +75,7 @@ def summarize(raw_input: str) -> str:
     if not cleaned_regex:
         return ""
 
-    if len(cleaned_regex.split()) < 50:
-        return cleaned_regex
+    # We removed the 50-word check so that short texts still go through the LLM for deduplication.
 
     cleaned_llm = llm_clean_text(cleaned_regex)
     

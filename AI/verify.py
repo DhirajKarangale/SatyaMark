@@ -28,12 +28,14 @@ text_5 = "In my opinion, Python is a much more elegant language than JavaScript.
 text_6 = "Claude 3.5 Sonnet was released by Anthropic as a major upgrade in AI capabilities."
 text_7 = "Devfolio is a popular platform used for hosting and managing hackathons globally."
 text_8 = "Elevation Capital is a venture capital firm that focuses on early-stage investments in India."
+text_9 = "tech_insider |#| claude 3.5 sonnet released |#| anthropic's claude 3.5 sonnet has been released, showing impressive capabilities in coding, reasoning, and visual tasks compared to previous models."
+text_10 = "vedang |#| Saw an UFO |#| Today I saw an UFO in pune hinjewadi |#| 10 aug 2026"
 
 img_1 = os.path.join(TEST_PATH, "real", "2.jpg")
 img_2 = os.path.join(TEST_PATH, "ai", "1.jpg")
 img_3 = "https://res.cloudinary.com/dfamljkyo/image/upload/v1765866848/v4fh8c9xhegyx2havzar.png"
 
-ACTIVE_TEXT = None
+ACTIVE_TEXT = text_10
 ACTIVE_IMAGE = None
 
 if __name__ == "__main__":

@@ -41,24 +41,14 @@ def is_social_metadata(segment: str) -> bool:
     if not s:
         return True
 
-    if re.fullmatch(r"(@[a-zA-Z0-9_]+\s*)+", s):
+    if re.fullmatch(r"([@#][a-zA-Z0-9_]+\s*)+", s):
         return True
 
-    date_time_patterns = [
-        r"(?i)\d+\s*[hmdswy]",
-        r"(?i)\d+\s+(?:sec|min|hr|day|week|month|year)s?(?:\s+ago)?",
-        r"(?i)(?:just now|today|yesterday|tomorrow)",
-        r"\d{1,4}[-/\.\s]+\d{1,2}[-/\.\s]+\d{1,4}",
-        r"(?i)\d{1,2}(?:st|nd|rd|th)?[-/\.\s,]+[a-z]{3,10}(?:[-/\.\s,]+\d{2,4})?",
-        r"(?i)[a-z]{3,10}[-/\.\s,]+\d{1,2}(?:st|nd|rd|th)?(?:[-/\.\s,]+\d{2,4})?",
-        r"(?i)\d{4}[-/\.\s,]+[a-z]{3,10}[-/\.\s,]+\d{1,2}(?:st|nd|rd|th)?",
-        r"(?i)\d{1,2}:\d{2}(?::\d{2})?(?:\s*[ap]\.?m\.?)?",
-        r"(?i)\d{1,2}\s*[ap]\.?m\.?",
-        r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})?",
-    ]
-
-    if any(re.fullmatch(pattern, s) for pattern in date_time_patterns):
+    # Matches usernames without @ or tags without # (e.g., tech_insider, john_doe123)
+    if re.fullmatch(r"[a-zA-Z0-9_]+", s) and len(s) <= 25:
         return True
+
+    # We removed date filtering here so that important dates get passed to the summarizer.
 
     if re.fullmatch(r"\d+(?:,\d{3})*(?:\.\d+)?[KkMmBb]?", s):
         return True
@@ -83,7 +73,7 @@ def clean_raw_social_text(raw_text: str) -> str:
         parts: List[str] = [p.strip() for p in cleaned.split(SEPARATOR) if p.strip()]
 
         meaningful_parts = [p for p in parts if not is_social_metadata(p)]
-        cleaned = f" {SEPARATOR} ".join(meaningful_parts)
+        cleaned = ". ".join(meaningful_parts)
 
     cleaned = cleaned.replace("\u00a0", " ")
 

@@ -27,16 +27,11 @@ function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            {/* Logo / Brand */}
             <NavLink
               to={routeHome}
-              className="flex items-center gap-2 text-white font-bold text-xl 
-                                hover:text-cyan-400 transition-colors"
+              className="flex items-center gap-2 text-white font-bold text-xl hover:text-cyan-400 transition-colors"
             >
-              <div className="w-8 h-8 rounded-lg bg-linear-to-br from-cyan-400 to-blue-600 
-                  flex items-center justify-center text-white font-bold text-sm">
-                S
-              </div>
+              <img src="/Logo.png" alt="SatyaMark Logo" className="w-8 h-8 object-contain" />
               <span className="hidden sm:block">SatyaMark</span>
             </NavLink>
 

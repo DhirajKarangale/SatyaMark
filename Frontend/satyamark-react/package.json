@@ -1,6 +1,6 @@
 {
   "name": "satyamark-react",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "Official React SDK for SatyaMark — a lightweight UI library to embed transparent content verification marks, confidence indicators, and trust signals into React applications.",
   "license": "MIT",
   "author": "DK",

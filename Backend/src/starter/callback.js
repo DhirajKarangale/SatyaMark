@@ -119,10 +119,10 @@ app.post("/ai-callback/text", async (req, res) => {
 
         const reasonText = (reason || "").toLowerCase();
 
-        const isInternalError =
-            reasonText.includes("internal error occurred") ||
+        const isInternalError = mark === "ERROR" || reasonText.includes("internal error occurred") ||
             reasonText.includes("failed to generate") ||
-            reasonText.includes("models and tokens failed");
+            reasonText.includes("models and tokens failed") ||
+            reasonText.includes("pipeline execution failed");
 
         let dbId = null;
         if (!isInternalError) {
@@ -164,10 +164,10 @@ app.post("/ai-callback/image", async (req, res) => {
 
         const reasonText = (reason || "").toLowerCase();
 
-        const isInternalError =
-            reasonText.includes("internal error occurred") ||
+        const isInternalError = mark === "ERROR" || reasonText.includes("internal error occurred") ||
             reasonText.includes("failed to generate") ||
-            reasonText.includes("models and tokens failed");
+            reasonText.includes("models and tokens failed") ||
+            reasonText.includes("pipeline execution failed");
 
         let dbId = null;
         if (!isInternalError) {

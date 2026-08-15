@@ -4,6 +4,7 @@ let socket: WebSocket | null = null;
 let storedConnectionData: SatyaMarkConnectionData | null = null;
 
 let isConnected = false;
+let reconnectAttempts = 0;
 type ConnectionListener = (connected: boolean) => void;
 const connectionListeners: ConnectionListener[] = [];
 
@@ -83,6 +84,7 @@ export async function init(connectionData: SatyaMarkConnectionData) {
             notifyConnectionState(true);
         }
 
+        reconnectAttempts = 0;
         console.log("Connected to server: ", connectionData.user_id);
     };
 
@@ -103,8 +105,9 @@ export async function init(connectionData: SatyaMarkConnectionData) {
                 socket?.close();
                 socket = null;
             }
-
-            throw new Error(data.msg);
+            console.error("RateLimiter Error:", data.msg);
+            receiveData({ type: "error", error: data.msg });
+            return;
         }
 
         receiveData(data);
@@ -112,6 +115,13 @@ export async function init(connectionData: SatyaMarkConnectionData) {
 
     socket.onclose = () => {
         console.log("Server connection closed");
+        notifyConnectionState(false);
+        setTimeout(() => {
+            if (storedConnectionData) {
+                console.log("Attempting to reconnect...");
+                init(storedConnectionData);
+            }
+        }, Math.min(1000 * Math.pow(2, reconnectAttempts++), 30000));
     };
 
     storedConnectionData = connectionData;

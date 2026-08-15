@@ -51,49 +51,26 @@ def process_job_data(client, job_data, source_name):
     image_hash = job_data.get("image_hash")
     retry = job_data.get("retry")
 
-    lock_key = f"ai:lock:image:{image_hash}"
-    cache_key = f"ai:result:image:{image_hash}"
-
     logger.info(f"[{CONSUMER_NAME} | {source_name}] Processing Job: {jobId}")
 
     try:
-        # 1. Check if it's already processed
-        cached_result = client.get(cache_key)
-        if cached_result:
-            logger.info(f"[{CONSUMER_NAME} | {source_name}] Result found in AI cache: {jobId}")
-            payload = json.loads(cached_result)
-            payload["jobId"] = jobId
-            payload["clientId"] = clientId
-            payload["retry"] = retry
-            requests.post(callback_url, json=payload, timeout=10)
-            return True
+        result = verify(image_url)
 
-        # 2. Check if it's currently processing
-        if not client.set(lock_key, "1", nx=True, ex=300):
-            return False
+        payload = {
+            "jobId": jobId,
+            "clientId": clientId,
+            "image_url": image_url,
+            "image_hash": image_hash,
+            "mark": str(result["mark"]),
+            "reason": result.get("reason"),
+            "confidence": result.get("confidence"),
+            "retry": retry
+        }
 
-        try:
-            result = verify(image_url)
-
-            payload = {
-                "jobId": jobId,
-                "clientId": clientId,
-                "image_url": image_url,
-                "image_hash": image_hash,
-                "mark": str(result["mark"]),
-                "reason": result.get("reason"),
-                "confidence": result.get("confidence"),
-                "retry": retry
-            }
-
-            # Cache the result for 24 hours
-            client.set(cache_key, json.dumps(payload), ex=86400)
-
-            requests.post(callback_url, json=payload, timeout=10)
-            logger.info(f"[{CONSUMER_NAME} | {source_name}] Job completed successfully: {jobId}")
-            return True
-        finally:
-            client.delete(lock_key)
+        res = requests.post(callback_url, json=payload, timeout=10)
+        res.raise_for_status()
+        logger.info(f"[{CONSUMER_NAME} | {source_name}] Job completed successfully: {jobId}")
+        return True
 
     except Exception as e:
         logger.error(f"[{CONSUMER_NAME} | {source_name}] AI/Callback ERROR for {jobId}: {e}", exc_info=True)

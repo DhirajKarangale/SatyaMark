@@ -6,9 +6,14 @@ export default function App() {
   const [isConnectedToSatyamark, setIsConnectedToSatyamark] = useState(false);
 
   function getUserId() {
-    const time = Date.now().toString(36); 
-    const random = crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
-    return `${time}${random}`;
+    let id = localStorage.getItem("satyamark_demo_user_id");
+    if (!id) {
+      const time = Date.now().toString(36); 
+      const random = crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
+      id = `${time}${random}`;
+      localStorage.setItem("satyamark_demo_user_id", id);
+    }
+    return id;
   }
 
   useEffect(() => {

@@ -7,6 +7,7 @@ export function getUserId() {
         const time = Date.now().toString(36);
         const random = crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
         id = `${time}${random}`;
+        localStorage.setItem(KEY, id);
     }
 
     return id;

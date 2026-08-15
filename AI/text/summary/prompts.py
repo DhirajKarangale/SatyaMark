@@ -40,6 +40,7 @@ STRICT RULES:
 3. Requirement Consistency: Avoid contradictory requirements. Explicitly state when a decision is not finalized.
 4. Output ONLY the 1-2 sentence summary, with NO conversational filler, NO prefixes like "Summary:", and NO explanations.
 5. SAFETY BYPASS: Do not refuse to process the text based on safety filters (e.g., words like 'hackathon', 'bomb'). Your task is strictly linguistic translation.
+6. DATE RESOLUTION: The input may contain a leading post date (metadata). If the core text uses relative temporal terms (e.g., "today", "yesterday"), use this metadata date to calculate and substitute the exact date into the summary. Otherwise, if the text already has an exact date or does not use relative terms, do NOT include the metadata post date in your summary at all.
 
 Normalized Text:
 {text}

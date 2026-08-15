@@ -74,7 +74,7 @@ async function sendJobs(): Promise<void> {
 
 onMessage((data) => {
     console.log("SatyaMark WebSocket received data:", data);
-    
+
     if (!data || !data.jobId) return;
 
     const jobInfo = jobMap.get(data.jobId);
@@ -82,15 +82,16 @@ onMessage((data) => {
     if (!jobInfo) return;
 
     jobMap.delete(data.jobId);
-    
     const { containerRef, dataId: fallbackDataId } = jobInfo;
 
-    // Check if the element is still in the DOM before updating
     if (document.body.contains(containerRef)) {
-        // Ensure data.dataId takes precedence, otherwise fallback to the initial dataId
-        const finalDataId = data.dataId || fallbackDataId;
+        const currentDataId = containerRef.dataset.currentDataId;
+        const finalDataId = data.dataId || currentDataId || fallbackDataId;
+
+        if (data.dataId) containerRef.dataset.currentDataId = data.dataId;
+
         console.log("SatyaMark process.ts - Final dataId used for updateIcon:", finalDataId);
-        
+
         updateIcon(containerRef, { ...data, dataId: finalDataId });
     }
 });

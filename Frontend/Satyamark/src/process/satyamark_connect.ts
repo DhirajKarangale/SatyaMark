@@ -8,9 +8,9 @@ type ConnectionListener = (connected: boolean) => void;
 const connectionListeners: ConnectionListener[] = [];
 
 const isDev = import.meta.env.VITE_IS_DEV === "true";
+const wsUrlLocal = import.meta.env.VITE_WS_URL_BASE;
 
 async function getWsUrl() {
-    const wsUrlLocal = "ws://localhost:1000";
     if (isDev) return wsUrlLocal;
 
     const res = await fetch(

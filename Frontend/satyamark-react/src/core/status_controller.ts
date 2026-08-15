@@ -95,7 +95,6 @@ function updateIconImmediately(containerRef: HTMLDivElement, data: any) {
         icon.style.cursor = "pointer";
         icon.onclick = () => {
             const routeUrl = `${satyamark_url}/${type}/${data.dataId}`;
-            console.log("SatyaMark Status Click - Routing to:", routeUrl);
             window.open(routeUrl, "_blank");
         };
     } else {

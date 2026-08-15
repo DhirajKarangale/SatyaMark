@@ -1,10 +1,46 @@
 import { ICON_URLS, type IconKey } from "../utils/iconRegistry";
-import { ensureIconLoaded } from "../utils/iconLoader";
+import { ensureIconLoaded, preloadIcons } from "../utils/iconLoader";
 
 const DEFAULT_ICON_SIZE = 20;
 const satyamark_url = "https://satyamark.vercel.app/chat";
 
+let areIconsLoaded = false;
+type StatusQueueItem = {
+    containerRef: HTMLDivElement;
+    data: any;
+};
+const statusQueue: StatusQueueItem[] = [];
+
+export async function initIcons() {
+    await preloadIcons();
+    areIconsLoaded = true;
+    flushStatusQueue();
+}
+
+function flushStatusQueue() {
+    while (statusQueue.length > 0) {
+        const item = statusQueue.shift();
+        if (item && document.body.contains(item.containerRef)) {
+            updateIconImmediately(item.containerRef, item.data);
+        }
+    }
+}
+
 export function updateIcon(containerRef: HTMLDivElement, data: any) {
+    if (!areIconsLoaded) {
+        // Update data if container already exists in queue, otherwise push new
+        const existingIndex = statusQueue.findIndex(item => item.containerRef === containerRef);
+        if (existingIndex !== -1) {
+            statusQueue[existingIndex].data = data;
+        } else {
+            statusQueue.push({ containerRef, data });
+        }
+        return;
+    }
+    updateIconImmediately(containerRef, data);
+}
+
+function updateIconImmediately(containerRef: HTMLDivElement, data: any) {
     const root = containerRef;
     const iconSize = DEFAULT_ICON_SIZE;
     let mark: IconKey = "pending";

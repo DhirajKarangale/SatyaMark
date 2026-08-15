@@ -2,6 +2,7 @@ import { SocketClient } from "./socketClient";
 import { generateJobId } from "../utils/generateIds";
 import { emitMessage, emitConnection } from "./eventBus";
 import { getSessionId, setSessionId, clearSession } from "../utils/manageSessions";
+import { initIcons } from "./status_controller";
 
 const isDev = false;
 
@@ -47,6 +48,7 @@ async function resolveWsUrl(): Promise<string> {
 
 export async function init(newContext: ConnectionContext) {
   context = newContext;
+  initIcons();
   await connect();
 }
 

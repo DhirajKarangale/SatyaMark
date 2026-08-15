@@ -30,7 +30,11 @@ function Chat() {
                 const res = await fetch(`${urlBase}/${endpoint}?id=${id}`);
                 const data = await res.json();
                 jobStore.remove(id);
-                if (data) resultBus.publish(data);
+                if (res.ok && data && data.mark) {
+                    resultBus.publish(data);
+                } else {
+                    setShowAlert(true);
+                }
             } catch (err) {
                 jobStore.remove(id);
                 setShowAlert(true);

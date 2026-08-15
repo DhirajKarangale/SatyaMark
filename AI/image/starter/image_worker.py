@@ -15,6 +15,7 @@ from redis.backoff import ExponentialBackoff
 from redis.exceptions import ConnectionError, TimeoutError
 from dotenv import load_dotenv
 from starter.image_verify import verify
+from utils.redis_proxy import RedisProxy
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -125,11 +126,12 @@ def render_worker_loop(redis_url, check_rate_ms):
         retry=retry_strategy,
     )
 
-    ensure_consumer_group(client, "RENDER")
+    proxy_client = RedisProxy(client, "RENDER")
+    ensure_consumer_group(proxy_client, "RENDER")
 
     while True:
         try:
-            status = fetch_and_process(client, "RENDER")
+            status = fetch_and_process(proxy_client, "RENDER")
             if status == "PROCESSED":
                 continue
 
@@ -151,7 +153,8 @@ def upstash_worker_loop(redis_url, check_rate_ms):
     logger.info(f"[{CONSUMER_NAME}] Started UPSTASH thread (Ephemeral Connection).")
 
     temp_client = redis.from_url(redis_url, decode_responses=True)
-    ensure_consumer_group(temp_client, "UPSTASH")
+    temp_proxy = RedisProxy(temp_client, "UPSTASH")
+    ensure_consumer_group(temp_proxy, "UPSTASH")
     temp_client.close()
 
     while True:
@@ -165,8 +168,8 @@ def upstash_worker_loop(redis_url, check_rate_ms):
                 socket_connect_timeout=10,
                 socket_timeout=10,
             )
-
-            status = fetch_and_process(client, "UPSTASH")
+            proxy_client = RedisProxy(client, "UPSTASH")
+            status = fetch_and_process(proxy_client, "UPSTASH")
 
         except (ConnectionError, TimeoutError, ConnectionResetError) as e:
             logger.warning(f"[UPSTASH] Ephemeral Network Error: {e}.")

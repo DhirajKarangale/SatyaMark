@@ -6,19 +6,19 @@ async function generateImageHash(imageUrl) {
     try {
         parsedUrl = new URL(imageUrl);
     } catch {
-        console.log("Invalid URL");
+        // console.log("Invalid URL");
         return;
     }
 
     if (!["http:", "https:"].includes(parsedUrl.protocol)) {
-        console.log("Only HTTP/HTTPS URLs are allowed");
+        // console.log("Only HTTP/HTTPS URLs are allowed");
         return;
     }
 
     const response = await fetch(imageUrl);
 
     if (!response.ok) {
-        console.log(`Failed to download image: ${response.status} ${response.statusText}`);
+        // console.log(`Failed to download image: ${response.status} ${response.statusText}`);
         return;
     }
 
@@ -26,7 +26,7 @@ async function generateImageHash(imageUrl) {
     const buffer = Buffer.from(arrayBuffer);
 
     if (!buffer.length) {
-        console.log("Downloaded image is empty");
+        // console.log("Downloaded image is empty");
         return;
     }
 

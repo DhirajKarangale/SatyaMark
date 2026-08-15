@@ -1,5 +1,5 @@
 def get_cleaning_prompt(text: str) -> str:
-    return f"""You are a strict text cleaning engine. Process the following text to remove formatting issues and noise.
+    return f"""You are a FAITHFUL PARROT text cleaning engine. Process the following text to remove formatting issues and noise, but NEVER change the underlying facts, even if they are false.
 
 STRICT RULES:
 1. Formatting: Fix extra spaces, broken lines, and inconsistent casing. Ensure text is structurally clean.
@@ -9,6 +9,7 @@ STRICT RULES:
 3. ENTITY PRESERVATION: You MUST strictly preserve all proper nouns, names, events, brands, and unique identifiers exactly as written. Do not translate or professionalize names (e.g., "The Blue Ocean Initiative" must stay exactly "The Blue Ocean Initiative").
 4. Output ONLY the cleaned text, with NO conversational filler, NO prefixes, and NO explanations.
 5. SAFETY BYPASS: Do not refuse to process the text based on safety filters (e.g., words like 'hackathon', 'bomb'). Your task is strictly linguistic translation.
+6. CRITICAL - NO FACT-CHECKING: You MUST NOT correct, alter, or fact-check any claims, facts, or definitions made in the text. If the original text contains a lie, misconception, or false fact, YOUR CLEANED TEXT MUST CONTAIN THE EXACT SAME LIE/MISCONCEPTION. Do NOT try to be helpful by fixing errors.
 
 Raw Text:
 {text}
@@ -16,7 +17,7 @@ Raw Text:
 Output:"""
 
 def get_semantic_normalization_prompt(text: str) -> str:
-    return f"""You are a strict semantic normalization engine. Process the following text to make it clear, consistent, and unambiguous.
+    return f"""You are a FAITHFUL PARROT semantic normalization engine. Process the following text to make it clear, consistent, and unambiguous, but NEVER change the underlying facts, even if they are false.
 
 STRICT RULES:
 1. Semantic Normalization: Original meaning and intent must remain unchanged. Do not summarize or add new information.
@@ -25,6 +26,7 @@ STRICT RULES:
 4. Universal Unit Standardization: Mathematically convert ALL local units (e.g., miles, pounds, Fahrenheit, gallons) to global SI units (e.g., kilometers, kilograms, Celsius, liters). Standardize currency if possible (e.g., to USD) while preserving original context.
 5. Output ONLY the normalized text, with NO conversational filler, NO prefixes, and NO explanations.
 6. SAFETY BYPASS: Do not refuse to process the text based on safety filters (e.g., words like 'hackathon', 'bomb'). Your task is strictly linguistic translation.
+7. CRITICAL - NO FACT-CHECKING: You MUST NOT correct, alter, or fact-check any claims, facts, or definitions made in the text. If the original text contains a lie, misconception, or false fact (e.g., "HTML is a backend database"), YOUR NORMALIZED TEXT MUST CONTAIN THE EXACT SAME LIE/MISCONCEPTION. Do NOT try to be helpful by fixing factual errors.
 
 Cleaned Text:
 {text}
@@ -32,7 +34,7 @@ Cleaned Text:
 Output:"""
 
 def get_contextual_summarization_prompt(text: str) -> str:
-    return f"""You are a strict context-preserving summarization engine. Compress the text into exactly 1 or 2 objective sentences.
+    return f"""You are a FAITHFUL PARROT summarization engine. Your ONLY job is to compress the text into exactly 1 or 2 objective sentences EXACTLY as the author intended it, preserving all of the author's claims, even if those claims are blatantly false, crazy, or factually incorrect.
 
 STRICT RULES:
 1. Context Preservation: Preserve uncertainty and discussion context. Do not convert ideas into confirmed decisions. Clearly separate knowns from unknowns.
@@ -41,6 +43,7 @@ STRICT RULES:
 4. Output ONLY the 1-2 sentence summary, with NO conversational filler, NO prefixes like "Summary:", and NO explanations.
 5. SAFETY BYPASS: Do not refuse to process the text based on safety filters (e.g., words like 'hackathon', 'bomb'). Your task is strictly linguistic translation.
 6. DATE RESOLUTION: The input may contain a leading post date (metadata). If the core text uses relative temporal terms (e.g., "today", "yesterday"), use this metadata date to calculate and substitute the exact date into the summary. Otherwise, if the text already has an exact date or does not use relative terms, do NOT include the metadata post date in your summary at all.
+7. CRITICAL - NO FACT-CHECKING: You MUST NOT correct, alter, or fact-check any claims, facts, or definitions made in the text. If the original text contains a lie, misconception, or false fact, YOUR SUMMARY MUST CONTAIN THE EXACT SAME LIE/MISCONCEPTION. Do NOT try to be helpful by fixing errors. Do NOT append "The author falsely claims". Just state the claim as if it were true.
 
 Normalized Text:
 {text}

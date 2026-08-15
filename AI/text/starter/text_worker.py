@@ -43,7 +43,7 @@ def ensure_consumer_group(client, source_name):
             logger.warning(f"[{source_name}] Group creation issue: {e}")
 
 
-def process_job_data(job_data, source_name):
+def process_job_data(client, job_data, source_name):
     """Handles the AI logic and fires the webhook."""
     jobId = job_data.get("jobId")
     text = job_data.get("text")
@@ -53,59 +53,56 @@ def process_job_data(job_data, source_name):
     summary_hash = job_data.get("summary_hash")
     retry = job_data.get("retry")
 
+    lock_key = f"ai:lock:text:{text_hash}"
+    cache_key = f"ai:result:text:{text_hash}"
+
     logger.info(f"[{CONSUMER_NAME} | {source_name}] Processing Job: {jobId}")
 
     try:
-        output = verify_text(text)
-        summary = output.get("summary")
-        result = output.get("result")
-        payload = {
-            "jobId": jobId,
-            "clientId": clientId,
-            "text_hash": text_hash,
-            "summary_hash": summary_hash,
-            "mark": str(result["mark"]),
-            "reason": result.get("reason"),
-            "confidence": result.get("confidence"),
-            "urls": result.get("urls"),
-            "summary": summary,
-            "retry": retry
-        }
+        # 1. Check if it's already processed
+        cached_result = client.get(cache_key)
+        if cached_result:
+            logger.info(f"[{CONSUMER_NAME} | {source_name}] Result found in AI cache: {jobId}")
+            payload = json.loads(cached_result)
+            payload["jobId"] = jobId
+            payload["clientId"] = clientId
+            payload["retry"] = retry
+            requests.post(callback_url, json=payload, timeout=25)
+            return True
 
-        requests.post(callback_url, json=payload, timeout=25)
-        logger.info(f"[{CONSUMER_NAME} | {source_name}] Job completed successfully: {jobId}")
-        return True
+        # 2. Check if it's currently processing
+        if not client.set(lock_key, "1", nx=True, ex=300):
+            return False
+
+        try:
+            output = verify_text(text)
+            summary = output.get("summary")
+            result = output.get("result")
+            payload = {
+                "jobId": jobId,
+                "clientId": clientId,
+                "text_hash": text_hash,
+                "summary_hash": summary_hash,
+                "mark": str(result["mark"]),
+                "reason": result.get("reason"),
+                "confidence": result.get("confidence"),
+                "urls": result.get("urls"),
+                "summary": summary,
+                "retry": retry
+            }
+
+            # Cache the result for 24 hours
+            client.set(cache_key, json.dumps(payload), ex=86400)
+
+            requests.post(callback_url, json=payload, timeout=25)
+            logger.info(f"[{CONSUMER_NAME} | {source_name}] Job completed successfully: {jobId}")
+            return True
+        finally:
+            client.delete(lock_key)
 
     except Exception as e:
         logger.error(f"[{CONSUMER_NAME} | {source_name}] AI/Callback ERROR for {jobId}: {e}", exc_info=True)
         return False
-
-def process_pel(client, source_name):
-    """Processes any abandoned jobs left in the PEL due to network drops."""
-    try:
-        entries = client.xreadgroup(GROUP, CONSUMER_NAME, {STREAM_KEY: "0"}, count=1)
-        if not entries:
-            return
-
-        stream, messages = entries[0]
-        if not messages:
-            return
-
-        msg_id, fields = messages[0]
-        job_data = json.loads(fields["data"])
-        
-        logger.info(f"[{source_name}] Recovered job {job_data.get('jobId')} from PEL.")
-
-        success = process_job_data(job_data, source_name)
-        if success:
-            client.xack(STREAM_KEY, GROUP, msg_id)
-            client.xdel(STREAM_KEY, msg_id)
-
-    except (ConnectionError, TimeoutError, ConnectionResetError) as e:
-        raise e
-    except Exception as e:
-        logger.error(f"[{source_name}] PEL Read Error: {e}", exc_info=True)
-
 
 def fetch_and_process(client, source_name):
     """Fetches a job from the provided client and processes it."""
@@ -119,7 +116,7 @@ def fetch_and_process(client, source_name):
         msg_id, fields = messages[0]
         job_data = json.loads(fields["data"])
 
-        success = process_job_data(job_data, source_name)
+        success = process_job_data(client, job_data, source_name)
 
         if success:
             client.xack(STREAM_KEY, GROUP, msg_id)
@@ -160,7 +157,6 @@ def worker_loop(redis_url, check_rate_ms, source_name):
 
     while True:
         try:
-            process_pel(client, source_name)
             status = fetch_and_process(client, source_name)
             if status == "PROCESSED":
                 continue

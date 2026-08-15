@@ -18,23 +18,6 @@ const process_queue: ProcessQueueItem[] = [];
 
 export function process(containerRef: HTMLDivElement, dataId: string) {
     validateStatusContainer(containerRef);
-
-    const queueItem = process_queue.find(item => item.dataId === dataId);
-    if (queueItem) {
-        queueItem.containerRef = containerRef;
-        return;
-    }
-
-    let foundInMap = false;
-    for (const job of jobMap.values()) {
-        if (job.dataId === dataId) {
-            job.containerRef = containerRef;
-            foundInMap = true;
-            break;
-        }
-    }
-    if (foundInMap) return;
-
     process_queue.push({ containerRef, dataId });
     void sendJobs();
 }
@@ -90,6 +73,8 @@ async function sendJobs(): Promise<void> {
 }
 
 onMessage((data) => {
+    console.log("SatyaMark WebSocket received data:", data);
+
     if (!data || !data.jobId) return;
 
     const jobInfo = jobMap.get(data.jobId);
@@ -104,6 +89,9 @@ onMessage((data) => {
         const finalDataId = data.dataId || currentDataId || fallbackDataId;
 
         if (data.dataId) containerRef.dataset.currentDataId = data.dataId;
+
+        console.log("SatyaMark process.ts - Final dataId used for updateIcon:", finalDataId);
+
         updateIcon(containerRef, { ...data, dataId: finalDataId });
     }
 });

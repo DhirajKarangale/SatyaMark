@@ -80,14 +80,21 @@ async function connect() {
         sessionId,
       });
 
-      isConnected = true;
-      isConnecting = false;
-      emitConnection(ctx);
+      if (sessionId) {
+        isConnected = true;
+        isConnecting = false;
+        emitConnection(ctx);
+      }
     },
 
     onMessage: async (data) => {
       if (data.type === "session_created" && data.sessionId) {
         await setSessionId(data.sessionId);
+        if (!isConnected) {
+          isConnected = true;
+          isConnecting = false;
+          emitConnection(getContext());
+        }
         return;
       }
 

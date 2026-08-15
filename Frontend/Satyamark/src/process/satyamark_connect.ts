@@ -79,7 +79,9 @@ export async function init(connectionData: SatyaMarkConnectionData) {
             sessionId,
         });
 
-        notifyConnectionState(true);
+        if (sessionId) {
+            notifyConnectionState(true);
+        }
 
         console.log("Connected to server: ", connectionData.user_id);
     };
@@ -89,6 +91,9 @@ export async function init(connectionData: SatyaMarkConnectionData) {
 
         if (data.type === "session_created" && data.sessionId) {
             await setSessionId(data.sessionId);
+            if (!isConnected) {
+                notifyConnectionState(true);
+            }
             return;
         }
 

@@ -10,7 +10,7 @@ from websearch.web_verify import web_verify
 logger = logging.getLogger(__name__)
 
 
-TEST_STOP_AFTER = 'summarize'
+TEST_STOP_AFTER = None
 
 class GraphState(TypedDict):
     statement: str

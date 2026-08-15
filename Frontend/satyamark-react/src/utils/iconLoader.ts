@@ -11,7 +11,9 @@ function loadIcon(key: IconKey): Promise<void> {
     img.onload = () => resolve();
     img.onerror = () => {
       iconLoadMap.delete(key); // allow retry
-      reject(new Error(`Failed to load icon: ${key}`));
+      // We resolve instead of reject so Promise.all doesn't fail fast
+      // if one icon fails to load.
+      resolve(); 
     };
     img.src = ICON_URLS[key];
   });
@@ -21,18 +23,11 @@ function loadIcon(key: IconKey): Promise<void> {
 }
 
 /**
- * Background preload — non-blocking, idempotent
+ * Preload all icons immediately on init and return a Promise
  */
-export function preloadIcons() {
-  const run = () => {
-    (Object.keys(ICON_URLS) as IconKey[]).forEach(loadIcon);
-  };
-
-  if ("requestIdleCallback" in window) {
-    (window as any).requestIdleCallback(run);
-  } else {
-    setTimeout(run, 0);
-  }
+export function preloadIcons(): Promise<void[]> {
+  const promises = (Object.keys(ICON_URLS) as IconKey[]).map(loadIcon);
+  return Promise.all(promises);
 }
 
 /**

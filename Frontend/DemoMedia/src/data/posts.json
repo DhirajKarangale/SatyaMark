@@ -1,72 +1,75 @@
 [
     {
         "id": "1",
-        "title": "Claude 3.5 Sonnet Released",
-        "description": "Anthropic's Claude 3.5 Sonnet has been released, showing impressive capabilities in coding, reasoning, and visual tasks compared to previous models.",
-        "userName": "tech_insider",
-        "date": "2025-12-07"
+        "title": "First Computer Bug",
+        "description": "The first computer bug was an actual moth found in the Harvard Mark II computer in 1947.",
+        "userName": "TechHistory",
+        "date": "2025-04-12"
     },
     {
         "id": "2",
-        "title": "Google Android Shutdown",
-        "description": "Google announced today that they are shutting down the Android operating system permanently next month to focus exclusively on building smart toasters.",
-        "userName": "news_fake",
-        "date": "2025-11-28"
+        "title": "HTML Programming",
+        "description": "HTML is a Turing-complete programming language used to build complex backend databases.",
+        "userName": "WebDev_Guru",
+        "date": "2024-09-28"
     },
     {
         "id": "3",
-        "title": "The First Computer Bug",
-        "description": "The term 'bug' in computer science was popularized when a real moth was found trapped in a relay of the Harvard Mark II computer in 1947.",
-        "userName": "history_nerd",
-        "date": "2025-10-12"
+        "title": "Into the Woods",
+        "description": "Taking a break from the screen. Nature is the best debugger.",
+        "imageURL": "https://res.cloudinary.com/dfamljkyo/image/upload/v1786190391/1_ijap2e.jpg",
+        "userName": "NatureCoder",
+        "date": "2026-01-05"
     },
     {
         "id": "4",
-        "title": "Claude Origins",
-        "description": "The Claude AI model was originally written entirely in HTML and CSS back in 1995 before being ported to Python.",
-        "userName": "false_facts",
-        "date": "2025-12-05"
+        "title": "Archer's View",
+        "description": "An archer overlooking a misty river valley at dawn.",
+        "imageURL": "https://res.cloudinary.com/dfamljkyo/image/upload/v1754751870/fuse/m2jrqr3a2fteuc4zkxal.jpg",
+        "userName": "OutdoorAdventurer",
+        "date": "2023-11-17"
     },
     {
         "id": "5",
-        "title": "The Future of Quantum Teleportation",
-        "description": "Secret labs are currently researching quantum teleportation that will fundamentally alter how we commute by 2030, making traditional cars completely obsolete.",
-        "userName": "future_predictor",
-        "date": "2025-12-01"
+        "title": "Code Utopia",
+        "description": "Somewhere in the world, there is a legacy codebase that runs flawlessly with zero technical debt.",
+        "userName": "CleanCodeNinja",
+        "date": "2025-08-02"
     },
     {
         "id": "6",
-        "title": "Solid-State Battery Breakthroughs",
-        "description": "Recent advances in solid-state batteries have allowed researchers to double energy density, opening new doors for much longer-lasting consumer electronics.",
-        "userName": "science_daily",
-        "date": "2025-08-15"
+        "title": "1GB Hard Drive",
+        "description": "The first 1GB hard drive, introduced by IBM in 1980, weighed over 500 pounds.",
+        "userName": "HardwareFan",
+        "date": "2026-03-22"
     },
     {
         "id": "7",
-        "title": "Apple Acquires Hologram Inc.",
-        "description": "Apple has just confirmed the acquisition of Hologram Inc., a secretive startup building holographic smartphones, for a record-breaking $50 billion.",
-        "userName": "rumor_mill",
-        "date": "2025-07-04"
+        "title": "Linux & Rust",
+        "description": "Rust is now officially supported in the Linux kernel alongside C for better memory safety.",
+        "userName": "Systems_Update",
+        "date": "2024-12-14"
     },
     {
         "id": "8",
-        "title": "Forest",
-        "imageURL": "https://res.cloudinary.com/dfamljkyo/image/upload/v1786190391/1_ijap2e.jpg",
-        "userName": "sysadmin_bob",
-        "date": "2025-06-21"
+        "title": "Apollo 11 RAM",
+        "description": "The Apollo 11 guidance computer landed humans on the moon using only 4KB of RAM.",
+        "userName": "Engineering_Facts",
+        "date": "2025-02-09"
     },
     {
         "id": "9",
-        "title": "Data Center View",
-        "imageURL": "https://res.cloudinary.com/dfamljkyo/image/upload/v1754751870/fuse/m2jrqr3a2fteuc4zkxal.jpg",
-        "userName": "cloud_guru",
-        "date": "2025-05-02"
+        "title": "JavaScript Frameworks",
+        "description": "A new JavaScript framework is created by the community approximately every 15 minutes.",
+        "userName": "JS_Evangelist",
+        "date": "2023-07-30"
     },
     {
         "id": "10",
-        "title": "Tech Setup",
+        "title": "Graveyard Moon",
+        "description": "A spooky graveyard silhouetted against a full moon with the letters DK.",
         "imageURL": "https://res.cloudinary.com/dfamljkyo/image/upload/v1765866684/jnosohvjltegdoufkvef.png",
-        "userName": "dev_workspace",
-        "date": "2025-04-11"
+        "userName": "NightWatcher",
+        "date": "2026-06-11"
     }
 ]

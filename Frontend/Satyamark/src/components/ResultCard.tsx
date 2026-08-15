@@ -321,7 +321,7 @@ function ResultCard() {
     );
   }
 
-  const markMeta = MARK_META[currentData.mark.toLowerCase()] || MARK_META["pending"];
+  const markMeta = MARK_META[currentData.mark?.toLowerCase() || "pending"] || MARK_META["pending"];
 
   return (
     <>

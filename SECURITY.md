@@ -23,7 +23,7 @@ If you are using an older commit or fork, we strongly recommend upgrading to the
 If you discover a security vulnerability in SatyaMark, please **do not open a public issue**.
 
 ### 📩 How to Report
-- Email: **security@satyamark.dev** *(or replace with your preferred contact)*  
+- Email: **dakarangale02@gmail.com**  
 - Include:
   - A clear description of the issue
   - Steps to reproduce (if possible)

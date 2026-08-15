@@ -1,5 +1,6 @@
 require("dotenv").config();
 const redis = require("redis");
+const connectionManager = require("../utils/connectionManager");
 
 const clients = {
   renderText: null,
@@ -12,17 +13,56 @@ const clients = {
   rateLimiter: null 
 };
 
+function createProxyClient(client, name) {
+    return new Proxy(client, {
+        get(target, prop, receiver) {
+            const originalProperty = target[prop];
+            if (typeof originalProperty === 'function') {
+                const isEventEmitterMethod = ['on', 'once', 'emit', 'removeListener', 'removeAllListeners'].includes(prop);
+                
+                if (!isEventEmitterMethod) {
+                    return async function (...args) {
+                        await connectionManager.ensureConnection(name);
+                        return originalProperty.apply(target, args);
+                    };
+                }
+                return originalProperty.bind(target);
+            }
+            return Reflect.get(target, prop, receiver);
+        }
+    });
+}
+
 async function createAndConnect(url, name) {
   if (!url) return null;
   const client = redis.createClient({ url });
-  client.on("error", (err) => console.log(`[Redis Error - ${name}]`, err.message));
-  // client.on("ready", () => console.log(`[Redis Ready - ${name}]`));
+  
+  connectionManager.setStatus(name, "connecting");
+
+  client.on("error", (err) => {
+      console.log(`[Redis Error - ${name}]`, err.message);
+      connectionManager.setStatus(name, "disconnected");
+  });
+  
+  client.on("ready", () => {
+      connectionManager.setStatus(name, "connected");
+  });
+
+  client.on("reconnecting", () => {
+      connectionManager.setStatus(name, "connecting");
+  });
+
+  client.on("end", () => {
+      connectionManager.setStatus(name, "disconnected");
+  });
+
   try {
     await client.connect();
   } catch (err) {
     console.log(`[Redis Connect Error - ${name}]`, err.message);
   }
-  return client;
+  
+  return createProxyClient(client, name);
 }
 
 async function initRedisClients() {

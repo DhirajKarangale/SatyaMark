@@ -15,6 +15,7 @@ from redis.backoff import ExponentialBackoff
 from redis.exceptions import ConnectionError, TimeoutError
 from dotenv import load_dotenv
 from starter.text_verify import verify_text
+from utils.redis_proxy import RedisProxy
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -130,11 +131,12 @@ def worker_loop(redis_url, check_rate_ms, source_name):
         retry=retry_strategy,
     )
 
-    ensure_consumer_group(client, source_name)
+    proxy_client = RedisProxy(client, source_name)
+    ensure_consumer_group(proxy_client, source_name)
 
     while True:
         try:
-            status = fetch_and_process(client, source_name)
+            status = fetch_and_process(proxy_client, source_name)
             if status == "PROCESSED":
                 continue
 

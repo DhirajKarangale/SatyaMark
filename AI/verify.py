@@ -4,11 +4,12 @@ import json
 import time
 import argparse
 
+sys.path.append(os.path.dirname(__file__))
 sys.path.append(os.path.join(os.path.dirname(__file__), "text"))
 sys.path.append(os.path.join(os.path.dirname(__file__), "image"))
 
 from text.starter.text_verify import verify_text
-from image.image_verify import verify as verify_image
+from image.starter.image_verify import verify as verify_image
 
 ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
 TEST_PATH = os.path.join(ROOT_DIR, "dataset", "test")

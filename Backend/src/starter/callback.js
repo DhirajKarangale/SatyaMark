@@ -5,6 +5,7 @@ const cors = require("cors");
 const modelText = require('../model/modelText');
 const modelImage = require('../model/modelImage');
 const redisEventBus = require("./redisEventBus");
+const messages = require("../utils/messages.json");
 
 const app = express();
 
@@ -13,9 +14,15 @@ app.use(helmet());
 app.use(express.json());
 app.use(bodyParser.json({ limit: "1mb" }));
 
+app.get('/', (req, res) => {
+    const randomMessage = messages.root[Math.floor(Math.random() * messages.root.length)];
+    res.status(200).json({ message: randomMessage });
+});
+
 app.get('/health', async (req, res, next) => {
     try {
-        res.status(200).json("Ok");
+        const randomMessage = messages.health[Math.floor(Math.random() * messages.health.length)];
+        res.status(200).json({ message: randomMessage });
     } catch (error) {
         next(error);
     }

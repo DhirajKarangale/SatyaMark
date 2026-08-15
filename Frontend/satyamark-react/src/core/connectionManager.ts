@@ -25,7 +25,7 @@ let reconnectAttempts = 0;
 
 async function resolveWsUrl(): Promise<string> {
   if (isDev) {
-    const wsUrl = "ws://localhost:1000";
+    const wsUrl = "ws://localhost:2402";
     return wsUrl;
   }
 

@@ -53,52 +53,29 @@ def process_job_data(client, job_data, source_name):
     summary_hash = job_data.get("summary_hash")
     retry = job_data.get("retry")
 
-    lock_key = f"ai:lock:text:{text_hash}"
-    cache_key = f"ai:result:text:{text_hash}"
-
     logger.info(f"[{CONSUMER_NAME} | {source_name}] Processing Job: {jobId}")
 
     try:
-        # 1. Check if it's already processed
-        cached_result = client.get(cache_key)
-        if cached_result:
-            logger.info(f"[{CONSUMER_NAME} | {source_name}] Result found in AI cache: {jobId}")
-            payload = json.loads(cached_result)
-            payload["jobId"] = jobId
-            payload["clientId"] = clientId
-            payload["retry"] = retry
-            requests.post(callback_url, json=payload, timeout=25)
-            return True
+        output = verify_text(text)
+        summary = output.get("summary")
+        result = output.get("result")
+        payload = {
+            "jobId": jobId,
+            "clientId": clientId,
+            "text_hash": text_hash,
+            "summary_hash": summary_hash,
+            "mark": str(result["mark"]),
+            "reason": result.get("reason"),
+            "confidence": result.get("confidence"),
+            "urls": result.get("urls"),
+            "summary": summary,
+            "retry": retry
+        }
 
-        # 2. Check if it's currently processing
-        if not client.set(lock_key, "1", nx=True, ex=300):
-            return False
-
-        try:
-            output = verify_text(text)
-            summary = output.get("summary")
-            result = output.get("result")
-            payload = {
-                "jobId": jobId,
-                "clientId": clientId,
-                "text_hash": text_hash,
-                "summary_hash": summary_hash,
-                "mark": str(result["mark"]),
-                "reason": result.get("reason"),
-                "confidence": result.get("confidence"),
-                "urls": result.get("urls"),
-                "summary": summary,
-                "retry": retry
-            }
-
-            # Cache the result for 24 hours
-            client.set(cache_key, json.dumps(payload), ex=86400)
-
-            requests.post(callback_url, json=payload, timeout=25)
-            logger.info(f"[{CONSUMER_NAME} | {source_name}] Job completed successfully: {jobId}")
-            return True
-        finally:
-            client.delete(lock_key)
+        res = requests.post(callback_url, json=payload, timeout=25)
+        res.raise_for_status()
+        logger.info(f"[{CONSUMER_NAME} | {source_name}] Job completed successfully: {jobId}")
+        return True
 
     except Exception as e:
         logger.error(f"[{CONSUMER_NAME} | {source_name}] AI/Callback ERROR for {jobId}: {e}", exc_info=True)

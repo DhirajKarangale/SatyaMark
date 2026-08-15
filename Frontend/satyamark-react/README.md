@@ -12,6 +12,10 @@ version](https://badge.fury.io/js/satyamark-react.svg)](https://www.npmjs.com/pa
 [![License:
 MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/DhirajKarangale/SatyaMark/main/Assets/Video/Satyamark_gif.gif" alt="SatyaMark Demo GIF" width="850" />
+</p>
+
 ------------------------------------------------------------------------
 
 ## Installation

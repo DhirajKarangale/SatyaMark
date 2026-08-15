@@ -145,13 +145,13 @@ The documentation is intended for both developers and general users.
 ### 1. Clone the Project
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/DhirajKarangale/SatyaMark.git
 ```
 
 ### 2. Navigate to the Frontend
 
 ```bash
-cd .\Frontend\Satyamark\
+cd Frontend/Satyamark
 ```
 
 ### 3. Create Environment File
@@ -217,6 +217,16 @@ SatyaMark is privacy-first by design.
 - Privacy-first by default
 - Honest accuracy disclosure
 - Incremental and scalable rollout
+
+---
+
+## 🤝 Open Source & Contributing
+
+SatyaMark is proudly open-source. We welcome contributions to this main verification application and the core library.
+
+- Check out the [Contributing Guide](../../CONTRIBUTING.md) to get started.
+- Review our [Code of Conduct](../../CODE_OF_CONDUCT.md).
+- Found a bug or have an idea? [Open an issue on GitHub](https://github.com/DhirajKarangale/SatyaMark/issues).
 
 ---
 

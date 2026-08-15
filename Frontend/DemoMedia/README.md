@@ -82,7 +82,7 @@ registerStatus(jobId, domElement);
 ## 🚀 Run Locally
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/DhirajKarangale/SatyaMark.git
 cd Frontend/DemoMedia
 npm install
 npm run dev
@@ -97,6 +97,16 @@ Open: http://localhost:5173
 - Image verification is experimental
 - Video/audio not supported yet
 - Results are best-effort, not guarantees
+
+---
+
+## 🤝 Open Source & Contributing
+
+SatyaMark is proudly open-source. We welcome contributions to this demo app and the core library.
+
+- Check out the [Contributing Guide](../../CONTRIBUTING.md) to get started.
+- Review our [Code of Conduct](../../CODE_OF_CONDUCT.md).
+- Found a bug or have an idea? [Open an issue on GitHub](https://github.com/DhirajKarangale/SatyaMark/issues).
 
 ---
 

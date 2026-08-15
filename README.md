@@ -6,10 +6,22 @@
 
 <p align="center">
   <a href="https://www.npmjs.com/package/satyamark-react">
-    <img src="https://img.shields.io/npm/v/satyamark-react.svg" />
+    <img src="https://img.shields.io/npm/v/satyamark-react.svg?style=flat-square" alt="NPM Version" />
+  </a>
+  <a href="https://github.com/DhirajKarangale/SatyaMark/stargazers">
+    <img src="https://img.shields.io/github/stars/DhirajKarangale/SatyaMark.svg?style=flat-square&color=yellow" alt="GitHub stars" />
+  </a>
+  <a href="https://github.com/DhirajKarangale/SatyaMark/network/members">
+    <img src="https://img.shields.io/github/forks/DhirajKarangale/SatyaMark.svg?style=flat-square&color=orange" alt="GitHub forks" />
+  </a>
+  <a href="https://github.com/DhirajKarangale/SatyaMark/issues">
+    <img src="https://img.shields.io/github/issues/DhirajKarangale/SatyaMark.svg?style=flat-square&color=red" alt="GitHub issues" />
+  </a>
+  <a href="https://github.com/DhirajKarangale/SatyaMark/pulls">
+    <img src="https://img.shields.io/github/issues-pr/DhirajKarangale/SatyaMark.svg?style=flat-square&color=brightgreen" alt="GitHub pull requests" />
   </a>
   <a href="https://opensource.org/licenses/MIT">
-    <img src="https://img.shields.io/badge/license-MIT-blue.svg" />
+    <img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square" alt="License" />
   </a>
 </p>
 

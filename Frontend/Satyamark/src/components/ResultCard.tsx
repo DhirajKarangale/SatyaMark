@@ -1,4 +1,5 @@
 import Alert from "./Alert";
+import { Helmet } from "react-helmet-async";
 import { jobStore } from "../store/jobStore";
 import { resultBus } from "../store/resultBus";
 import { memo, useState, useEffect } from "react";
@@ -325,6 +326,29 @@ function ResultCard() {
 
   return (
     <>
+      {currentData && (
+        <Helmet>
+          <title>Verification Result: {markMeta.label} | SatyaMark</title>
+          <meta name="description" content={`SatyaMark analyzed this content and rated it as ${markMeta.label}. Check the full verification result.`} />
+          <script type="application/ld+json">
+            {JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ClaimReview",
+              "claimReviewed": currentData.summary || "Content verification request",
+              "reviewRating": {
+                "@type": "Rating",
+                "ratingValue": markMeta.label === "Correct" ? "5" : markMeta.label === "Incorrect" ? "1" : "3",
+                "bestRating": "5",
+                "alternateName": markMeta.label
+              },
+              "author": {
+                "@type": "Organization",
+                "name": "SatyaMark"
+              }
+            })}
+          </script>
+        </Helmet>
+      )}
       <motion.div
         variants={cardVariants}
         initial="hidden"
@@ -445,6 +469,7 @@ function ResultCard() {
                         href={url}
                         target="_blank"
                         rel="noopener noreferrer"
+                        aria-label={`View source URL: ${url}`}
                         className="flex items-start gap-2 text-cyan-400 hover:text-cyan-300 
                                                     transition-colors group"
                       >
@@ -464,6 +489,7 @@ function ResultCard() {
           <div className="border-t border-white/10 bg-slate-900/50 p-4 flex flex-wrap items-center justify-between gap-3">
             <button
               onClick={() => setShowRecheckPopup(true)}
+              aria-label="Request a recheck of this verification result"
               className="inline-flex items-center gap-2 px-4 py-2 
                                 bg-orange-500/10 hover:bg-orange-500/20 
                                 border border-orange-500/30 hover:border-orange-500/50
@@ -489,6 +515,7 @@ function ResultCard() {
               {queue.length > 0 && (
                 <button
                   onClick={loadNext}
+                  aria-label={`Load next verification result. ${queue.length} items remaining in queue.`}
                   className="inline-flex items-center gap-2 px-4 py-2 
                                         bg-gradient-to-r from-cyan-600 to-blue-600 
                                         hover:from-cyan-500 hover:to-blue-500

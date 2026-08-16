@@ -59,6 +59,7 @@ function Navbar() {
                 href="https://github.com/DhirajKarangale/SatyaMark"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="View SatyaMark GitHub Repository"
                 className="flex items-center gap-2 px-4 py-2 rounded-lg 
                   text-sm font-medium text-gray-300 
                   hover:bg-white/10 hover:text-white transition-all duration-200 ml-2"
@@ -71,6 +72,7 @@ function Navbar() {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label={mobileMenuOpen ? "Close mobile menu" : "Open mobile menu"}
               className="md:hidden p-2 rounded-lg text-gray-300 
               hover:bg-white/10 hover:text-white transition-colors"
             >
@@ -114,6 +116,7 @@ function Navbar() {
                   href="https://github.com/DhirajKarangale/SatyaMark"
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="View SatyaMark GitHub Repository"
                   className="flex items-center gap-3 px-4 py-3 rounded-lg 
                                         text-base font-medium text-gray-300 
                                         hover:bg-white/10 hover:text-white transition-all duration-200"

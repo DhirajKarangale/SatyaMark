@@ -35,6 +35,7 @@ function NotFound() {
         <div className="flex justify-center pt-2">
           <button
             onClick={() => navigate("/")}
+            aria-label="Go to Homepage"
             className="px-6 py-3 rounded-xl bg-cyan-500 text-black font-medium hover:bg-cyan-400 transition"
           >
             Go to Home

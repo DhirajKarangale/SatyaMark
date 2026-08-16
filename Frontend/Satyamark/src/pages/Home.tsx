@@ -1,4 +1,6 @@
 import { memo } from "react";
+import { Helmet } from "react-helmet-async";
+import FAQ from "../components/FAQ";
 import { motion, type Variants } from "framer-motion";
 import { Link } from "react-router-dom";
 import { MARK_META } from "../utils/MARK_META";
@@ -17,6 +19,32 @@ const fadeUp: Variants = {
 function Home() {
   return (
     <div className="min-h-screen bg-slate-950 text-gray-100">
+      <Helmet>
+        <title>SatyaMark | AI-Powered Content Verification</title>
+        <meta name="description" content="SatyaMark is a centralized verification platform that helps users and platforms distinguish truth from misinformation in real-time across text and images." />
+        <meta property="og:site_name" content="SatyaMark" />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://satyamark.vercel.app/" />
+        <meta name="keywords" content="SatyaMark, AI content verification, fact checking engine, deepfake detection, open source trust infrastructure, misinformation detection, react verification SDK, AI credibility platform, real-time content analysis, trust signals" />
+        <script type="application/ld+json">
+          {JSON.stringify([
+            {
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "SatyaMark",
+              "url": "https://satyamark.vercel.app/"
+            },
+            {
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              "name": "SatyaMark",
+              "operatingSystem": "Any",
+              "applicationCategory": "DeveloperApplication",
+              "url": "https://satyamark.vercel.app/"
+            }
+          ])}
+        </script>
+      </Helmet>
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-linear-to-b from-slate-900 via-slate-950 to-slate-950">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-cyan-500/10 via-transparent to-transparent" />
@@ -57,6 +85,7 @@ function Home() {
 
               <Link
                 to={routeChat}
+                aria-label="Open Chat Interface"
                 className="inline-flex items-center gap-2 px-8 py-3 
                bg-white/5 hover:bg-white/10 
                border border-white/20 
@@ -70,6 +99,7 @@ function Home() {
               <a
                 href="https://satyamark-demo-socialmedia.vercel.app/"
                 target="_blank"
+                aria-label="Try SatyaMark Live Demo"
                 className="inline-flex items-center gap-2 px-8 py-3 
                 bg-linear-to-r from-cyan-600 to-blue-600 
                 hover:from-cyan-500 hover:to-blue-500
@@ -85,6 +115,7 @@ function Home() {
                 href="https://github.com/DhirajKarangale/SatyaMark"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="View SatyaMark on GitHub"
                 className="inline-flex items-center gap-2 px-8 py-3 
                                     bg-white/5 hover:bg-white/10 
                                     border border-white/20 
@@ -99,6 +130,7 @@ function Home() {
                 href="https://www.npmjs.com/package/satyamark-react"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="View SatyaMark NPM Package"
                 className="inline-flex items-center gap-2 px-8 py-3 
                                     bg-white/5 hover:bg-white/10 
                                     border border-white/20 
@@ -134,6 +166,29 @@ function Home() {
             </motion.div>
           </motion.div>
         </div>
+      </section>
+
+      {/* Demo Video Section */}
+      <section className="relative z-10 -mt-10 pb-20 px-4 sm:px-6 lg:px-8">
+        <motion.div 
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.7, ease: "easeOut" }}
+            className="max-w-5xl mx-auto rounded-2xl overflow-hidden shadow-2xl shadow-cyan-500/20 border border-white/10 bg-slate-900/80 backdrop-blur-md p-2 sm:p-4"
+        >
+          <div className="rounded-xl overflow-hidden border border-white/5 bg-black flex justify-center items-center">
+            <video 
+              controls 
+              playsInline 
+              preload="metadata"
+              aria-label="Demonstration of SatyaMark in action"
+              className="w-full h-auto max-h-[70vh] object-contain opacity-90 hover:opacity-100 transition-opacity duration-300"
+            >
+              <source src="/Satyamark.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </motion.div>
       </section>
 
       {/* Problem Section */}
@@ -361,6 +416,7 @@ function Home() {
                   </a>
                   <Link
                     to={routeDoccu}
+                    aria-label="View Documentation Details"
                     className="text-blue-400 hover:text-blue-300 font-medium"
                   >
                     Documentation →
@@ -462,6 +518,7 @@ function Home() {
             >
               <Link
                 to={routeDoccu}
+                aria-label="Get Started with Documentation"
                 className="inline-flex items-center gap-2 px-8 py-3 
                                     bg-linear-to-r from-cyan-600 to-blue-600 
                                     hover:from-cyan-500 hover:to-blue-500
@@ -476,6 +533,8 @@ function Home() {
               <a
                 href="https://www.linkedin.com/in/dhiraj-karangale-464ab91bb/"
                 target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Contact on LinkedIn"
                 className="inline-flex items-center gap-2 px-8 py-3 
                                     bg-white/5 hover:bg-white/10 
                                     border border-white/20 
@@ -488,6 +547,9 @@ function Home() {
           </motion.div>
         </div>
       </section>
+
+      {/* FAQ Section */}
+      <FAQ />
 
       {/* Footer */}
       <footer className="bg-slate-950 border-t border-white/10 py-12">
@@ -503,16 +565,17 @@ function Home() {
             <div className="space-y-4">
               <h3 className="text-white font-semibold text-lg">Links</h3>
               <div className="flex flex-col gap-2">
-                <Link to={routeChat} className="text-gray-400 hover:text-cyan-400 text-sm">
+                <Link to={routeChat} aria-label="Go to Live Demo" className="text-gray-400 hover:text-cyan-400 text-sm">
                   Live Demo
                 </Link>
-                <Link to={routeDoccu} className="text-gray-400 hover:text-cyan-400 text-sm">
+                <Link to={routeDoccu} aria-label="Go to Documentation" className="text-gray-400 hover:text-cyan-400 text-sm">
                   Documentation
                 </Link>
                 <a
                   href="https://github.com/DhirajKarangale/SatyaMark"
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="GitHub Link in Footer"
                   className="text-gray-400 hover:text-cyan-400 text-sm"
                 >
                   GitHub
@@ -521,6 +584,7 @@ function Home() {
                   href="https://www.npmjs.com/package/satyamark-react"
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="NPM Package Link in Footer"
                   className="text-gray-400 hover:text-cyan-400 text-sm"
                 >
                   NPM Package
@@ -533,6 +597,7 @@ function Home() {
               <div className="flex flex-col gap-2 text-sm">
                 <a
                   href="mailto:dhirajkarangale02@gmail.com"
+                  aria-label="Email dhirajkarangale02@gmail.com"
                   className="text-gray-400 hover:text-cyan-400"
                 >
                   dhirajkarangale02@gmail.com
@@ -541,6 +606,7 @@ function Home() {
                   href="https://dhirajkarangale.netlify.app/"
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="View Developer Portfolio"
                   className="text-gray-400 hover:text-cyan-400"
                 >
                   Portfolio
@@ -549,6 +615,7 @@ function Home() {
                   href="https://www.linkedin.com/in/dhiraj-karangale-464ab91bb/"
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="View Developer LinkedIn"
                   className="text-gray-400 hover:text-cyan-400"
                 >
                   LinkedIn

@@ -1,4 +1,5 @@
 import { memo, useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import Alert from "../components/Alert";
 import { jobStore } from "../store/jobStore";
 import ChatInput from "../components/ChatInput";
@@ -46,6 +47,33 @@ function Chat() {
 
     return (
         <div className="min-h-screen bg-slate-950 flex flex-col">
+            <Helmet>
+                <title>Live Verification Chat | SatyaMark API</title>
+                <meta name="description" content="Test SatyaMark's real-time verification engine. Upload images or paste text to instantly check for misinformation, deepfakes, and factual accuracy." />
+                <meta name="robots" content="index, follow" />
+                <link rel="canonical" href="https://satyamark.vercel.app/chat" />
+                <meta property="og:title" content="Live Verification Chat | SatyaMark API" />
+                <meta property="og:description" content="Submit text or images to verify their authenticity in real-time with SatyaMark's AI verification engine." />
+                <meta property="twitter:title" content="Live Verification Chat | SatyaMark API" />
+                <meta property="twitter:description" content="Submit text or images to verify their authenticity in real-time with SatyaMark's AI verification engine." />
+                <meta name="keywords" content="SatyaMark live demo, verify images, deepfake scanner, real-time AI fact checking, check text authenticity, SatyaMark API testing" />
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "WebApplication",
+                        "name": "SatyaMark Live Verification Chat",
+                        "url": "https://satyamark.vercel.app/chat",
+                        "applicationCategory": "UtilityApplication",
+                        "operatingSystem": "All",
+                        "description": "Test SatyaMark's real-time verification engine. Upload images or paste text to instantly check for misinformation, deepfakes, and factual accuracy.",
+                        "offers": {
+                            "@type": "Offer",
+                            "price": "0",
+                            "priceCurrency": "USD"
+                        }
+                    })}
+                </script>
+            </Helmet>
             {/* Page Header */}
             <div className="bg-linear-to-b from-slate-900 to-slate-950 border-b border-white/10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

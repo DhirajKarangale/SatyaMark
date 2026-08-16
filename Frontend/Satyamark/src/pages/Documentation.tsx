@@ -1,4 +1,5 @@
 import { memo, useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { motion, type Variants } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
@@ -41,6 +42,17 @@ function Documentation() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-gray-100">
+      <Helmet>
+        <title>Documentation | SatyaMark API & SDK</title>
+        <meta name="description" content="Complete guide to integrating SatyaMark verification into your React application. Learn about our SDK, WebSocket API, and Core Concepts." />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://satyamark.vercel.app/documentation" />
+        <meta property="og:title" content="Documentation | SatyaMark API & SDK" />
+        <meta property="og:description" content="Complete guide to integrating SatyaMark verification into your React application. Learn about our SDK, WebSocket API, and Core Concepts." />
+        <meta property="twitter:title" content="Documentation | SatyaMark API & SDK" />
+        <meta property="twitter:description" content="Complete guide to integrating SatyaMark verification into your React application. Learn about our SDK, WebSocket API, and Core Concepts." />
+        <meta name="keywords" content="SatyaMark documentation, react verification SDK, content verification API, SatyaMark integration, open source trust infrastructure, WebSocket React SDK" />
+      </Helmet>
       {/* Hero Section */}
       <section className="bg-linear-to-b from-slate-900 to-slate-950 border-b border-white/10">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -63,6 +75,7 @@ function Documentation() {
                 href="https://www.npmjs.com/package/satyamark-react"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="View SatyaMark NPM Package"
                 className="inline-flex items-center gap-2 px-6 py-3 
                                     bg-gradient-to-r from-cyan-600 to-blue-600 
                                     hover:from-cyan-500 hover:to-blue-500
@@ -76,6 +89,7 @@ function Documentation() {
                 href="https://github.com/DhirajKarangale/SatyaMark"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="View SatyaMark GitHub Repository"
                 className="inline-flex items-center gap-2 px-6 py-3 
                                     bg-white/5 hover:bg-white/10 
                                     border border-white/20 
@@ -88,6 +102,7 @@ function Documentation() {
                 href="https://satyamark-demo-socialmedia.vercel.app/"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Try SatyaMark Live Demo"
                 className="inline-flex items-center gap-2 px-6 py-3 
                                     bg-white/5 hover:bg-white/10 
                                     border border-white/20 
@@ -612,6 +627,7 @@ function PostCard({ post }) {
               href="https://www.npmjs.com/package/satyamark-react"
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="View NPM Package Details"
               className="bg-white/5 hover:bg-white/10 border border-white/10 
                                 rounded-xl p-5 transition-all group"
             >
@@ -628,6 +644,7 @@ function PostCard({ post }) {
               href="https://github.com/DhirajKarangale/SatyaMark"
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="View GitHub Repository Details"
               className="bg-white/5 hover:bg-white/10 border border-white/10 
                                 rounded-xl p-5 transition-all group"
             >
@@ -644,6 +661,7 @@ function PostCard({ post }) {
               href="https://satyamark-demo-socialmedia.vercel.app/"
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="View Live Demo Details"
               className="bg-white/5 hover:bg-white/10 border border-white/10 
                                 rounded-xl p-5 transition-all group"
             >
@@ -658,6 +676,7 @@ function PostCard({ post }) {
 
             <Link
               to={routeChat}
+              aria-label="Try it Now Interactive Demo"
               className="bg-white/5 hover:bg-white/10 border border-white/10 
                                 rounded-xl p-5 transition-all group"
             >
@@ -739,6 +758,7 @@ function PostCard({ post }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           onClick={scrollToTop}
+          aria-label="Scroll to top of page"
           className="fixed bottom-8 right-8 w-12 h-12 rounded-full 
                         bg-gradient-to-r from-cyan-600 to-blue-600 
                         hover:from-cyan-500 hover:to-blue-500

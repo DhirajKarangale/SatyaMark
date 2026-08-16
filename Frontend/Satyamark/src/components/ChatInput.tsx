@@ -145,6 +145,7 @@ function ChatInput() {
                     setLocalImage(null);
                     setImageUrl(null);
                   }}
+                  aria-label="Remove uploaded image preview"
                   className="absolute -top-2 -right-2
                                         bg-red-500 hover:bg-red-600
                                         rounded-full p-1.5
@@ -185,6 +186,7 @@ function ChatInput() {
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
+                aria-label="Upload an image to verify"
                 className="w-11 h-11 rounded-xl flex justify-center items-center
                 bg-white/5 hover:bg-white/10 border border-white/10
                 text-gray-300 hover:text-white
@@ -199,6 +201,7 @@ function ChatInput() {
                 onClick={send}
                 disabled={!isValid || uploading}
                 whileTap={{ scale: 0.95 }}
+                aria-label="Submit content for verification"
                 className={`w-11 h-11 rounded-xl flex justify-center items-center transition-all duration-200
                 ${isValid && !uploading
                     ? "bg-linear-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white shadow-lg shadow-cyan-500/25"

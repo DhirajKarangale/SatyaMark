@@ -36,7 +36,15 @@ Community feedback and contributions are welcome.
 
 ## ✨ What Is SatyaMark?
 
-SatyaMark is an open‑source project that includes:
+SatyaMark is an open-source, multi-modal content verification platform. It solves the computational expense of real-time fact-checking by decoupling frontend DOM extraction (via a React SDK) from backend AI processing (via Node.js and Python workers).
+
+**Core Features:**
+
+- **Non-Binary Verdicts:** Outputs confidence scores and explainable reasoning instead of absolute "True/False" labels.
+- **Asynchronous Processing:** Uses Redis Streams (xAdd, xReadGroup) to queue expensive tasks without blocking the UI.
+- **Multi-Modal AI Pipeline:** Evaluates text via LangGraph state-machines and tests images against 22+ local forensic heuristics.
+
+The ecosystem also includes:
 
 - 🧠 **AI verification workers** — Text fact‑checking, AI‑image detection, forensics  
 - ⚙️ **Backend orchestrator** — Redis Streams + WebSockets + PostgreSQL  

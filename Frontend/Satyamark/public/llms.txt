@@ -1,0 +1,40 @@
+# SatyaMark
+
+> SatyaMark is an open-source, multi-modal content verification platform built with React, Node.js, and Python. It provides confidence scores and explainable reasoning for digital content, avoiding absolute binary truth claims.
+
+SatyaMark separates verification workloads from user interactions using asynchronous processing (Redis Streams) and real-time WebSocket communication to ensure fast UI performance while executing expensive AI tasks.
+
+## Project Links
+- [Official Website](https://satyamark.vercel.app/): The main portal for manual content checks.
+- [React SDK on npm](https://www.npmjs.com/package/satyamark-react): The official SDK utilizing React refs and WebSockets for DOM extraction.
+- [Demo Social Media App](https://satyamark-demo-socialmedia.vercel.app/): A sandbox environment demonstrating frontend integration.
+- [GitHub Repository](https://github.com/DhirajKarangale/SatyaMark): The official open-source repository.
+
+## Core Architecture & Tech Stack
+
+- **Client Ecosystem (React, Vite):** `satyamark-react` SDK attaches to React refs to extract claims and establish WebSockets.
+- **Backend Orchestrator (Node.js, Express, ws):** Manages concurrent WebSocket connections and routes jobs to Redis Streams. 
+- **Distributed Queues (Redis Streams):** Event persistence, consumer groups (`xReadGroup`), reliable delivery, and decoupled horizontal scaling.
+- **Relational Persistence & Caching (PostgreSQL):** Persists verified objects and acts as a massive deduplication caching layer via SHA-256 hashes.
+- **AI Pipelines (Python, LangGraph, LangChain):** Autonomous intelligence layer. Text is verified via LangGraph pipelines; images undergo comprehensive forensic analysis (22+ heuristics). Uses FAISS/Milvus for semantic searches, supported by Anthropic Claude, Hugging Face, and Google Search.
+
+## Repository Structure
+
+- `/AI`: Python verification workers.
+- `/Backend`: Node.js Redis + WS + DB orchestrator.
+- `/Frontend/Satyamark`: Main frontend web application.
+- `/Frontend/DemoMedia`: Social media demo app showing integration.
+- `/Frontend/satyamark-react`: The React SDK (published to npm).
+
+## Data Flow
+
+1. **DOM Extraction:** SDK extracts visible claims and establishes a WebSocket connection.
+2. **Caching:** Backend computes a SHA-256 hash. If found in Postgres, broadcasts instantly.
+3. **Queueing:** Backend checks Redis RAM saturation. If safe, queues job via Redis Streams.
+4. **Processing:** Python workers consume jobs via `xReadGroup` and process them independently.
+5. **Results:** Workers post verdict via HTTP; backend persists to DB and pushes to client via WebSockets.
+
+## Open Source Principles
+- Transparency over certainty.
+- Privacy-first and evidence > opinion.
+- Incremental improvement (Image verification is experimental, no video/audio yet).

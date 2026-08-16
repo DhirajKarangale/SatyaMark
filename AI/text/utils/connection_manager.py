@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 class ConnectionManager:
     def __init__(self):
         self.states = {}
-        self.lock = threading.Lock()
+        self.lock = threading.RLock()
         
     def _init_state(self, service_name):
         with self.lock:

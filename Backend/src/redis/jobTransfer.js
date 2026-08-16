@@ -15,7 +15,7 @@ async function transferQueue(renderClient, upstashClient, streamKey, queueName) 
         const response = await renderClient.xReadGroup(
             GROUP_NAME,
             CONSUMER_NAME,
-            [{ key: streamKey, id: ">" }],
+            [{ key: streamKey, id: "0" }],
             { COUNT: 500 }
         );
 

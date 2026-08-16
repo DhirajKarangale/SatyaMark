@@ -13,6 +13,10 @@
       "destination": "/site.webmanifest"
     },
     {
+      "source": "/llms",
+      "destination": "/llms.txt"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

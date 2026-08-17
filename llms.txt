@@ -5,7 +5,7 @@
 SatyaMark separates verification workloads from user interactions using asynchronous processing (Redis Streams) and real-time WebSocket communication to ensure fast UI performance while executing expensive AI tasks.
 
 ## Project Links
-- [Official Website](https://satyamark.vercel.app/): The main portal for manual content checks.
+- [Official Website](https://satyamark.js.org/): The main portal for manual content checks.
 - [React SDK on npm](https://www.npmjs.com/package/satyamark-react): The official SDK utilizing React refs and WebSockets for DOM extraction.
 - [Demo Social Media App](https://satyamark-demo-socialmedia.vercel.app/): A sandbox environment demonstrating frontend integration.
 - [GitHub Repository](https://github.com/DhirajKarangale/SatyaMark): The official open-source repository.

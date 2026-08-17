@@ -51,7 +51,7 @@ function Chat() {
                 <title>Live Verification Chat | SatyaMark API</title>
                 <meta name="description" content="Test SatyaMark's real-time verification engine. Upload images or paste text to instantly check for misinformation, deepfakes, and factual accuracy." />
                 <meta name="robots" content="index, follow" />
-                <link rel="canonical" href="https://satyamark.vercel.app/chat" />
+                <link rel="canonical" href="https://satyamark.js.org/chat" />
                 <meta property="og:title" content="Live Verification Chat | SatyaMark API" />
                 <meta property="og:description" content="Submit text or images to verify their authenticity in real-time with SatyaMark's AI verification engine." />
                 <meta property="twitter:title" content="Live Verification Chat | SatyaMark API" />
@@ -62,7 +62,7 @@ function Chat() {
                         "@context": "https://schema.org",
                         "@type": "WebApplication",
                         "name": "SatyaMark Live Verification Chat",
-                        "url": "https://satyamark.vercel.app/chat",
+                        "url": "https://satyamark.js.org/chat",
                         "applicationCategory": "UtilityApplication",
                         "operatingSystem": "All",
                         "description": "Test SatyaMark's real-time verification engine. Upload images or paste text to instantly check for misinformation, deepfakes, and factual accuracy.",

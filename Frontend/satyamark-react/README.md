@@ -308,7 +308,7 @@ SatyaMark is fully open-source and welcomes contributions!
 
 - **Main Repository:** [github.com/DhirajKarangale/SatyaMark](https://github.com/DhirajKarangale/SatyaMark)
 - **npm Package:** [npmjs.com/package/satyamark-react](https://www.npmjs.com/package/satyamark-react)
-- **Demo Application:** [Live Demo](https://satyamark.vercel.app)
+- **Demo Application:** [Live Demo](https://satyamark.js.org)
 
 All contributions are reviewed for alignment with SatyaMark's principles: transparency, evidence-based verification, and accessibility.
 

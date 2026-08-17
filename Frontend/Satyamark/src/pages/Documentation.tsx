@@ -46,7 +46,7 @@ function Documentation() {
         <title>Documentation | SatyaMark API & SDK</title>
         <meta name="description" content="Complete guide to integrating SatyaMark verification into your React application. Learn about our SDK, WebSocket API, and Core Concepts." />
         <meta name="robots" content="index, follow" />
-        <link rel="canonical" href="https://satyamark.vercel.app/documentation" />
+        <link rel="canonical" href="https://satyamark.js.org/documentation" />
         <meta property="og:title" content="Documentation | SatyaMark API & SDK" />
         <meta property="og:description" content="Complete guide to integrating SatyaMark verification into your React application. Learn about our SDK, WebSocket API, and Core Concepts." />
         <meta property="twitter:title" content="Documentation | SatyaMark API & SDK" />

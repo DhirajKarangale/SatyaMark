@@ -24,7 +24,7 @@ function Home() {
         <meta name="description" content="SatyaMark is a centralized verification platform that helps users and platforms distinguish truth from misinformation in real-time across text and images." />
         <meta property="og:site_name" content="SatyaMark" />
         <meta name="robots" content="index, follow" />
-        <link rel="canonical" href="https://satyamark.vercel.app/" />
+        <link rel="canonical" href="https://satyamark.js.org/" />
         <meta name="keywords" content="SatyaMark, AI content verification, fact checking engine, deepfake detection, open source trust infrastructure, misinformation detection, react verification SDK, AI credibility platform, real-time content analysis, trust signals" />
         <script type="application/ld+json">
           {JSON.stringify([
@@ -32,7 +32,7 @@ function Home() {
               "@context": "https://schema.org",
               "@type": "WebSite",
               "name": "SatyaMark",
-              "url": "https://satyamark.vercel.app/"
+              "url": "https://satyamark.js.org/"
             },
             {
               "@context": "https://schema.org",
@@ -40,7 +40,7 @@ function Home() {
               "name": "SatyaMark",
               "operatingSystem": "Any",
               "applicationCategory": "DeveloperApplication",
-              "url": "https://satyamark.vercel.app/"
+              "url": "https://satyamark.js.org/"
             }
           ])}
         </script>

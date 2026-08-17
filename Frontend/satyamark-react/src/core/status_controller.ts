@@ -2,7 +2,7 @@ import { ICON_URLS, type IconKey } from "../utils/iconRegistry";
 import { ensureIconLoaded, preloadIcons } from "../utils/iconLoader";
 
 const DEFAULT_ICON_SIZE = 20;
-const satyamark_url = "https://satyamark.vercel.app/chat";
+const satyamark_url = "https://satyamark.js.org/chat";
 
 let areIconsLoaded = false;
 type StatusQueueItem = {

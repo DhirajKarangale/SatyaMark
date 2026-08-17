@@ -42,7 +42,7 @@ class RedisQueueManager {
         if (this.isProcessing || this.localJobQueue.length === 0) return;
 
         this.isProcessing = true;
-        
+
         const clients = getClients();
         const renderClient = clients[this.renderClientName];
         const upstashClient = clients[this.upstashClientName];

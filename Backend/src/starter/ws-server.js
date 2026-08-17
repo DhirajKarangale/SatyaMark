@@ -19,7 +19,7 @@ function startws(server) {
     socket.isAlive = true;
     socket.on('pong', heartbeat);
     socket.on("message", (msg) => {
-      
+
       let data;
       try {
         data = JSON.parse(msg.toString());

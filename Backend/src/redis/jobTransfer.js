@@ -19,13 +19,12 @@ async function transferQueue(renderClient, upstashClient, streamKey, queueName) 
             { COUNT: 500 }
         );
 
-        if (!response || response.length === 0) {
-            return;
-        }
-
+        if (!response || response.length === 0) return;
         const messages = response[0].messages;
+        if (!messages || messages.length === 0) return;
+
         console.log(`[TRANSFER] Scooped ${messages.length} unassigned jobs from ${queueName}. Moving to Upstash...`);
-        
+
         let successCount = 0;
 
         for (const entry of messages) {
@@ -36,7 +35,7 @@ async function transferQueue(renderClient, upstashClient, streamKey, queueName) 
                 await upstashClient.xAdd(streamKey, "*", jobData);
                 await renderClient.xAck(streamKey, GROUP_NAME, renderMessageId);
                 await renderClient.xDel(streamKey, renderMessageId);
-                
+
                 successCount++;
             } catch (err) {
                 console.log(`[TRANSFER ERROR] Failed to move ${queueName} job ID ${renderMessageId}:`, err.message);

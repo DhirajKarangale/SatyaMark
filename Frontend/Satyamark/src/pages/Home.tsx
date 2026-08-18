@@ -32,6 +32,7 @@ function Home() {
               "@context": "https://schema.org",
               "@type": "WebSite",
               "name": "SatyaMark",
+              "alternateName": ["Satya Mark", "SatyaMark AI"],
               "url": "https://satyamark.js.org/"
             },
             {

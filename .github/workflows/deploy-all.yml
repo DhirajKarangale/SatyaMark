@@ -1,14 +1,40 @@
-name: Deploy Multi-Worker Architecture
+name: Unified Deploy Pipeline
 
 on:
   push:
     branches: [main]
-    paths:
-      - 'AI/**'
-      - '.github/workflows/**'
 
 jobs:
-  deploy-all-workers:
+  deploy-vercel:
+    name: Deploy to Vercel (Frontend)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Vercel Deploy Hook
+        run: |
+          if [ -z "${{ secrets.VERCEL_DEPLOY_HOOK_URL_SATYAMARK }}" ] || [ -z "${{ secrets.VERCEL_DEPLOY_HOOK_URL_DEMO }}" ]; then
+            echo "One or both VERCEL_DEPLOY_HOOK_URLs are not set. Please add them to your repository secrets."
+            exit 1
+          fi
+          echo "Triggering Satyamark Main App Deployment..."
+          curl -X POST "${{ secrets.VERCEL_DEPLOY_HOOK_URL_SATYAMARK }}"
+          
+          echo "Triggering Satyamark Demo App Deployment..."
+          curl -X POST "${{ secrets.VERCEL_DEPLOY_HOOK_URL_DEMO }}"
+
+  deploy-render:
+    name: Deploy to Render (Backend)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render Deploy Hook
+        run: |
+          if [ -z "${{ secrets.RENDER_DEPLOY_HOOK_URL }}" ]; then
+            echo "RENDER_DEPLOY_HOOK_URL is not set. Please add it to your repository secrets."
+            exit 1
+          fi
+          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
+
+  deploy-huggingface-workers:
+    name: Deploy to Hugging Face (AI)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Main Repository

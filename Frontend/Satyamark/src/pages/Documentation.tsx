@@ -304,16 +304,16 @@ function App() {
 import { process } from "satyamark-react";
 
 function PostCard({ post }) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!cardRef.current) return;
+    if (!ref.current) return;
     try {
-      process(cardRef.current, postData.id);
+      process(ref.current, post.id);
     } catch (error) {
       console.log(error);
     }
-  }, []);
+  }, [post.id]);
 
   return (
     <div ref={ref}>
@@ -452,7 +452,7 @@ function PostCard({ post }) {
                 Extracts text and images from a DOM element and submits them for verification.
               </p>
               <ul className="text-sm space-y-1">
-                <li>• <code>rootElement: HTMLElement</code> — DOM element containing content</li>
+                <li>• <code>rootElement: HTMLDivElement</code> — DOM element containing content</li>
                 <li>• <code>dataId: string</code> — Unique identifier for this content</li>
               </ul>
             </div>

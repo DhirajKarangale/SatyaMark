@@ -20,7 +20,7 @@ function Home() {
   return (
     <div className="min-h-screen bg-slate-950 text-gray-100">
       <Helmet>
-        <title>SatyaMark | Open-Source AI Content Verification Infrastructure</title>
+        <title>SatyaMark | Real-Time Content Verification</title>
         <meta name="description" content="SatyaMark is an open-source AI content verification infrastructure. Integrate our real-time React SDK for deepfake detection, fact-checking, and trust signals." />
         <meta property="og:type" content="website" />
         <meta property="og:title" content="SatyaMark | AI Content Verification" />
@@ -89,13 +89,13 @@ function Home() {
             <motion.div
               custom={2}
               variants={fadeUp}
-              className="flex flex-wrap items-center justify-center gap-4 pt-4"
+              className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4 pt-4 w-full"
             >
 
               <Link
                 to={routeChat}
                 aria-label="Open Chat Interface"
-                className="inline-flex items-center gap-2 px-8 py-3 
+                className="flex w-[90%] sm:w-auto justify-center items-center gap-2 px-8 py-3 
                bg-white/5 hover:bg-white/10 
                border border-white/20 
                text-white font-semibold rounded-lg 
@@ -109,7 +109,7 @@ function Home() {
                 href="https://satyamark-demo-socialmedia.vercel.app/"
                 target="_blank"
                 aria-label="Try SatyaMark Live Demo"
-                className="inline-flex items-center gap-2 px-8 py-3 
+                className="flex w-[90%] sm:w-auto justify-center items-center gap-2 px-8 py-3 
                 bg-linear-to-r from-cyan-600 to-blue-600 
                 hover:from-cyan-500 hover:to-blue-500
                 text-white font-semibold rounded-lg 
@@ -125,7 +125,7 @@ function Home() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="View SatyaMark on GitHub"
-                className="inline-flex items-center gap-2 px-8 py-3 
+                className="flex w-[90%] sm:w-auto justify-center items-center gap-2 px-8 py-3 
                                     bg-white/5 hover:bg-white/10 
                                     border border-white/20 
                                     text-white font-semibold rounded-lg 
@@ -140,7 +140,7 @@ function Home() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="View SatyaMark NPM Package"
-                className="inline-flex items-center gap-2 px-8 py-3 
+                className="flex w-[90%] sm:w-auto justify-center items-center gap-2 px-8 py-3 
                                     bg-white/5 hover:bg-white/10 
                                     border border-white/20 
                                     text-white font-semibold rounded-lg 
@@ -193,7 +193,7 @@ function Home() {
               aria-label="Demonstration of SatyaMark in action"
               className="w-full h-auto max-h-[70vh] object-contain opacity-90 hover:opacity-100 transition-opacity duration-300"
             >
-              <source src="/SatyaMark.mp4" type="video/mp4" />
+              <source src="/Satyamark.mp4" type="video/mp4" />
               Your browser does not support the video tag.
             </video>
           </div>
@@ -523,12 +523,12 @@ function Home() {
             <motion.div
               custom={2}
               variants={fadeUp}
-              className="flex flex-wrap items-center justify-center gap-4"
+              className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4 w-full"
             >
               <Link
                 to={routeDoccu}
                 aria-label="Get Started with Documentation"
-                className="inline-flex items-center gap-2 px-8 py-3 
+                className="flex w-[90%] sm:w-auto justify-center items-center gap-2 px-8 py-3 
                                     bg-linear-to-r from-cyan-600 to-blue-600 
                                     hover:from-cyan-500 hover:to-blue-500
                                     text-white font-semibold rounded-lg 
@@ -544,7 +544,7 @@ function Home() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Contact on LinkedIn"
-                className="inline-flex items-center gap-2 px-8 py-3 
+                className="flex w-[90%] sm:w-auto justify-center items-center gap-2 px-8 py-3 
                                     bg-white/5 hover:bg-white/10 
                                     border border-white/20 
                                     text-white font-semibold rounded-lg 

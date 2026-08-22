@@ -159,10 +159,16 @@ cd Frontend/Satyamark
 Create a `.env` file in `Frontend/Satyamark` with the following values:
 
 ```env
+# Required for API endpoints
 VITE_URL_BASE=<backend_base_url>
 
+# Required for image uploads
 VITE_CLOUD_NAME=<cloudinary_cloud_name>
 VITE_UPLOAD_PRESET=<cloudinary_upload_preset>
+
+# Optional: Only needed if running the WebSocket server locally
+VITE_IS_DEV=true
+VITE_WS_URL_BASE=ws://localhost:2402
 ```
 
 ### 4. Install Dependencies

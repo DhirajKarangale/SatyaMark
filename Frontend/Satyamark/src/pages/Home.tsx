@@ -89,13 +89,13 @@ function Home() {
             <motion.div
               custom={2}
               variants={fadeUp}
-              className="flex flex-wrap items-center justify-center gap-4 pt-4"
+              className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4 pt-4 w-full"
             >
 
               <Link
                 to={routeChat}
                 aria-label="Open Chat Interface"
-                className="inline-flex items-center gap-2 px-8 py-3 
+                className="flex w-[90%] sm:w-auto justify-center items-center gap-2 px-8 py-3 
                bg-white/5 hover:bg-white/10 
                border border-white/20 
                text-white font-semibold rounded-lg 
@@ -109,7 +109,7 @@ function Home() {
                 href="https://satyamark-demo-socialmedia.vercel.app/"
                 target="_blank"
                 aria-label="Try SatyaMark Live Demo"
-                className="inline-flex items-center gap-2 px-8 py-3 
+                className="flex w-[90%] sm:w-auto justify-center items-center gap-2 px-8 py-3 
                 bg-linear-to-r from-cyan-600 to-blue-600 
                 hover:from-cyan-500 hover:to-blue-500
                 text-white font-semibold rounded-lg 
@@ -125,7 +125,7 @@ function Home() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="View SatyaMark on GitHub"
-                className="inline-flex items-center gap-2 px-8 py-3 
+                className="flex w-[90%] sm:w-auto justify-center items-center gap-2 px-8 py-3 
                                     bg-white/5 hover:bg-white/10 
                                     border border-white/20 
                                     text-white font-semibold rounded-lg 
@@ -140,7 +140,7 @@ function Home() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="View SatyaMark NPM Package"
-                className="inline-flex items-center gap-2 px-8 py-3 
+                className="flex w-[90%] sm:w-auto justify-center items-center gap-2 px-8 py-3 
                                     bg-white/5 hover:bg-white/10 
                                     border border-white/20 
                                     text-white font-semibold rounded-lg 
@@ -523,12 +523,12 @@ function Home() {
             <motion.div
               custom={2}
               variants={fadeUp}
-              className="flex flex-wrap items-center justify-center gap-4"
+              className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4 w-full"
             >
               <Link
                 to={routeDoccu}
                 aria-label="Get Started with Documentation"
-                className="inline-flex items-center gap-2 px-8 py-3 
+                className="flex w-[90%] sm:w-auto justify-center items-center gap-2 px-8 py-3 
                                     bg-linear-to-r from-cyan-600 to-blue-600 
                                     hover:from-cyan-500 hover:to-blue-500
                                     text-white font-semibold rounded-lg 
@@ -544,7 +544,7 @@ function Home() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Contact on LinkedIn"
-                className="inline-flex items-center gap-2 px-8 py-3 
+                className="flex w-[90%] sm:w-auto justify-center items-center gap-2 px-8 py-3 
                                     bg-white/5 hover:bg-white/10 
                                     border border-white/20 
                                     text-white font-semibold rounded-lg 

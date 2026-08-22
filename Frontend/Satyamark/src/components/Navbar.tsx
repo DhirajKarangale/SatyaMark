@@ -1,7 +1,7 @@
-import { memo, useState } from "react";
+import { memo, useState, useEffect, useRef } from "react";
 import { NavLink } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Home, MessageCircleCode, FileText, Menu, X, Github } from "lucide-react";
+import { Home, MessageCircleCode, FileText, Menu, X, Github, ExternalLink, Package } from "lucide-react";
 import { routeHome, routeChat, routeDoccu } from "../utils/Routes";
 
 const navItems = [
@@ -12,11 +12,31 @@ const navItems = [
 
 function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const navRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (navRef.current && !navRef.current.contains(event.target as Node)) {
+        setMobileMenuOpen(false);
+      }
+    }
+
+    if (mobileMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [mobileMenuOpen]);
 
   return (
     <>
       {/* Desktop & Mobile Navbar */}
       <motion.nav
+        ref={navRef}
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
@@ -55,6 +75,8 @@ function Navbar() {
                 </NavLink>
               ))}
 
+              <div className="w-px h-6 bg-white/30 mx-2" />
+
               <a
                 href="https://github.com/DhirajKarangale/SatyaMark"
                 target="_blank"
@@ -62,10 +84,39 @@ function Navbar() {
                 aria-label="View SatyaMark GitHub Repository"
                 className="flex items-center gap-2 px-4 py-2 rounded-lg 
                   text-sm font-medium text-gray-300 
-                  hover:bg-white/10 hover:text-white transition-all duration-200 ml-2"
+                  hover:bg-white/10 hover:text-white transition-all duration-200"
               >
                 <Github size={18} />
                 <span>GitHub</span>
+              </a>
+
+              <a
+                href="https://www.npmjs.com/package/satyamark-react"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="View SatyaMark NPM Package"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg 
+                  text-sm font-medium text-gray-300 
+                  hover:bg-white/10 hover:text-white transition-all duration-200"
+              >
+                <Package size={18} />
+                <span>NPM</span>
+              </a>
+
+              <a
+                href="https://satyamark-demo-socialmedia.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Try SatyaMark Live Demo"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg 
+                  text-sm font-medium text-white
+                  bg-linear-to-r from-cyan-600 to-blue-600 
+                  hover:from-cyan-500 hover:to-blue-500
+                  shadow-lg shadow-cyan-500/25 
+                  transition-all duration-200 hover:scale-105"
+              >
+                <ExternalLink size={18} />
+                <span>Live Demo</span>
               </a>
             </div>
 
@@ -93,24 +144,7 @@ function Navbar() {
                                 bg-slate-950/95 backdrop-blur-xl overflow-hidden"
             >
               <div className="px-4 py-3 space-y-1">
-                {navItems.map((item) => (
-                  <NavLink
-                    key={item.path}
-                    to={item.path}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={({ isActive }) =>
-                      `flex items-center gap-3 px-4 py-3 rounded-lg 
-                                            text-base font-medium transition-all duration-200
-                                            ${isActive
-                        ? "bg-cyan-700 text-white"
-                        : "text-gray-300 hover:bg-white/10 hover:text-white"
-                      }`
-                    }
-                  >
-                    {item.icon}
-                    <span>{item.name}</span>
-                  </NavLink>
-                ))}
+                {/* External links in mobile menu */}
 
                 <a
                   href="https://github.com/DhirajKarangale/SatyaMark"
@@ -124,11 +158,61 @@ function Navbar() {
                   <Github size={18} />
                   <span>GitHub</span>
                 </a>
+
+                <a
+                  href="https://www.npmjs.com/package/satyamark-react"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="View SatyaMark NPM Package"
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg 
+                                        text-base font-medium text-gray-300 
+                                        hover:bg-white/10 hover:text-white transition-all duration-200"
+                >
+                  <Package size={18} />
+                  <span>NPM</span>
+                </a>
+
+                <a
+                  href="https://satyamark-demo-socialmedia.vercel.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Try SatyaMark Live Demo"
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg 
+                                        text-base font-medium text-white 
+                                        bg-linear-to-r from-cyan-600 to-blue-600
+                                        hover:from-cyan-500 hover:to-blue-500 
+                                        shadow-md shadow-cyan-500/20
+                                        transition-all duration-200"
+                >
+                  <ExternalLink size={18} />
+                  <span>Live Demo</span>
+                </a>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </motion.nav>
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 
+                      bg-slate-950/90 backdrop-blur-xl border-t border-white/10">
+        <div className="flex items-center justify-around h-16 px-2">
+          {[navItems[1], navItems[0], navItems[2]].map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) =>
+                `flex flex-col items-center justify-center w-full h-full gap-1 
+                 text-xs font-medium transition-colors
+                 ${isActive ? "text-cyan-400" : "text-gray-400 hover:text-gray-300"}`
+              }
+            >
+              {item.icon}
+              <span>{item.name}</span>
+            </NavLink>
+          ))}
+        </div>
+      </nav>
     </>
   );
 }

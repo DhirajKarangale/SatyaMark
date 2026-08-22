@@ -7,7 +7,7 @@ function LayoutNavbar() {
         <div className="min-h-screen w-full bg-slate-950">
             <Navbar />
 
-            <main className="pt-16 h-[calc(100vh-4rem)]">
+            <main className="pt-16 pb-16 md:pb-0 min-h-[calc(100vh-4rem)]">
                 <Outlet />
             </main>
         </div>

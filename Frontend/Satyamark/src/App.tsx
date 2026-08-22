@@ -16,7 +16,7 @@ import { routeHome, routeChat, routeChatWithId, routeDoccu } from './utils/Route
 
 function App() {
   useEffect(() => {
-    init({ app_id: "Satyamark", user_id: getUserId() })
+    init({ app_id: "SatyaMark", user_id: getUserId() })
   }, []);
 
   return (

@@ -59,7 +59,7 @@ It acts as a **neutral verification layer** — surfacing trust signals, not abs
 
 | Resource | Link |
 |----------|------|
-| 🌐 Official Website / Web App | https://satyamark.js.org/ |
+| 🌐 Official Website / Web App | [SatyaMark](https://satyamark.js.org/) |
 | 📱 Demo Social Media App | https://satyamark-demo-socialmedia.vercel.app/ |
 | 📦 React SDK (npm) | https://www.npmjs.com/package/satyamark-react |
 | 👨‍💻 Creator's Portfolio | https://dhirajkarangale.vercel.app/ |
@@ -258,3 +258,15 @@ PRs and issues welcome.
 <p align="center">
   <strong>Building trust infrastructure — openly, transparently, and with community.</strong>
 </p>
+
+
+
+
+
+
+
+
+
+
+
+Test Search: "satyamark.vercel.app" -site:satyamark.vercel.app

@@ -12,7 +12,7 @@ SatyaMark is live and publicly accessible:
 
 - **Live URL:**  
   <a href="https://satyamark.js.org/" target="_blank" rel="noopener noreferrer">
-    https://satyamark.js.org/
+    SatyaMark
   </a>
 
 Users can manually verify content, inspect verification results, and view detailed reasoning by opening verification links shared from external platforms.

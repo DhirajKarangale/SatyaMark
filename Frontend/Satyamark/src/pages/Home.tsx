@@ -20,10 +20,17 @@ function Home() {
   return (
     <div className="min-h-screen bg-slate-950 text-gray-100">
       <Helmet>
-        <title>SatyaMark | AI-Powered Content Verification</title>
-        <meta name="description" content="SatyaMark is a centralized verification platform that helps users and platforms distinguish truth from misinformation in real-time across text and images." />
+        <title>SatyaMark | Open-Source AI Content Verification Infrastructure</title>
+        <meta name="description" content="SatyaMark is an open-source AI content verification infrastructure. Integrate our real-time React SDK for deepfake detection, fact-checking, and trust signals." />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="SatyaMark | AI Content Verification" />
+        <meta property="og:description" content="A real-time AI content verification infrastructure. Integrate our React SDK for deepfake detection, fact-checking, and trust signals." />
         <meta property="og:site_name" content="SatyaMark" />
-        <meta name="robots" content="index, follow" />
+        <meta property="og:url" content="https://satyamark.js.org/" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="SatyaMark | AI Content Verification" />
+        <meta name="twitter:description" content="A real-time AI content verification infrastructure. Integrate our React SDK for deepfake detection and fact-checking." />
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
         <link rel="canonical" href="https://satyamark.js.org/" />
         <meta name="keywords" content="SatyaMark, AI content verification, fact checking engine, deepfake detection, open source trust infrastructure, misinformation detection, react verification SDK, AI credibility platform, real-time content analysis, trust signals" />
         <script type="application/ld+json">
@@ -41,6 +48,7 @@ function Home() {
               "name": "SatyaMark",
               "operatingSystem": "Any",
               "applicationCategory": "DeveloperApplication",
+              "description": "Open-source multi-modal content verification infrastructure with an official React SDK.",
               "url": "https://satyamark.js.org/"
             }
           ])}
@@ -550,7 +558,7 @@ function Home() {
       </section>
 
       {/* System Updates Section */}
-      <section id="updates" className="py-20 bg-black border-t border-white/5">
+      <section id="updates" className="py-20 bg-black border-t border-white/5" aria-labelledby="updates-heading">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -560,8 +568,8 @@ function Home() {
             className="space-y-8"
           >
             <div className="text-center space-y-4">
-              <h2 className="text-3xl sm:text-4xl font-bold text-white">System Updates</h2>
-              <p className="text-gray-400 text-lg">The latest improvements to the SatyaMark engine</p>
+              <h2 id="updates-heading" className="text-3xl sm:text-4xl font-bold text-white">Upcoming Updates</h2>
+              <p className="text-gray-400 text-lg">The roadmap and upcoming improvements for the SatyaMark engine</p>
             </div>
             
             <div className="bg-slate-900/50 border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-cyan-500/30 transition-colors duration-300">
@@ -575,10 +583,16 @@ function Home() {
                   <time dateTime="2026-08-22" itemProp="datePublished">August 22, 2026</time>
                   <meta itemProp="dateModified" content="2026-08-22" />
                 </div>
-                <h3 className="text-xl sm:text-2xl font-semibold text-white" itemProp="headline">SatyaMark Engine v1.1 Released</h3>
-                <p className="text-gray-400 leading-relaxed" itemProp="articleBody">
-                  SatyaMark, the open-source AI content verification infrastructure, has released Engine v1.1. This update improves the real-time WebSocket verification pipeline performance, enhances the React SDK with semantic SEO schema definitions, and expands developer documentation for deepfake detection integration.
-                </p>
+                <h3 className="text-xl sm:text-2xl font-semibold text-white" itemProp="headline">SatyaMark v0.0.20 (In Development)</h3>
+                <div className="text-gray-400 leading-relaxed space-y-3" itemProp="articleBody">
+                  <p>SatyaMark, the open-source AI content verification infrastructure, is actively developing Engine v0.0.20. This major update expands our real-time fact-checking SDK with the following capabilities:</p>
+                  <ul className="list-disc pl-5 space-y-2">
+                    <li><strong>Text Verification Accuracy:</strong> Optimizing our AI pipelines to significantly improve real-time claim extraction, response speed, and evidence-backed reasoning.</li>
+                    <li><strong>Contextual Image Analysis:</strong> Upgrading from basic deepfake detection to deep contextual understanding. The AI will cross-reference the image's semantic meaning (what it depicts and where it was captured) directly against the post description to detect misinformation.</li>
+                    <li><strong>AI Video Detection:</strong> Introducing specialized forensic pipelines to accurately distinguish between AI-generated video content and authentic human-captured footage.</li>
+                    <li><strong>AI Audio Detection:</strong> Deploying new machine learning models to detect voice cloning, deepfake audio, and synthetic media across digital platforms.</li>
+                  </ul>
+                </div>
               </article>
             </div>
           </motion.div>

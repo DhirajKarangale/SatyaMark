@@ -258,15 +258,3 @@ PRs and issues welcome.
 <p align="center">
   <strong>Building trust infrastructure — openly, transparently, and with community.</strong>
 </p>
-
-
-
-
-
-
-
-
-
-
-
-Test Search: "satyamark.vercel.app" -site:satyamark.vercel.app

@@ -46,7 +46,7 @@ function Chat() {
     }, []);
 
     return (
-        <div className="min-h-screen bg-slate-950 flex flex-col">
+        <div className="flex-1 min-h-0 bg-slate-950 flex flex-col">
             <Helmet>
                 <title>Live Verification Chat | SatyaMark API</title>
                 <meta name="description" content="Test SatyaMark's real-time verification engine. Upload images or paste text to instantly check for misinformation, deepfakes, and factual accuracy." />
@@ -75,21 +75,21 @@ function Chat() {
                 </script>
             </Helmet>
             {/* Page Header */}
-            <div className="bg-linear-to-b from-slate-900 to-slate-950 border-b border-white/10">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                    <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
+            <div className="bg-linear-to-b from-slate-900 to-slate-950 border-b border-white/10 shrink-0">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-4">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-white mb-1 sm:mb-2">
                         Live Verification
                     </h1>
-                    <p className="text-gray-400">
+                    <p className="text-sm sm:text-base text-gray-400">
                         Submit text or images to verify their authenticity in real-time
                     </p>
                 </div>
             </div>
 
             {/* Main Content */}
-            <div className="flex-1 flex flex-col max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+            <div className="flex-1 flex flex-col min-h-0 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
                 {/* Results Area - Scrollable */}
-                <div className="flex-1 min-h-0 overflow-y-auto mb-6 custom-scroll">
+                <div className="flex-1 min-h-0 overflow-y-auto mb-4 sm:mb-6 custom-scroll">
                     <ResultCard />
                 </div>
 

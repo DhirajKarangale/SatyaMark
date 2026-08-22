@@ -4,10 +4,10 @@ import Navbar from "./Navbar";
 
 function LayoutNavbar() {
     return (
-        <div className="min-h-screen w-full bg-slate-950">
+        <div className="flex flex-col min-h-[100dvh] w-full bg-slate-950">
             <Navbar />
 
-            <main className="pt-16 pb-16 md:pb-0 min-h-[calc(100vh-4rem)]">
+            <main className="flex flex-col flex-1 pt-16 pb-16 md:pb-0">
                 <Outlet />
             </main>
         </div>

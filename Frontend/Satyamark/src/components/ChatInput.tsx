@@ -22,12 +22,23 @@ function ChatInput() {
   const CLOUD_NAME = import.meta.env.VITE_CLOUD_NAME;
   const UPLOAD_PRESET = import.meta.env.VITE_UPLOAD_PRESET;
 
-  useEffect(() => {
+  const adjustHeight = () => {
     if (!textareaRef.current) return;
-    textareaRef.current.style.height = "auto";
-    textareaRef.current.style.height =
-      Math.min(textareaRef.current.scrollHeight, 120) + "px";
+    const el = textareaRef.current;
+    el.style.height = "auto";
+    const newHeight = Math.min(el.scrollHeight, 120);
+    el.style.height = newHeight + "px";
+    el.style.overflowY = el.scrollHeight > 120 ? "auto" : "hidden";
+  };
+
+  useEffect(() => {
+    adjustHeight();
   }, [text]);
+
+  useEffect(() => {
+    window.addEventListener("resize", adjustHeight);
+    return () => window.removeEventListener("resize", adjustHeight);
+  }, []);
 
   useEffect(() => {
     return onConnectionChange(setConnected);
@@ -177,7 +188,7 @@ function ChatInput() {
                 rows={1}
                 className="w-full resize-none bg-transparent text-white 
                 placeholder:text-gray-500 outline-none
-                max-h-[120px] overflow-y-auto custom-scroll"
+                max-h-[120px] overflow-hidden custom-scroll"
               />
             </div>
 

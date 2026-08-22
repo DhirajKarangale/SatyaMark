@@ -254,7 +254,7 @@ function ResultCard() {
 
   if (showConnecting) {
     return (
-      <div className="w-full h-full flex flex-col items-center justify-center gap-4 py-20">
+      <div className="w-full h-full flex flex-col items-center justify-center gap-4 py-10 sm:py-20">
         <Loader2 className="w-12 h-12 text-cyan-400 animate-spin" />
         <div className="text-gray-300 text-lg font-medium">
           Connecting to server…
@@ -268,7 +268,7 @@ function ResultCard() {
       const jobs = jobStore.list();
 
       return (
-        <div className="w-full h-full flex flex-col items-center justify-center gap-4 py-20 px-1">
+        <div className="w-full h-full flex flex-col items-center justify-center gap-4 py-10 sm:py-20 px-1">
           <Loader2 className="w-16 h-16 text-cyan-400 animate-spin" />
           <div className="text-gray-300 text-center space-y-2 max-w-full">
             <div className="text-xl font-semibold">Processing your content</div>
@@ -281,7 +281,7 @@ function ResultCard() {
     }
 
     return (
-      <div className="w-full h-full flex flex-col items-center justify-center py-20">
+      <div className="w-full h-full flex flex-col items-center justify-start pb-6 sm:pb-12">
         <motion.div
           variants={cardVariants}
           initial="hidden"

@@ -193,7 +193,7 @@ function Home() {
               aria-label="Demonstration of SatyaMark in action"
               className="w-full h-auto max-h-[70vh] object-contain opacity-90 hover:opacity-100 transition-opacity duration-300"
             >
-              <source src="/SatyaMark.mp4" type="video/mp4" />
+              <source src="/Satyamark.mp4" type="video/mp4" />
               Your browser does not support the video tag.
             </video>
           </div>

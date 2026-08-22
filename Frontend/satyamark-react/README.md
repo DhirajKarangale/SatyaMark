@@ -95,12 +95,12 @@ import { useRef, useEffect } from "react";
 import { process } from "satyamark-react";
 
 function PostCard({ post }) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!cardRef.current) return;
+    if (!ref.current) return;
     try {
-      process(cardRef.current, postData.id);
+      process(ref.current, post.id);
     } catch (error) {
       console.log(error);
     }
@@ -191,7 +191,7 @@ All retries, result handling, and UI updates are managed internally.
 
   **Parameters**
 
-  -   `rootElement: HTMLElement` — DOM element containing the content
+  -   `rootElement: HTMLDivElement` — DOM element containing the content
   -   `dataId: string` — Unique identifier for this specific content item
 
 ------------------------------------------------------------------------
@@ -254,9 +254,9 @@ SatyaMark displays different marks based on verification results:
 
   **Solution:** Check ref exists before processing:
   ```tsx
-  if (!cardRef.current) return;
+  if (!ref.current) return;
   try {
-    process(cardRef.current, postData.id);
+    process(ref.current, post.id);
   } catch (error) {
     console.log(error);
   }

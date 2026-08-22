@@ -7,3 +7,4 @@ piexif
 PyWavelets
 Pillow
 opencv-python-headless
+langchain_huggingface

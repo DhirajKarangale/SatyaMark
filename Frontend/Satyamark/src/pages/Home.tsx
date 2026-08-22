@@ -185,7 +185,7 @@ function Home() {
               aria-label="Demonstration of SatyaMark in action"
               className="w-full h-auto max-h-[70vh] object-contain opacity-90 hover:opacity-100 transition-opacity duration-300"
             >
-              <source src="/Satyamark.mp4" type="video/mp4" />
+              <source src="/SatyaMark.mp4" type="video/mp4" />
               Your browser does not support the video tag.
             </video>
           </div>
@@ -545,6 +545,42 @@ function Home() {
                 Contact Us
               </a>
             </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* System Updates Section */}
+      <section id="updates" className="py-20 bg-black border-t border-white/5">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="space-y-8"
+          >
+            <div className="text-center space-y-4">
+              <h2 className="text-3xl sm:text-4xl font-bold text-white">System Updates</h2>
+              <p className="text-gray-400 text-lg">The latest improvements to the SatyaMark engine</p>
+            </div>
+            
+            <div className="bg-slate-900/50 border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-cyan-500/30 transition-colors duration-300">
+              <article className="space-y-3" itemScope itemType="https://schema.org/NewsArticle">
+                <meta itemProp="publisher" content="SatyaMark" />
+                <div className="flex items-center gap-3 text-sm text-cyan-400 font-medium">
+                  <span className="relative flex h-2.5 w-2.5" aria-hidden="true">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500"></span>
+                  </span>
+                  <time dateTime="2026-08-22" itemProp="datePublished">August 22, 2026</time>
+                  <meta itemProp="dateModified" content="2026-08-22" />
+                </div>
+                <h3 className="text-xl sm:text-2xl font-semibold text-white" itemProp="headline">SatyaMark Engine v1.1 Released</h3>
+                <p className="text-gray-400 leading-relaxed" itemProp="articleBody">
+                  SatyaMark, the open-source AI content verification infrastructure, has released Engine v1.1. This update improves the real-time WebSocket verification pipeline performance, enhances the React SDK with semantic SEO schema definitions, and expands developer documentation for deepfake detection integration.
+                </p>
+              </article>
+            </div>
           </motion.div>
         </div>
       </section>

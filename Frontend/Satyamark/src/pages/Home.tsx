@@ -20,7 +20,7 @@ function Home() {
   return (
     <div className="min-h-screen bg-slate-950 text-gray-100">
       <Helmet>
-        <title>SatyaMark | Open-Source AI Content Verification Infrastructure</title>
+        <title>SatyaMark | Real-Time Content Verification</title>
         <meta name="description" content="SatyaMark is an open-source AI content verification infrastructure. Integrate our real-time React SDK for deepfake detection, fact-checking, and trust signals." />
         <meta property="og:type" content="website" />
         <meta property="og:title" content="SatyaMark | AI Content Verification" />

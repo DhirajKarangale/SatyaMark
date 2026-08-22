@@ -60,7 +60,7 @@ jobs:
           COPY . .
           RUN pip install --no-cache-dir -r AI/image/requirements.txt
           EXPOSE 7860
-          CMD ["python", "AI/image/image_worker.py"]
+          CMD ["python", "AI/image/starter/image_worker.py"]
           EOF
           
           cat <<EOF > image_build/README.md

@@ -121,6 +121,8 @@ def fact_check(statement: str, web_data: List[Dict[str, Any]]) -> dict:
             "urls": [item.get("url") for item in web_data if item.get("url")],
         }
 
+    url_weights = {item.get("url"): item.get("credibility_weight", 1.0) for item in web_data if item.get("url")}
+
     logger.info("Running Reduce phase for final verification...")
     prompt = f"""
 You are a professional fact-checking system. 
@@ -131,6 +133,9 @@ STATEMENT TO VERIFY:
 CONDENSED EVIDENCE GATHERED FROM THE WEB:
 {json.dumps(condensed_evidence, ensure_ascii=False, indent=2)}
 
+SOURCE CREDIBILITY WEIGHTS:
+{json.dumps(url_weights, indent=2)}
+
 TASK:
 1. Compare the statement against the evidence. 
 2. Ignore any evidence that is irrelevant.
@@ -139,10 +144,11 @@ TASK:
    - Mark Incorrect if the evidence explicitly disproves the statement.
    - Mark Insufficient if there isn't enough info to make a call.
 4. STRICT GROUNDING RULE: Do NOT use your internal knowledge. You must rely ONLY on the provided EVIDENCE. If the evidence does not contain the answer, you MUST mark it Insufficient.
-5. UNIT & MATH RULE: The statement will likely use global SI units. If the scraped evidence uses local/imperial units (or vice versa), you MUST accurately convert and mathematically verify them before making a decision. Do not mark a claim Incorrect simply due to unit differences.
-6. NUANCE RULE: If the evidence shows the claim is a mix of true and false (partially true) or requires critical context that is missing from the statement, mark it as Insufficient with a detailed explanation of the nuance rather than forcing a binary Correct/Incorrect.
-7. RELEVANCE RULE: Do not discuss irrelevant entities, websites, or data found in the evidence that are unrelated to the core entities of the statement. Keep your reasoning strictly focused on the subject of the claim.
-8. URL CITATION RULE: In your JSON output, the "urls" array MUST contain ONLY the precise Source URLs that you actively used to form your reasoning. Do not output all provided URLs.
+5. CREDIBILITY RULE: Use the SOURCE CREDIBILITY WEIGHTS to resolve conflicts. A source with weight 1.5 is highly authoritative (e.g. Reuters). A source with weight 1.0 is standard. Trust higher-weighted sources if evidence conflicts.
+6. UNIT & MATH RULE: The statement will likely use global SI units. If the scraped evidence uses local/imperial units (or vice versa), you MUST accurately convert and mathematically verify them before making a decision. Do not mark a claim Incorrect simply due to unit differences.
+7. NUANCE RULE: If the evidence shows the claim is a mix of true and false (partially true) or requires critical context that is missing from the statement, mark it as Insufficient with a detailed explanation of the nuance rather than forcing a binary Correct/Incorrect.
+8. RELEVANCE RULE: Do not discuss irrelevant entities, websites, or data found in the evidence that are unrelated to the core entities of the statement. Keep your reasoning strictly focused on the subject of the claim.
+9. URL CITATION RULE: In your JSON output, the "urls" array MUST contain ONLY the precise Source URLs that you actively used to form your reasoning. Do not output all provided URLs.
 
 OUTPUT STRICT JSON ONLY. Do not use Markdown formatting blocks (like ```json).
 {{

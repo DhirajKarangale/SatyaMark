@@ -88,7 +88,7 @@ def process_job_data(client, job_data, source_name):
 
 import concurrent.futures
 
-executor = concurrent.futures.ThreadPoolExecutor(max_workers=10)
+executor = concurrent.futures.ThreadPoolExecutor(max_workers=50)
 
 def process_job_async(client, msg_id, job_data, source_name):
     success = process_job_data(client, job_data, source_name)

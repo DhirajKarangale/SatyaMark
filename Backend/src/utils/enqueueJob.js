@@ -1,13 +1,16 @@
 const { getClients } = require("../redis/redisClient");
+const connectionManager = require("./connectionManager");
 require("dotenv").config();
 
 const JOB_ENQUEUE_RATE = parseInt(process.env.JOB_ENQUEUE_RATE) || 1000;
 
 class RedisQueueManager {
-    constructor(queueName, renderClientName, upstashClientName, maxMemoryMB = 23) {
+    constructor(queueName, renderClientName, upstashClientName, renderConnName, upstashConnName, maxMemoryMB = 23) {
         this.queueName = queueName;
         this.renderClientName = renderClientName;
         this.upstashClientName = upstashClientName;
+        this.renderConnName = renderConnName;
+        this.upstashConnName = upstashConnName;
         this.maxMemoryMB = maxMemoryMB;
 
         this.localJobQueue = [];
@@ -20,12 +23,12 @@ class RedisQueueManager {
             const match = memoryInfo.match(/used_memory:(\d+)/);
             if (match) {
                 const bytes = parseInt(match[1], 10);
-                return bytes / (1024 * 1024); // Convert to MB
+                return bytes / (1024 * 1024);
             }
         } catch (err) {
-            console.log(`[${this.queueName} MEMORY ERROR]`, err.message);
+            // Memory check failed — treat as full so we fall through to Upstash
         }
-        return 0;
+        return Infinity;
     }
 
     enqueue(jobData) {
@@ -35,11 +38,17 @@ class RedisQueueManager {
         }
 
         this.localJobQueue.push(jobData);
-        console.log(`[QUEUE] Job ${jobData.jobId} added to ${this.queueName} queue. (Size: ${this.localJobQueue.length})`);
     }
 
     async processQueue() {
         if (this.isProcessing || this.localJobQueue.length === 0) return;
+
+        // Non-blocking pre-check: skip if no Redis is connected.
+        // This prevents the Proxy's ensureConnection() from blocking indefinitely.
+        const renderReady = connectionManager.getStatus(this.renderConnName) === 'connected';
+        const upstashReady = connectionManager.getStatus(this.upstashConnName) === 'connected';
+
+        if (!renderReady && !upstashReady) return;
 
         this.isProcessing = true;
 
@@ -48,36 +57,50 @@ class RedisQueueManager {
         const upstashClient = clients[this.upstashClientName];
 
         try {
-            if (!renderClient) {
-                console.log(`Missing Render client for ${this.queueName}`);
-                return;
-            }
+            let usedMB = Infinity;
 
-            let usedMB = await this.getRenderMemoryMB(renderClient);
+            if (renderReady && renderClient) {
+                usedMB = await this.getRenderMemoryMB(renderClient);
+            }
 
             while (this.localJobQueue.length > 0) {
                 const currentJob = this.localJobQueue[0];
                 const streamKey = currentJob.STREAM_KEY;
                 const jobPayload = { data: JSON.stringify(currentJob) };
 
-                if (usedMB < this.maxMemoryMB) {
-                    await renderClient.xAdd(streamKey, "*", jobPayload);
-                    console.log(`[${this.queueName} ROUTER] Job ${currentJob.jobId} -> RENDER (${usedMB.toFixed(2)} MB used)`);
-                } else {
-                    if (!upstashClient) {
-                        console.log(`Missing Upstash client for ${this.queueName}`);
-                        return;
-                    }
+                let pushed = false;
 
-                    await upstashClient.xAdd(streamKey, "*", jobPayload);
-                    console.log(`[${this.queueName} ROUTER] Render Full. Job ${currentJob.jobId} -> UPSTASH`);
+                // Try Render first (if connected and under memory limit)
+                if (renderReady && renderClient && usedMB < this.maxMemoryMB) {
+                    try {
+                        await renderClient.xAdd(streamKey, "*", jobPayload);
+                        console.log(`[${this.queueName}] Job ${currentJob.jobId} → RENDER`);
+                        pushed = true;
+                    } catch (err) {
+                        // Render failed mid-operation, fall through to Upstash
+                    }
+                }
+
+                // Fallback to Upstash
+                if (!pushed && upstashReady && upstashClient) {
+                    try {
+                        await upstashClient.xAdd(streamKey, "*", jobPayload);
+                        console.log(`[${this.queueName}] Job ${currentJob.jobId} → UPSTASH`);
+                        pushed = true;
+                    } catch (err) {
+                        // Both clusters failed
+                    }
+                }
+
+                if (!pushed) {
+                    break; // No Redis available right now, retry on next interval tick
                 }
 
                 this.localJobQueue.shift();
             }
 
         } catch (error) {
-            console.log(`[${this.queueName} PROCESSOR ERROR]`, error.message);
+            console.log(`[${this.queueName} ERROR]`, error.message);
         } finally {
             this.isProcessing = false;
         }
@@ -91,13 +114,17 @@ class RedisQueueManager {
 const textQueue = new RedisQueueManager(
     "TEXT",
     "renderText",
-    "upstashText"
+    "upstashText",
+    "Render Text",
+    "Upstash Text"
 );
 
 const imageQueue = new RedisQueueManager(
     "IMAGE",
     "renderImage",
-    "upstashImage"
+    "upstashImage",
+    "Render Image",
+    "Upstash Image"
 );
 
 async function enqueueJob(jobData) {

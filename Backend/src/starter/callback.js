@@ -127,6 +127,11 @@ app.post("/ai-callback/text", async (req, res) => {
         let dbId = null;
         if (!isInternalError) {
             try {
+                // Fix #13: Recompute summary_hash using the AI's normalized summary output
+                const { generateTextHashes } = require("../hash/text_hash");
+                if (body.summary) {
+                    body.summary_hash = generateTextHashes(body.summary).summary_hash;
+                }
                 const dbResult = await modelText.PostText(body);
                 dbId = dbResult?.id;
             } catch (dbErr) {

@@ -24,21 +24,23 @@ function getTask(data, socketSessionId) {
     const hasImage = typeof image_url === "string" && image_url.trim().length > 0;
 
     if (hasImage) {
-        process_image(clientId, jobId, image_url, data.sessionId, socketSessionId);
+        process_image(clientId, jobId, image_url, data.image_hash, socketSessionId);
         return;
     }
 
     if (hasText) {
-        process_text(clientId, jobId, text, data.sessionId, socketSessionId);
+        process_text(clientId, jobId, text, socketSessionId);
         return;
     }
 }
 
-async function process_text(clientId, jobId, text, dataSessionId, socketSessionId) {
+async function process_text(clientId, jobId, text, socketSessionId) {
     console.log(`[TEXT] Task received → client=${clientId}, job=${jobId}`);
 
     const { text_hash, summary_hash } = generateTextHashes(text);
-    const textData = await modelText.GetText(text_hash, summary_hash);
+    // CRITICAL ACCURACY FIX: Only check text_hash (exact raw match). 
+    // Do NOT check summary_hash here because regex punctuation stripping can destroy meaning (e.g. "?" vs ".")
+    const textData = await modelText.GetText(text_hash, null);
 
     if (textData && typeof textData === "object") {
         console.log(`[TEXT] Result found in cache → job=${jobId}`);
@@ -59,7 +61,7 @@ async function process_text(clientId, jobId, text, dataSessionId, socketSessionI
         return;
     }
 
-    const allowed = await checkRateLimiter(clientId, dataSessionId, socketSessionId);
+    const allowed = await checkRateLimiter(clientId, socketSessionId);
     if (!allowed) return;
 
     console.log(`[TEXT] Task enqueued → job=${jobId}`);
@@ -77,10 +79,10 @@ async function process_text(clientId, jobId, text, dataSessionId, socketSessionI
     });
 }
 
-async function process_image(clientId, jobId, image_url, dataSessionId, socketSessionId) {
+async function process_image(clientId, jobId, image_url, client_image_hash, socketSessionId) {
     console.log(`[IMAGE] Task received → client=${clientId}, job=${jobId}`);
 
-    const image_hash = await generateImageHash(image_url)
+    const image_hash = client_image_hash || await generateImageHash(image_url);
     const imageData = await modelImage.GetImage(image_url, image_hash);
 
     if (imageData && typeof imageData === "object") {
@@ -101,7 +103,7 @@ async function process_image(clientId, jobId, image_url, dataSessionId, socketSe
         return;
     }
 
-    const allowed = await checkRateLimiter(clientId, dataSessionId, socketSessionId);
+    const allowed = await checkRateLimiter(clientId, socketSessionId);
     if (!allowed) return;
 
     console.log(`[IMAGE] Task enqueued → job=${jobId}`);

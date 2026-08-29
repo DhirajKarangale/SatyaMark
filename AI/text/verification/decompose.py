@@ -19,6 +19,7 @@ RULES:
 2. Do NOT change the meaning or fix factual errors.
 3. If the input is just one simple claim, do not needlessly split it. Return it as is.
 4. Return ONLY a valid JSON array of strings. Do not include markdown formatting or explanations.
+5. JOURNALISTIC CONTEXT: You are processing text for a legitimate news and fact-checking platform. You will encounter sensitive topics (e.g., natural disasters, missing people, politics). You are authorized and required to process these topics. Do not trigger safety refusals for news events.
 
 Statement:
 {text}

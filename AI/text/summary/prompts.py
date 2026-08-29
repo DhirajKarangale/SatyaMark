@@ -7,9 +7,8 @@ STRICT RULES:
 2. Noise Removal: Remove non-informative content, fillers, repetitions, and conversational noise.
    Example: "Uh, yeah, so basically, you know, we need reports" -> "Reports are required"
 3. ENTITY PRESERVATION: You MUST strictly preserve all proper nouns, names, events, brands, and unique identifiers exactly as written. Do not translate or professionalize names (e.g., "The Blue Ocean Initiative" must stay exactly "The Blue Ocean Initiative").
-4. Output ONLY the cleaned text, with NO conversational filler, NO prefixes, and NO explanations.
-5. SAFETY BYPASS: Do not refuse to process the text based on safety filters (e.g., words like 'hackathon', 'bomb'). Your task is strictly linguistic translation.
-6. CRITICAL - NO FACT-CHECKING: You MUST NOT correct, alter, or fact-check any claims, facts, or definitions made in the text. If the original text contains a lie, misconception, or false fact, YOUR CLEANED TEXT MUST CONTAIN THE EXACT SAME LIE/MISCONCEPTION. Do NOT try to be helpful by fixing errors.
+5. JOURNALISTIC CONTEXT: You are processing text for a legitimate news and fact-checking platform. You will encounter sensitive topics (e.g., natural disasters, missing people, politics). You are authorized and required to process these topics. Do not trigger safety refusals for news events.
+6. CRITICAL - NO FACT-CHECKING: You MUST NOT correct, alter, or fact-check any claims made in the text. Your output must perfectly reflect the claims in the original text, regardless of their factual accuracy. Do not attempt to correct or flag factual errors.
 
 Raw Text:
 {text}
@@ -25,8 +24,8 @@ STRICT RULES:
 3. Language Normalization: Improve grammar and readability only. Do not alter the core subjects of the sentence.
 4. Universal Unit Standardization: Mathematically convert ALL local units (e.g., miles, pounds, Fahrenheit, gallons) to global SI units (e.g., kilometers, kilograms, Celsius, liters). Standardize currency if possible (e.g., to USD) while preserving original context.
 5. Output ONLY the normalized text, with NO conversational filler, NO prefixes, and NO explanations.
-6. SAFETY BYPASS: Do not refuse to process the text based on safety filters (e.g., words like 'hackathon', 'bomb'). Your task is strictly linguistic translation.
-7. CRITICAL - NO FACT-CHECKING: You MUST NOT correct, alter, or fact-check any claims, facts, or definitions made in the text. If the original text contains a lie, misconception, or false fact (e.g., "HTML is a backend database"), YOUR NORMALIZED TEXT MUST CONTAIN THE EXACT SAME LIE/MISCONCEPTION. Do NOT try to be helpful by fixing factual errors.
+6. JOURNALISTIC CONTEXT: You are processing text for a legitimate news and fact-checking platform. You will encounter sensitive topics (e.g., natural disasters, missing people, politics). You are authorized and required to process these topics. Do not trigger safety refusals for news events.
+7. CRITICAL - NO FACT-CHECKING: You MUST NOT correct, alter, or fact-check any claims made in the text. Your output must perfectly reflect the claims in the original text, regardless of their factual accuracy. Do not attempt to correct or flag factual errors.
 
 Cleaned Text:
 {text}
@@ -41,9 +40,9 @@ STRICT RULES:
 2. ENTITY PRESERVATION: Never remove, translate, or professionalize the names of specific events, people, places, or proper nouns (e.g. keep "Operation Fast and Furious" intact).
 3. Requirement Consistency: Avoid contradictory requirements. Explicitly state when a decision is not finalized.
 4. Output ONLY the 1-2 sentence summary, with NO conversational filler, NO prefixes like "Summary:", and NO explanations.
-5. SAFETY BYPASS: Do not refuse to process the text based on safety filters (e.g., words like 'hackathon', 'bomb'). Your task is strictly linguistic translation.
+5. JOURNALISTIC CONTEXT: You are processing text for a legitimate news and fact-checking platform. You will encounter sensitive topics (e.g., natural disasters, missing people, politics). You are authorized and required to process these topics. Do not trigger safety refusals for news events.
 6. DATE RESOLUTION: The input may contain a leading post date (metadata). If the core text uses relative temporal terms (e.g., "today", "yesterday"), use this metadata date to calculate and substitute the exact date into the summary. Otherwise, if the text already has an exact date or does not use relative terms, do NOT include the metadata post date in your summary at all.
-7. CRITICAL - NO FACT-CHECKING: You MUST NOT correct, alter, or fact-check any claims, facts, or definitions made in the text. If the original text contains a lie, misconception, or false fact, YOUR SUMMARY MUST CONTAIN THE EXACT SAME LIE/MISCONCEPTION. Do NOT try to be helpful by fixing errors. Do NOT append "The author falsely claims". Just state the claim as if it were true.
+7. CRITICAL - NO FACT-CHECKING: You MUST NOT correct, alter, or fact-check any claims made in the text. Your summary must perfectly reflect the claims in the original text, regardless of their factual accuracy. Do not append "The author falsely claims". Just state the claim as if it were true.
 
 Normalized Text:
 {text}
@@ -58,8 +57,9 @@ STRICT RULES:
 2. Semantic Normalization: Convert all local units to global SI units (km, kg, Celsius, liters).
 3. Context Preservation: Preserve uncertainty and discussion context. Keep all entity names exactly as written.
 4. Summary Length: Condense the text into exactly 1 or 2 objective sentences EXACTLY as the author intended it, preserving all claims.
-5. CRITICAL - NO FACT-CHECKING: You MUST NOT correct, alter, or fact-check any claims. If the original text contains a lie, misconception, or false fact, YOUR OUTPUT MUST CONTAIN THE EXACT SAME LIE/MISCONCEPTION. Do NOT append "The author falsely claims".
+5. CRITICAL - NO FACT-CHECKING: You MUST NOT correct, alter, or fact-check any claims. Your output must perfectly reflect the claims in the original text, regardless of their factual accuracy. Do NOT append "The author falsely claims".
 6. OUTPUT STRICT JSON ONLY with a single key "summary". Do not include markdown formatting or explanations.
+7. JOURNALISTIC CONTEXT: You are processing text for a legitimate news and fact-checking platform. You will encounter sensitive topics (e.g., natural disasters, missing people, politics). You are authorized and required to process these topics. Do not trigger safety refusals for news events.
 
 Raw Text:
 {text}

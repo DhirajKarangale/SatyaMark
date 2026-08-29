@@ -7,7 +7,7 @@ from image.truthscan import truthscan_verify
 
 logger = logging.getLogger(__name__)
 
-VERIFICATION_PIPELINE = ['sightengine', 'truthscan', 'heuristic']
+VERIFICATION_PIPELINE = ['truthscan', 'sightengine', 'heuristic']
 
 def verify(image_source):
     try:

@@ -1,4 +1,16 @@
+import os
 from . import human_translator
+from .feature_extractor import extract_feature_vector
+
+ML_MODEL_PATH = os.path.join(os.path.dirname(__file__), "model", "classifier.joblib")
+classifier = None
+try:
+    if os.path.exists(ML_MODEL_PATH):
+        from joblib import load
+        classifier = load(ML_MODEL_PATH)
+except Exception as e:
+    import logging
+    logging.getLogger(__name__).warning(f"Failed to load ML classifier: {e}")
 
 def detect(data):
     ai_score = 0
@@ -113,6 +125,73 @@ def detect(data):
         ai_score += 1
         reasons.append("overly stable perturbation embedding")
 
+    # ---- Watermark Analysis (previously unused) ----
+    wm = data.get("watermark", {}).get("watermark_analysis", {})
+    if wm.get("watermark_detected"):
+        ai_score += 2
+        reasons.append("periodic watermark pattern detected")
+    elif wm.get("watermark_score", 0) > 10:
+        ai_score += 1
+        reasons.append("elevated watermark-like signal")
+
+    # ---- Visual Artifact Analysis (previously unused) ----
+    visual = data.get("visual", {}).get("visual_artifact_features", {})
+    if visual:
+        noise_feat = visual.get("noise", {})
+        sym_feat = visual.get("symmetry", {})
+        tex_feat = visual.get("texture_blocks", {})
+
+        if noise_feat.get("residual_variance", 999) < 1.0:
+            ai_score += 2
+            reasons.append("unnaturally low noise residual variance")
+
+        if sym_feat.get("symmetry_score", 0) > 0.95:
+            ai_score += 1
+            reasons.append("unnaturally perfect bilateral symmetry")
+
+        if tex_feat.get("block_variance_global", 999) < 50:
+            ai_score += 1
+            reasons.append("unnaturally uniform texture blocks")
+
+    # ---- Compression Artifact Analysis (previously unused) ----
+    comp = data.get("compression_artifact_analysis", {}).get("compression_analysis", {})
+    if comp:
+        if comp.get("double_jpeg_probability", 0) > 0.3:
+            ai_score += 2
+            reasons.append("double JPEG compression detected (likely re-saved or tampered)")
+
+        if comp.get("dct_zero_ratio", 0) > 0.7:
+            ai_score += 1
+            reasons.append("high DCT zero coefficient ratio")
+
+    # ---- Pixel Level Analysis (previously unused) ----
+    pixel = data.get("pixel", {})
+    if pixel:
+        kurt = pixel.get("kurtosis", {})
+        if kurt:
+            avg_kurtosis = (kurt.get("r", 5) + kurt.get("g", 5) + kurt.get("b", 5)) / 3
+            if avg_kurtosis < 1.0:
+                ai_score += 2
+                reasons.append("unnaturally low channel kurtosis (AI-smooth pixel distribution)")
+            elif avg_kurtosis > 8.0:
+                real_score += 2
+
+        neighbor = pixel.get("neighbor_correlation", {})
+        if neighbor:
+            h_corr = neighbor.get("horizontal", 0)
+            v_corr = neighbor.get("vertical", 0)
+            if h_corr > 0.995 and v_corr > 0.995:
+                ai_score += 1
+                reasons.append("suspiciously high pixel neighbor correlation")
+
+        res_noise = pixel.get("residual_noise", {})
+        if res_noise:
+            if res_noise.get("kurtosis", 5) < 0.5:
+                ai_score += 1
+                reasons.append("low residual noise kurtosis (too clean)")
+            elif res_noise.get("kurtosis", 0) > 10:
+                real_score += 1
+
 
     total = ai_score + real_score
     if total == 0:
@@ -126,6 +205,21 @@ def detect(data):
         mark = "NONAI"
     else:
         mark = "UNCERTAIN"
+        
+    # ML Classifier Override
+    if classifier is not None:
+        try:
+            vec = extract_feature_vector(data)
+            probs = classifier.predict_proba([vec])[0]
+            pred_class = classifier.classes_[probs.argmax()]
+            max_prob = max(probs)
+            
+            if max_prob >= 0.65:
+                mark = "AI" if pred_class == 1 else "NONAI"
+                confidence = max_prob * 100
+        except Exception as e:
+            import logging
+            logging.getLogger(__name__).warning(f"ML override failed, falling back to rules: {e}")
 
     human_friendly_reason = human_translator.translate_forensics(
         mark=mark, 

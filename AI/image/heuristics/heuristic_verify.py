@@ -21,52 +21,51 @@ from . import decision_engine
 
 logger = logging.getLogger(__name__)
 
+import concurrent.futures
+
+def run_heuristics(img):
+    image_bytes = img["bytes"]
+    pil_image = img["pil_image"]
+    gray_pixels = img["pixels_gray"]
+    
+    tasks = {
+        "metadata": lambda: metadata.process(image_bytes),
+        "c2pa": lambda: c2pa.process(image_bytes),
+        "watermark": lambda: watermark.process(image_bytes),
+        "visual": lambda: visual_artifacts.process(pil_image),
+        "frequency_domain_analysis": lambda: frequency_domain_analysis.process(image_bytes),
+        "pixel": lambda: pixel_level_analysis.process(image_bytes),
+        "sensor_pattern_noise": lambda: sensor_pattern_noise.process(gray_pixels),
+        "compression_artifact_analysis": lambda: compression_artifact_analysis.process(image_bytes),
+        "gan": lambda: gan.process(image_bytes),
+        "perturbation": lambda: perturbation_robustness_testing.process(image_bytes),
+        "physics_geometry": lambda: physics_geometry.process(image_bytes),
+        "ela_analysis": lambda: ela_analysis.process(image_bytes),
+        "autoencoder_reconstruction": lambda: autoencoder_reconstruction.process(image_bytes),
+        "diffusion_latent_analysis": lambda: diffusion_latent_analysis.process(image_bytes),
+        "benfords_law": lambda: benfords_law.process(image_bytes),
+        "chromatic_aberration": lambda: chromatic_aberration.process(image_bytes),
+        "patch_analysis": lambda: patch_analyzer.process(image_bytes),
+        "copy_move": lambda: copy_move.process(image_bytes)
+    }
+
+    data = {}
+    with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
+        future_to_name = {executor.submit(func): name for name, func in tasks.items()}
+        for future in concurrent.futures.as_completed(future_to_name):
+            name = future_to_name[future]
+            try:
+                data[name] = future.result()
+            except Exception as e:
+                logger.error(f"Heuristic {name} failed: {e}")
+                data[name] = {}
+                
+    return data
+
+
 def verify(img):
     try:
-        image_bytes = img["bytes"]
-        pil_image = img["pil_image"]
-        gray_pixels = img["pixels_gray"]
-
-        img_metadata = metadata.process(image_bytes)
-        img_c2pa = c2pa.process(image_bytes)
-        img_watermark = watermark.process(image_bytes)
-        img_visual_artifacts = visual_artifacts.process(pil_image)
-        img_frequency_domain_analysis = frequency_domain_analysis.process(image_bytes)
-        img_pixel_level_analysis = pixel_level_analysis.process(image_bytes)
-        img_sensor_pattern_noise = sensor_pattern_noise.process(gray_pixels)
-        img_compression_artifact_analysis = compression_artifact_analysis.process(image_bytes)
-        img_gan = gan.process(image_bytes)
-        img_perturbation_robustness_testing = perturbation_robustness_testing.process(image_bytes)
-        img_physics_geometry = physics_geometry.process(image_bytes)
-        img_ela_analysis = ela_analysis.process(image_bytes)
-        img_autoencoder_reconstruction = autoencoder_reconstruction.process(image_bytes)
-        img_diffusion_latent_analysis = diffusion_latent_analysis.process(image_bytes)
-        img_benfords_law = benfords_law.process(image_bytes)
-        img_chromatic_aberration = chromatic_aberration.process(image_bytes)
-        img_patch_analysis = patch_analyzer.process(image_bytes)
-        img_copy_move = copy_move.process(image_bytes)
-    
-        data = {
-            "metadata": img_metadata,
-            "c2pa": img_c2pa,
-            "watermark": img_watermark,
-            "visual": img_visual_artifacts,
-            "frequency_domain_analysis": img_frequency_domain_analysis,
-            "pixel": img_pixel_level_analysis,
-            "sensor_pattern_noise": img_sensor_pattern_noise,
-            "compression_artifact_analysis": img_compression_artifact_analysis,
-            "gan": img_gan,
-            "perturbation": img_perturbation_robustness_testing,
-            "physics_geometry": img_physics_geometry,
-            "ela_analysis": img_ela_analysis,
-            "autoencoder_reconstruction": img_autoencoder_reconstruction,
-            "diffusion_latent_analysis": img_diffusion_latent_analysis,
-            "benfords_law": img_benfords_law,
-            "chromatic_aberration": img_chromatic_aberration,
-            "patch_analysis": img_patch_analysis,
-            "copy_move": img_copy_move
-        }
-
+        data = run_heuristics(img)
         img_decision_engine = decision_engine.process(data) 
         return img_decision_engine
 

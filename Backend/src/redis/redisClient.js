@@ -35,7 +35,15 @@ function createProxyClient(client, name) {
 
 async function createAndConnect(url, name) {
   if (!url) return null;
-  const client = redis.createClient({ url });
+  const client = redis.createClient({ 
+      url,
+      pingInterval: 10000,
+      socket: {
+          connectTimeout: 10000,
+          keepAlive: 10000
+      },
+      disableOfflineQueue: true
+  });
   
   connectionManager.setStatus(name, "connecting");
 

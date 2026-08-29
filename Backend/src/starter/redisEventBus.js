@@ -34,17 +34,8 @@ class RedisEventBus extends EventEmitter {
   }
 
   async publishData({ clientId, payload }) {
-    const { pub } = getClients();
-    if (!pub) {
-      console.log("[RedisEventBus] No publisher client available.");
-      return;
-    }
-
-    try {
-      await pub.publish(CHANNEL_NAME, JSON.stringify({ clientId, payload }));
-    } catch (err) {
-      console.log("[RedisEventBus] Publish error:", err.message);
-    }
+    // Single-instance optimization: Bypass Redis Pub/Sub and emit locally
+    this.emit("sendData", { clientId, payload });
   }
 }
 

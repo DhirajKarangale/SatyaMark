@@ -50,6 +50,7 @@ AI/venv/
 *.swo
 *.bak
 *.backup
+*.joblib
 
 # Ignore compiled LLM models or large downloaded files if any
 AI/dataset/ 

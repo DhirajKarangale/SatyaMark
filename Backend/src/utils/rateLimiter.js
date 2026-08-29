@@ -4,6 +4,26 @@ const { getClients } = require("../redis/redisClient");
 const LIMIT = 5;
 const WINDOW_SEC = 15; // 15 seconds
 
+const LUA_RATE_LIMIT = `
+  local key = KEYS[1]
+  local now = tonumber(ARGV[1])
+  local windowStart = tonumber(ARGV[2])
+  local limit = tonumber(ARGV[3])
+  local windowSec = tonumber(ARGV[4])
+  local randomVal = ARGV[5]
+
+  redis.call('ZREMRANGEBYSCORE', key, 0, windowStart)
+  local count = redis.call('ZCARD', key)
+
+  if count < limit then
+    redis.call('ZADD', key, now, randomVal)
+    redis.call('EXPIRE', key, windowSec)
+    return 1
+  else
+    return 0
+  end
+`;
+
 async function isAllowed(id) {
   const { rateLimiter } = getClients();
   if (!rateLimiter) return true; // Fail open if no redis
@@ -11,21 +31,14 @@ async function isAllowed(id) {
   const key = `rate_limit:${id}`;
   const now = Date.now();
   const windowStart = now - (WINDOW_SEC * 1000);
+  const randomVal = `${now}-${Math.random()}`;
   
   try {
-    // Add current timestamp
-    await rateLimiter.zAdd(key, { score: now, value: `${now}-${Math.random()}` });
-    
-    // Remove older timestamps
-    await rateLimiter.zRemRangeByScore(key, 0, windowStart);
-    
-    // Get count
-    const count = await rateLimiter.zCard(key);
-    
-    // Set expiry to window size so it cleans up itself
-    await rateLimiter.expire(key, WINDOW_SEC);
-    
-    return count <= LIMIT;
+    const result = await rateLimiter.eval(LUA_RATE_LIMIT, {
+      keys: [key],
+      arguments: [now.toString(), windowStart.toString(), LIMIT.toString(), WINDOW_SEC.toString(), randomVal]
+    });
+    return result === 1;
   } catch (err) {
     console.log("[RateLimiter Error]", err.message);
     return true; // fail open
@@ -42,14 +55,9 @@ async function emitRateLimitEvent(clientId, msg) {
   });
 }
 
-async function checkRateLimiter(clientId, dataSessionId, socketSessionId) {
-  if (!socketSessionId || !dataSessionId) {
+async function checkRateLimiter(clientId, socketSessionId) {
+  if (!socketSessionId) {
     await emitRateLimitEvent(clientId, "Session not established");
-    return false;
-  }
-  
-  if (dataSessionId !== socketSessionId) {
-    await emitRateLimitEvent(clientId, "Invalid session");
     return false;
   }
 

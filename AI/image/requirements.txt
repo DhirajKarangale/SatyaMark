@@ -3,8 +3,9 @@ dotenv
 requests
 numpy
 exifread
-piexif
 PyWavelets
 Pillow
 opencv-python-headless
 langchain_huggingface
+scikit-learn
+joblib

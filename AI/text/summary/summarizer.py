@@ -5,6 +5,7 @@ from summary.prompts import (
     get_cleaning_prompt,
     get_semantic_normalization_prompt,
     get_contextual_summarization_prompt,
+    get_combined_processing_prompt,
 )
 import logging
 
@@ -75,7 +76,8 @@ def summarize(raw_input: str) -> str:
     if not cleaned_regex:
         return ""
 
-    # We removed the 50-word check so that short texts still go through the LLM for deduplication.
+    if len(cleaned_regex.split()) < 10:
+        return cleaned_regex
 
     cleaned_llm = llm_clean_text(cleaned_regex)
     
@@ -87,9 +89,6 @@ def summarize(raw_input: str) -> str:
     if not normalized_text or normalized_text == cleaned_llm:
         normalized_text = cleaned_llm
 
-    if len(normalized_text.split()) < 10:
-        return normalized_text
-        
     final_summary = llm_summarize_text(normalized_text)
 
     return final_summary

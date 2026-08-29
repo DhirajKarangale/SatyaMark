@@ -35,6 +35,34 @@ EXCLUDED_DOMAINS = [
     "tumblr.com",
 ]
 
+CREDIBILITY_TIERS = {
+    "tier1": [
+        "reuters.com", "apnews.com", "bbc.com", "bbc.co.uk", "nature.com",
+        ".gov", "who.int", "un.org", "nih.gov", "cdc.gov", "nasa.gov",
+        "sciencedirect.com", "pubmed.ncbi.nlm.nih.gov",
+    ],
+    "tier2": [
+        "nytimes.com", "washingtonpost.com", "theguardian.com", "wsj.com",
+        "economist.com", "scientificamerican.com", "theatlantic.com",
+        "npr.org", "pbs.org", "arstechnica.com", "wired.com",
+    ],
+    "tier3": [
+        "wikipedia.org", "snopes.com", "politifact.com", "factcheck.org",
+        "fullfact.org", "britannica.com",
+    ],
+}
+
+CREDIBILITY_WEIGHTS = {"tier1": 1.5, "tier2": 1.3, "tier3": 1.2}
+
+
+def get_credibility_weight(url: str) -> float:
+    """Returns a credibility weight for a URL based on its domain tier."""
+    url_lower = url.lower()
+    for tier, domains in CREDIBILITY_TIERS.items():
+        if any(d in url_lower for d in domains):
+            return CREDIBILITY_WEIGHTS[tier]
+    return 1.0
+
 
 def is_excluded(url: str) -> bool:
     """Checks if a URL belongs to a social media or user-generated domain."""
@@ -99,7 +127,7 @@ def serper_search(query: str, tbs: str | None = None) -> dict:
 
 
 def extract_urls_with_meta(result: dict) -> list:
-    """Extracts ONLY valid, non-social-media URLs along with their snippets."""
+    """Extracts ONLY valid, non-social-media URLs along with their snippets and credibility weights."""
     out = []
     for item in result.get("organic", []):
         url = item.get("link")
@@ -111,6 +139,7 @@ def extract_urls_with_meta(result: dict) -> list:
             {
                 "url": url,
                 "snippet": item.get("snippet", ""),
+                "credibility_weight": get_credibility_weight(url),
             }
         )
 

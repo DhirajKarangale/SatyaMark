@@ -51,7 +51,14 @@ def web_verify(claim: str):
     for item in search_results:
         url = item["url"]
         if url in scraped_dict and len(scraped_dict[url]) > 50:
-            ordered_scraped_data.append({"url": url, "data": scraped_dict[url]})
+            ordered_scraped_data.append({
+                "url": url, 
+                "data": scraped_dict[url],
+                "credibility_weight": item.get("credibility_weight", 1.0)
+            })
+
+    # Sort by credibility weight descending to prioritize authoritative sources
+    ordered_scraped_data.sort(key=lambda x: x["credibility_weight"], reverse=True)
 
     final_evidence = ordered_scraped_data[:MAX_URLS_TO_VERIFY]
 

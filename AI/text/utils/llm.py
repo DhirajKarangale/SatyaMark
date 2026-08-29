@@ -4,7 +4,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-PROVIDERS_PRIORITY = ["claude", "huggingface"]
+PROVIDERS_PRIORITY = ["huggingface", "claude"]
 
 def invoke_llm(models: dict, prompt: str, parse_as_json: bool = False):
     """

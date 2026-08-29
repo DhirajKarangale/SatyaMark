@@ -77,10 +77,10 @@ def process_job_data(client, job_data, source_name):
         logger.error(f"[{CONSUMER_NAME} | {source_name}] AI/Callback ERROR for {jobId}: {e}", exc_info=True)
         return False
 
-def fetch_and_process(client, source_name):
-    """Fetches a job from the provided client and processes it."""
+def fetch_and_process(client, source_name, block_ms=5000):
+    """Fetches a job from the provided client and processes it using event-driven blocking."""
     try:
-        entries = client.xreadgroup(GROUP, CONSUMER_NAME, {STREAM_KEY: ">"}, count=1)
+        entries = client.xreadgroup(GROUP, CONSUMER_NAME, {STREAM_KEY: ">"}, count=1, block=block_ms)
 
         if not entries:
             return "EMPTY"
@@ -131,11 +131,9 @@ def render_worker_loop(redis_url, check_rate_ms):
 
     while True:
         try:
-            status = fetch_and_process(proxy_client, "RENDER")
+            status = fetch_and_process(proxy_client, "RENDER", block_ms=5000)
             if status == "PROCESSED":
                 continue
-
-            time.sleep(sleep_seconds)
 
         except (ConnectionError, TimeoutError, ConnectionResetError) as e:
             logger.warning(f"[RENDER] Network Drop Detected: {e}. Retrying in 5s...")
@@ -169,7 +167,7 @@ def upstash_worker_loop(redis_url, check_rate_ms):
                 socket_timeout=10,
             )
             proxy_client = RedisProxy(client, "UPSTASH")
-            status = fetch_and_process(proxy_client, "UPSTASH")
+            status = fetch_and_process(proxy_client, "UPSTASH", block_ms=2000)
 
         except (ConnectionError, TimeoutError, ConnectionResetError) as e:
             logger.warning(f"[UPSTASH] Ephemeral Network Error: {e}.")
@@ -185,8 +183,6 @@ def upstash_worker_loop(redis_url, check_rate_ms):
 
         if status == "PROCESSED":
             continue
-
-        time.sleep(sleep_seconds)
 
 def process_loop():
     threads = []

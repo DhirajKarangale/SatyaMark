@@ -49,3 +49,23 @@ Normalized Text:
 {text}
 
 Output:"""
+
+def get_combined_processing_prompt(text: str) -> str:
+    return f"""You are a FAITHFUL PARROT text processing engine. Your task is to clean, normalize, and summarize the provided text in ONE step.
+
+STRICT RULES:
+1. Formatting & Noise: Remove formatting issues, conversational noise, fillers, and non-informative content.
+2. Semantic Normalization: Convert all local units to global SI units (km, kg, Celsius, liters).
+3. Context Preservation: Preserve uncertainty and discussion context. Keep all entity names exactly as written.
+4. Summary Length: Condense the text into exactly 1 or 2 objective sentences EXACTLY as the author intended it, preserving all claims.
+5. CRITICAL - NO FACT-CHECKING: You MUST NOT correct, alter, or fact-check any claims. If the original text contains a lie, misconception, or false fact, YOUR OUTPUT MUST CONTAIN THE EXACT SAME LIE/MISCONCEPTION. Do NOT append "The author falsely claims".
+6. OUTPUT STRICT JSON ONLY with a single key "summary". Do not include markdown formatting or explanations.
+
+Raw Text:
+{text}
+
+Output format:
+{{
+  "summary": "<the 1-2 sentence cleaned, normalized summary>"
+}}
+"""

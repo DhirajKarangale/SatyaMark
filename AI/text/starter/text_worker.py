@@ -38,7 +38,7 @@ STREAM_KEY = "stream:ai:text:jobs"
 def ensure_consumer_group(client, source_name):
     """Creates the consumer group once on startup to save quota."""
     try:
-        client.xgroup_create(STREAM_KEY, GROUP, id="$", mkstream=True)
+        client.xgroup_create(STREAM_KEY, GROUP, id="0", mkstream=True)
     except redis.exceptions.ResponseError as e:
         if "BUSYGROUP" not in str(e):
             logger.warning(f"[{source_name}] Group creation issue: {e}")
@@ -57,6 +57,10 @@ def process_job_data(client, job_data, source_name):
     logger.info(f"[{CONSUMER_NAME} | {source_name}] Processing Job: {jobId}")
 
     try:
+        if not callback_url:
+            logger.error(f"[{CONSUMER_NAME} | {source_name}] Job {jobId} missing 'callback_url'. Dropping job.")
+            return True
+            
         output = verify_text(text)
         summary = output.get("summary")
         result = output.get("result")
@@ -82,10 +86,22 @@ def process_job_data(client, job_data, source_name):
         logger.error(f"[{CONSUMER_NAME} | {source_name}] AI/Callback ERROR for {jobId}: {e}", exc_info=True)
         return False
 
-def fetch_and_process(client, source_name):
-    """Fetches a job from the provided client and processes it."""
+import concurrent.futures
+
+executor = concurrent.futures.ThreadPoolExecutor(max_workers=10)
+
+def process_job_async(client, msg_id, job_data, source_name):
+    success = process_job_data(client, job_data, source_name)
+    if success:
+        client.xack(STREAM_KEY, GROUP, msg_id)
+        client.xdel(STREAM_KEY, msg_id)
+    else:
+        logger.warning(f"[{source_name}] Job {job_data.get('jobId')} failed. Leaving in PEL.")
+
+def fetch_and_process(client, source_name, block_ms=5000):
+    """Fetches a job from the provided client and dispatches it to a thread."""
     try:
-        entries = client.xreadgroup(GROUP, CONSUMER_NAME, {STREAM_KEY: ">"}, count=1)
+        entries = client.xreadgroup(GROUP, CONSUMER_NAME, {STREAM_KEY: ">"}, count=1, block=block_ms)
 
         if not entries:
             return "EMPTY"
@@ -94,22 +110,15 @@ def fetch_and_process(client, source_name):
         msg_id, fields = messages[0]
         job_data = json.loads(fields["data"])
 
-        success = process_job_data(client, job_data, source_name)
-
-        if success:
-            client.xack(STREAM_KEY, GROUP, msg_id)
-            client.xdel(STREAM_KEY, msg_id)
-            return "PROCESSED"
-        else:
-            logger.warning(f"[{source_name}] Job {job_data.get('jobId')} failed. Leaving in PEL.")
-            return "FAILED"
+        # Dispatch the job to a background thread so the main loop can immediately fetch the next job
+        executor.submit(process_job_async, client, msg_id, job_data, source_name)
+        return "DISPATCHED"
 
     except (ConnectionError, TimeoutError, ConnectionResetError) as e:
         raise e
     except Exception as e:
         logger.error(f"[{source_name}] Stream Read Error: {e}", exc_info=True)
         return "ERROR"
-
 
 def worker_loop(redis_url, check_rate_ms, source_name):
     sleep_seconds = check_rate_ms / 1000.0
@@ -136,11 +145,9 @@ def worker_loop(redis_url, check_rate_ms, source_name):
 
     while True:
         try:
-            status = fetch_and_process(proxy_client, source_name)
-            if status == "PROCESSED":
+            status = fetch_and_process(proxy_client, source_name, block_ms=5000)
+            if status in ["DISPATCHED", "EMPTY"]:
                 continue
-
-            time.sleep(sleep_seconds)
 
         except (ConnectionError, TimeoutError, ConnectionResetError) as e:
             logger.warning(f"[{source_name}] Network Drop Detected: {e}. Retrying in 5s...")

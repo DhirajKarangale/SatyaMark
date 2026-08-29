@@ -146,11 +146,11 @@ STATEMENT
 
     except Exception as e:
         return {
-            "mark": "UNVERIFYABLE",
-            "confidence": 100,
+            "mark": "ERROR",
+            "confidence": 0,
             "reason": (
-                f"An internal error occurred while processing the statement ({str(e)}). "
-                f"Because the system could not reliably determine whether the text asserts an "
-                f"objectively checkable factual claim, it is treated as unverifyable."
+                f"Verifyability check failed due to an internal error ({str(e)}). "
+                f"The pipeline will proceed with verification to avoid silently "
+                f"dropping a potentially valid claim."
             ),
         }

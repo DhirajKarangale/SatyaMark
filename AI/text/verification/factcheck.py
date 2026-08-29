@@ -40,7 +40,10 @@ EDGE CASE RULES (MANDATORY):
    If the statement contains subjective opinions or value judgments (e.g., "The Matrix is the best movie") that slipped past the verifyability check, you MUST mark it "Insufficient".
 
 6. CONFIDENCE-BASED FILTER RULE (MOST IMPORTANT):
-   You should output 'Correct' or 'Incorrect' for well-established, widely documented facts that you are highly confident about (above 85%% confidence). This includes historically documented events, well-known scientific facts, widely reported product launches, famous people's established biographical details, and other facts that are part of common documented knowledge. Only use 'Insufficient' when you genuinely cannot determine the answer from your training data — such as very recent events past your knowledge cutoff, niche or obscure statistics, hyper-specific numerical claims, or claims where you have real doubt. Do NOT default to 'Insufficient' out of excessive caution for facts you clearly know.
+   You should output 'Correct' or 'Incorrect' for well-established, widely documented facts that you are highly confident about (above 85% confidence). This includes historically documented events, well-known scientific facts, widely reported product launches, famous people's established biographical details, and other facts that are part of common documented knowledge. Only use 'Insufficient' when you genuinely cannot determine the answer from your training data — such as very recent events past your knowledge cutoff, niche or obscure statistics, hyper-specific numerical claims, or claims where you have real doubt. Do NOT default to 'Insufficient' out of excessive caution for facts you clearly know.
+
+7. SCIENTIFIC & ENVIRONMENTAL RULE:
+   For claims regarding the causes of natural disasters (e.g., floods, earthquakes, climate events), environmental phenomena, or geological events, you must be extremely skeptical of your internal knowledge. The scientific understanding or recent catalysts (e.g., glacier falls, infrastructure failures) may differ from common assumptions (e.g., rain). You MUST mark these claims as "Insufficient" to guarantee they are rigorously fact-checked against live web data.
 
 Return a JSON object with:
 mark, confidence (0-100), and a VERY DETAILED reason.

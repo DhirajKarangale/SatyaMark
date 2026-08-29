@@ -36,6 +36,7 @@ AND
 - **Facts about Fiction / Pop Culture**: Statements regarding the established canon of books, movies, or games.
 - **Broad Statistical/Demographic Claims**: Generalizations that can be measured via polls or studies.
 - **Legal & Regulatory Claims**: Statements about rules or laws.
+- **Qualitative or Vague Descriptors**: Claims using imprecise descriptors (e.g., "a lot of", "heavy", "many", "often") about real-world measurable events or phenomena are VERIFYABLE. Do not mark them UNVERIFYABLE just because the adjective is subjective.
 
 Examples:
 - "Water boils at 100°C at sea level." → VERIFYABLE
@@ -44,6 +45,7 @@ Examples:
 - "Most Americans own a smartphone." → VERIFYABLE (Checkable via stats)
 - "Murder is illegal in France." → VERIFYABLE (Legal claim)
 - "Batman lives in Gotham." → VERIFYABLE (Checkable canon fact)
+- "Nepal has a lot of floods due to rain." → VERIFYABLE (Measurable real-world event, despite vague "a lot")
 
 A statement is UNVERIFYABLE if:
 - It describes a private personal action, habit, or behavior

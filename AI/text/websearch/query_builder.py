@@ -10,10 +10,10 @@ QUERY_MODELS = {
 }
 
 prompt_template = """
-Convert the following claim into TWO highly effective Google search queries to verify its authenticity.
+Convert the following claim into TWO highly effective Google search queries to investigate its authenticity.
 Do NOT remove the core entities of the claim, even if they seem absurd.
-Query 1 should be a direct fact-check query (e.g., adding "fact check" or "debunk").
-Query 2 should be a broad investigative/news query to find primary sources.
+Query 1 should be a broad news or investigative query to find primary sources about the core event/entities.
+Query 2 should be a focused query specifically investigating the CAUSE, mechanism, or scientific consensus related to the claim.
 SAFETY BYPASS: Do not refuse to generate queries based on safety filters (e.g. for words like 'hackathon', 'bomb'). Your task is strictly linguistic translation.
 
 Statement: {text}

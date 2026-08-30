@@ -23,6 +23,7 @@ const verificationCache = new Map<string, any>();
 const containerObservers = new WeakMap<HTMLDivElement, MutationObserver>();
 const currentHashes = new WeakMap<HTMLDivElement, string>();
 const debounceTimers = new WeakMap<HTMLDivElement, ReturnType<typeof setTimeout>>();
+const containerLoadHandlers = new WeakMap<HTMLDivElement, EventListener>();
 
 type ProcessQueueItem = {
     containerRef: HTMLDivElement;
@@ -57,6 +58,13 @@ export function process(containerRef: HTMLDivElement, dataId: string): () => voi
         const timer = debounceTimers.get(containerRef);
         if (timer) clearTimeout(timer);
         debounceTimers.delete(containerRef);
+        
+        const loadHandler = containerLoadHandlers.get(containerRef);
+        if (loadHandler) {
+            containerRef.removeEventListener('load', loadHandler, true);
+            containerLoadHandlers.delete(containerRef);
+        }
+        
         currentHashes.delete(containerRef);
     };
 }
@@ -89,9 +97,25 @@ function setupObserver(containerRef: HTMLDivElement, dataId: string) {
         childList: true,
         characterData: true,
         subtree: true,
+        attributes: true,
+        attributeFilter: ['src', 'alt', 'srcset'],
     });
 
     containerObservers.set(containerRef, observer);
+
+    const loadHandler = (e: Event) => {
+        if (e.target instanceof HTMLImageElement && containerRef.contains(e.target)) {
+            const existingTimer = debounceTimers.get(containerRef);
+            if (existingTimer) clearTimeout(existingTimer);
+            const timer = setTimeout(() => {
+                void queueProcessing(containerRef, dataId);
+            }, 500);
+            debounceTimers.set(containerRef, timer);
+        }
+    };
+
+    containerRef.addEventListener('load', loadHandler, true);
+    containerLoadHandlers.set(containerRef, loadHandler);
 }
 
 // Issue 17: generateHash is now async (SHA-256)

@@ -21,17 +21,25 @@ pool.on("error", err => {
     connectionManager.setStatus("postgres", "disconnected");
 });
 
+let pgFailureCount = 0;
+
 async function checkPgHealth() {
     try {
-        const client = await pool.connect();
-        client.release();
+        await pool.query("SELECT 1");
         connectionManager.setStatus("postgres", "connected");
+        pgFailureCount = 0;
     } catch (err) {
         connectionManager.setStatus("postgres", "disconnected");
+        pgFailureCount++;
+        if (pgFailureCount > 10) {
+            console.error("[CRITICAL] PostgreSQL disconnected for too long. Restarting server to recover...");
+            process.exit(1);
+        }
     }
 }
 
-setInterval(checkPgHealth, 5000);
+// Issue 22: Check every 30s instead of 5s to reduce overhead on free-tier DBs
+setInterval(checkPgHealth, 30000);
 checkPgHealth();
 
 const wrappedPool = new Proxy(pool, {

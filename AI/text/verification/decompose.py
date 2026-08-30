@@ -15,10 +15,11 @@ If the statement is already a single, atomic claim (e.g. "Apple was founded in 1
 If the statement contains multiple independent facts (e.g. "Apple was founded in 1976 by Steve Jobs in London"), break it down into an array of separate, self-contained claims.
 
 RULES:
-1. Each extracted claim must be a complete sentence that can be fact-checked on its own without needing the original context.
-2. Do NOT change the meaning or fix factual errors.
+1. Each extracted claim must be a complete sentence that can be fact-checked on its own without needing the original context. Be clear and to the point. Do not hallucinate.
+2. NO FACT-CHECKING: You MUST NOT correct, alter, or fact-check any claims made in the text. Do NOT change the meaning or fix factual errors.
 3. If the input is just one simple claim, do not needlessly split it. Return it as is.
 4. Return ONLY a valid JSON array of strings. Do not include markdown formatting or explanations.
+5. JOURNALISTIC CONTEXT: You are processing text for a legitimate news and fact-checking platform. You will encounter sensitive topics (e.g., natural disasters, missing people, politics). You are authorized and required to process these topics. Do not trigger safety refusals for news events.
 
 Statement:
 {text}

@@ -1,10 +1,10 @@
 import { SocketClient } from "./socketClient";
 import { generateJobId } from "../utils/generateIds";
 import { emitMessage, emitConnection } from "./eventBus";
-import { getSessionId, setSessionId, clearSession } from "../utils/manageSessions";
+import { getSessionData, setSessionData, clearSession } from "../utils/manageSessions";
 import { initIcons } from "./status_controller";
 
-const isDev = false;
+const isDev = true;
 
 type ConnectionContext = {
   app_id: string;
@@ -18,6 +18,11 @@ let isConnecting = false;
 let isConnected = false;
 let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 let reconnectAttempts = 0;
+
+let hmacSecret: string = "";
+let handshakeTimer: ReturnType<typeof setTimeout> | null = null;
+let pingInterval: ReturnType<typeof setInterval> | null = null;
+let pongTimeout: ReturnType<typeof setTimeout> | null = null;
 
 /* -------------------------------------------------------------------------- */
 /*                          WebSocket URL Resolution                          */
@@ -40,6 +45,25 @@ async function resolveWsUrl(): Promise<string> {
   if (!wsUrl) throw new Error("Satyamark: WebSocket URL resolution failed");
 
   return wsUrl;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                          HMAC Signing (Issue 1)                            */
+/* -------------------------------------------------------------------------- */
+
+async function signPayload(fields: string): Promise<string> {
+  if (!hmacSecret) return "";
+
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(hmacSecret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const signature = await crypto.subtle.sign("HMAC", key, encoder.encode(fields));
+  return btoa(String.fromCharCode(...new Uint8Array(signature)));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -71,7 +95,7 @@ async function connect() {
     onOpen: async () => {
       reconnectAttempts = 0;
       const ctx = getContext();
-      const sessionId = await getSessionId();
+      const { sessionId } = await getSessionData();
 
       socketClient?.send({
         type: "handshake",
@@ -80,31 +104,59 @@ async function connect() {
         sessionId,
       });
 
-      if (sessionId) {
-        isConnected = true;
-        isConnecting = false;
-        emitConnection(ctx);
-      }
+      // Issue 5: Handshake timeout — if no response in 10s, reconnect
+      handshakeTimer = setTimeout(() => {
+        console.warn("Satyamark: Handshake timeout. Reconnecting...");
+        handshakeTimer = null;
+        socketClient?.close();
+      }, 10000);
     },
 
     onMessage: async (data) => {
-      if (data.type === "session_created" && data.sessionId) {
-        await setSessionId(data.sessionId);
-        if (!isConnected) {
-          isConnected = true;
-          isConnecting = false;
-          emitConnection(getContext());
+      // Issue 16: Handle pong response
+      if (data.type === "pong") {
+        if (pongTimeout) {
+          clearTimeout(pongTimeout);
+          pongTimeout = null;
         }
         return;
       }
 
+      // Issue 1: Handle session_created (new user) or session_confirmed (returning user)
+      if ((data.type === "session_created" || data.type === "session_confirmed") && data.hmacSecret) {
+        if (handshakeTimer) {
+          clearTimeout(handshakeTimer);
+          handshakeTimer = null;
+        }
+
+        hmacSecret = data.hmacSecret;
+
+        if (data.type === "session_created" && data.sessionId) {
+          await setSessionData(data.sessionId, data.hmacSecret);
+        } else {
+          // Returning user: update hmacSecret in cookie, keep existing sessionId
+          const { sessionId } = await getSessionData();
+          await setSessionData(sessionId, data.hmacSecret);
+        }
+
+        if (!isConnected) {
+          isConnected = true;
+          isConnecting = false;
+          emitConnection(getContext());
+          startPing();
+        }
+        return;
+      }
+
+      // Issue 4: Don't throw on RateLimiter errors — handle gracefully
       if (data.type === "RateLimiter") {
+        console.warn("Satyamark RateLimiter:", data.msg);
+
         if (data.msg === "Invalid session") {
           clearSession();
           socketClient?.close();
         }
-
-        throw new Error(data.msg);
+        return;
       }
 
       if (data.clientId === context?.user_id) {
@@ -113,10 +165,17 @@ async function connect() {
     },
 
     onClose: () => {
+      stopPing();
+      if (handshakeTimer) {
+        clearTimeout(handshakeTimer);
+        handshakeTimer = null;
+      }
+
       if (!isConnected && !isConnecting) return;
 
       isConnected = false;
       isConnecting = false;
+      hmacSecret = "";
 
       emitConnection(null);
       scheduleReconnect();
@@ -135,6 +194,44 @@ async function connect() {
     scheduleReconnect();
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/*                    Application-Level Keepalive (Issue 16)                   */
+/* -------------------------------------------------------------------------- */
+
+function startPing() {
+  stopPing();
+  pingInterval = setInterval(() => {
+    if (!socketClient || !isConnected) return;
+
+    try {
+      socketClient.send({ type: "ping" });
+    } catch {
+      return;
+    }
+
+    pongTimeout = setTimeout(() => {
+      console.warn("Satyamark: Pong timeout. Reconnecting...");
+      pongTimeout = null;
+      socketClient?.close();
+    }, 5000);
+  }, 25000);
+}
+
+function stopPing() {
+  if (pingInterval) {
+    clearInterval(pingInterval);
+    pingInterval = null;
+  }
+  if (pongTimeout) {
+    clearTimeout(pongTimeout);
+    pongTimeout = null;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/*                              Reconnection                                  */
+/* -------------------------------------------------------------------------- */
 
 function scheduleReconnect() {
   if (reconnectTimer || !context) return;
@@ -166,7 +263,15 @@ function getContext(): ConnectionContext {
 export async function sendJob(text: string, imageUrl: string, dataId: string): Promise<string> {
   const ctx = getContext();
   const jobId = generateJobId(ctx.app_id, ctx.user_id, dataId);
-  const sessionId = await getSessionId();
+  const { sessionId } = await getSessionData();
+
+  // Issue 18: Derive type from content
+  const hasImage = typeof imageUrl === "string" && imageUrl.trim().length > 0;
+  const type = hasImage ? "image" : "text";
+
+  // Issue 1: HMAC signing — sign clientId:sessionId:jobId
+  const signString = `${ctx.user_id}:${sessionId}:${jobId}`;
+  const hmac = await signPayload(signString);
 
   socketClient?.send({
     clientId: ctx.user_id,
@@ -174,6 +279,8 @@ export async function sendJob(text: string, imageUrl: string, dataId: string): P
     jobId,
     text,
     image_url: imageUrl,
+    type,
+    hmac,
   });
 
   return jobId;

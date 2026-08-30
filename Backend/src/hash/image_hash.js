@@ -6,33 +6,36 @@ async function generateImageHash(imageUrl) {
     try {
         parsedUrl = new URL(imageUrl);
     } catch {
-        // console.log("Invalid URL");
-        return;
+        return null;
     }
 
     if (!["http:", "https:"].includes(parsedUrl.protocol)) {
-        // console.log("Only HTTP/HTTPS URLs are allowed");
-        return;
+        return null;
     }
 
-    const response = await fetch(imageUrl);
+    try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 15000);
 
-    if (!response.ok) {
-        // console.log(`Failed to download image: ${response.status} ${response.statusText}`);
-        return;
+        const response = await fetch(imageUrl, { signal: controller.signal });
+        clearTimeout(timeout);
+
+        if (!response.ok) {
+            return null;
+        }
+
+        const arrayBuffer = await response.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+
+        if (!buffer.length) {
+            return null;
+        }
+
+        const hash = crypto.createHash("sha256").update(buffer).digest("hex");
+        return hash;
+    } catch {
+        return null;
     }
-
-    const arrayBuffer = await response.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-
-    if (!buffer.length) {
-        // console.log("Downloaded image is empty");
-        return;
-    }
-
-    const hash = crypto.createHash("sha256").update(buffer).digest("hex");
-
-    return hash;
 }
 
 module.exports = { generateImageHash };

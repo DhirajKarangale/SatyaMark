@@ -227,6 +227,12 @@ function Documentation() {
                 Initialize SatyaMark once in your root App component.
               </p>
 
+              <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4 mb-4">
+                <p className="text-sm text-gray-300">
+                  <strong className="text-blue-400">Note:</strong> During the current phase, you may provide any arbitrary <code>app_id</code> and <code>user_id</code>. We recommend using a snake_case version of your project name for the <code>app_id</code>, and a stable, unique identifier for the <code>user_id</code>.
+                </p>
+              </div>
+
               <CodeBlock code={`import { useEffect } from "react";
 import { init } from "satyamark-react";
 
@@ -545,6 +551,13 @@ function PostCard({ post }) {
           <div className="flex items-center gap-3">
             <CheckCircle className="text-cyan-400" size={28} />
             <h2 className="text-3xl font-bold text-white">Troubleshooting</h2>
+          </div>
+
+          <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-5">
+            <h3 className="text-blue-400 font-semibold mb-2">System Status Check</h3>
+            <p className="text-sm text-gray-300 leading-relaxed">
+              If you are experiencing unexpected behavior or connectivity issues, you can verify whether our core services are operational by testing the chat demo on the <a href="https://satyamark.js.org" className="text-cyan-400 hover:underline" target="_blank" rel="noopener noreferrer">SatyaMark website</a>. If the demo is also unresponsive, we may be experiencing a temporary service degradation. We apologize for any disruption and appreciate your patience as we restore full functionality. For further support, please contact <a href="mailto:dakarangale02@gmail.com" className="text-cyan-400 hover:underline">dakarangale02@gmail.com</a>.
+            </p>
           </div>
 
           <div className="space-y-6 text-gray-300 text-sm">

@@ -10,10 +10,8 @@ function loadIcon(key: IconKey): Promise<void> {
     const img = new Image();
     img.onload = () => resolve();
     img.onerror = () => {
-      iconLoadMap.delete(key); // allow retry
-      // We resolve instead of reject so Promise.all doesn't fail fast
-      // if one icon fails to load.
-      resolve(); 
+      iconLoadMap.delete(key);
+      resolve();
     };
     img.src = ICON_URLS[key];
   });

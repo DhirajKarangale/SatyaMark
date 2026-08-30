@@ -1,5 +1,6 @@
 require("dotenv").config();
 const { getClients } = require("./redisClient");
+const connectionManager = require("../utils/connectionManager");
 
 const TRANSFER_RATE_MS = parseInt(process.env.REDIS_RENDER_UPSTASH_TRANSFER_RATE) || 60000;
 
@@ -11,19 +12,23 @@ let isTransferring = false;
 async function transferQueue(renderClient, upstashClient, streamKey, queueName) {
     if (!renderClient || !upstashClient) return;
 
+    // Issue 19: Only transfer if Upstash is confirmed connected to prevent data loss
+    const upstashConnName = queueName === "TEXT" ? "Upstash Text" : "Upstash Image";
+    if (!connectionManager.isConnected(upstashConnName)) return;
+
     try {
         const response = await renderClient.xReadGroup(
             GROUP_NAME,
             CONSUMER_NAME,
-            [{ key: streamKey, id: "0" }],
-            { COUNT: 500 }
+            [{ key: streamKey, id: ">" }],
+            { COUNT: 50 }  // Issue 19: Reduced from 500 to limit blast radius
         );
 
         if (!response || response.length === 0) return;
         const messages = response[0].messages;
         if (!messages || messages.length === 0) return;
 
-        console.log(`[TRANSFER] Scooped ${messages.length} unassigned jobs from ${queueName}. Moving to Upstash...`);
+        console.log(`[TRANSFER] Found ${messages.length} unassigned jobs in ${queueName}. Moving to Upstash...`);
 
         let successCount = 0;
 
@@ -38,11 +43,15 @@ async function transferQueue(renderClient, upstashClient, streamKey, queueName) 
 
                 successCount++;
             } catch (err) {
-                console.log(`[TRANSFER ERROR] Failed to move ${queueName} job ID ${renderMessageId}:`, err.message);
+                // Issue 19: If Upstash write fails, stop to prevent claiming without transferring
+                console.log(`[TRANSFER ERROR] Failed to move ${queueName} job ${renderMessageId}. Stopping transfer.`, err.message);
+                break;
             }
         }
 
-        console.log(`[TRANSFER] Successfully moved ${successCount}/${messages.length} ${queueName} jobs to Upstash.`);
+        if (successCount > 0) {
+            console.log(`[TRANSFER] Successfully moved ${successCount}/${messages.length} ${queueName} jobs to Upstash.`);
+        }
     } catch (error) {
         if (!error.message.includes("NOGROUP")) {
             console.log(`[TRANSFER SYSTEM ERROR - ${queueName}]`, error.message);

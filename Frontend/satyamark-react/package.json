@@ -1,6 +1,6 @@
 {
   "name": "satyamark-react",
-  "version": "0.0.20",
+  "version": "0.0.22",
   "description": "React SDK for SatyaMark. Embed real-time AI content verification, deepfake detection, fact-checking, and trust signals directly into your React applications.",
   "license": "MIT",
   "author": "Dhiraj Karangale",

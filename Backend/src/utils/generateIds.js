@@ -6,4 +6,8 @@ function generateSessionId(app_id) {
   return `${app_id}_${time}_${random}`;
 }
 
-module.exports = { generateSessionId }
+function generateHmacSecret() {
+  return crypto.randomBytes(32).toString("hex");
+}
+
+module.exports = { generateSessionId, generateHmacSecret };

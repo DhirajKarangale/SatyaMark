@@ -1,12 +1,25 @@
 const mergeText = (texts: string[]) => texts.join(" |#| ");
 
 const extractFromDiv = (root: HTMLDivElement) => {
+  const statusContainer = root.querySelector("[data-satyamark-status-container]");
+
   const images = Array.from(root.querySelectorAll("img"))
-    .filter(img => img.complete && img.naturalHeight > 0)
+    .filter(img => img.complete && img.naturalHeight > 0 && (!statusContainer || !statusContainer.contains(img)))
     .map(img => img.src);
 
   const text: string[] = [];
-  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  const walker = document.createTreeWalker(
+      root, 
+      NodeFilter.SHOW_TEXT,
+      {
+          acceptNode: (node) => {
+              if (statusContainer && statusContainer.contains(node)) {
+                  return NodeFilter.FILTER_REJECT;
+              }
+              return NodeFilter.FILTER_ACCEPT;
+          }
+      }
+  );
 
   let node: Node | null;
   while ((node = walker.nextNode())) {

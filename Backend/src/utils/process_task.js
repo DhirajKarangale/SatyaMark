@@ -40,7 +40,7 @@ async function process_text(clientId, jobId, text, socketSessionId) {
     const { text_hash, summary_hash } = generateTextHashes(text);
     // CRITICAL ACCURACY FIX: Only check text_hash (exact raw match). 
     // Do NOT check summary_hash here because regex punctuation stripping can destroy meaning (e.g. "?" vs ".")
-    const textData = await modelText.GetText(text_hash, null);
+    const textData = await modelText.GetText(text_hash, summary_hash);
 
     if (textData && typeof textData === "object") {
         console.log(`[TEXT] Result found in cache → job=${jobId}`);

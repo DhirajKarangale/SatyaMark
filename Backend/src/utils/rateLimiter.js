@@ -1,8 +1,12 @@
 const redisEventBus = require("../starter/redisEventBus");
 const { getClients } = require("../redis/redisClient");
+const connectionManager = require("./connectionManager");
 
 const LIMIT = 5;
 const WINDOW_SEC = 15; // 15 seconds
+
+// Issue 11: In-memory fallback rate limiter
+const memoryStore = new Map();
 
 const LUA_RATE_LIMIT = `
   local key = KEYS[1]
@@ -24,9 +28,44 @@ const LUA_RATE_LIMIT = `
   end
 `;
 
+function isAllowedInMemory(id) {
+  const key = `rate_limit:${id}`;
+  const now = Date.now();
+  const windowStart = now - (WINDOW_SEC * 1000);
+
+  let timestamps = memoryStore.get(key) || [];
+  timestamps = timestamps.filter(t => t > windowStart);
+
+  if (timestamps.length < LIMIT) {
+    timestamps.push(now);
+    memoryStore.set(key, timestamps);
+    return true;
+  }
+
+  return false;
+}
+
+// Periodic cleanup of expired in-memory entries
+setInterval(() => {
+  const now = Date.now();
+  const windowStart = now - (WINDOW_SEC * 1000);
+  for (const [key, timestamps] of memoryStore.entries()) {
+    const valid = timestamps.filter(t => t > windowStart);
+    if (valid.length === 0) {
+      memoryStore.delete(key);
+    } else {
+      memoryStore.set(key, valid);
+    }
+  }
+}, 60000);
+
 async function isAllowed(id) {
   const { rateLimiter } = getClients();
-  if (!rateLimiter) return true; // Fail open if no redis
+
+  // Issue 11: Use in-memory fallback when Redis is unavailable
+  if (!rateLimiter || !connectionManager.isConnected("RateLimiter")) {
+    return isAllowedInMemory(id);
+  }
 
   const key = `rate_limit:${id}`;
   const now = Date.now();
@@ -41,7 +80,7 @@ async function isAllowed(id) {
     return result === 1;
   } catch (err) {
     console.log("[RateLimiter Error]", err.message);
-    return true; // fail open
+    return isAllowedInMemory(id); // Fallback on error too
   }
 }
 
@@ -71,7 +110,7 @@ async function checkRateLimiter(clientId, socketSessionId) {
 }
 
 function startRateLimiterCleanup() {
-  console.log("[RateLimiter] Cleanup is now handled natively by Redis expiration.");
+  console.log("[RateLimiter] Cleanup handled by Redis expiration and in-memory periodic cleanup.");
 }
 
 module.exports = { checkRateLimiter, startRateLimiterCleanup };

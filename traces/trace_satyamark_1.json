@@ -1,0 +1,887 @@
+{
+  "trace_id": "trace_satyamark_1",
+  "session_id": "APP123_mtfh1tjf_1jsazc7",
+  "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+  "started_at": "2026-08-30T13:21:19.992Z",
+  "completed_at": "2026-08-30T13:22:23.914Z",
+  "status": "completed",
+  "events": [
+    {
+      "timestamp": "2026-08-30T13:21:19.992Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "backend",
+      "service": "verification",
+      "stage": "request_handling",
+      "event": "backend_ws_received",
+      "status": "success",
+      "duration_ms": null,
+      "details": {},
+      "sequence_number": 1
+    },
+    {
+      "timestamp": "2026-08-30T13:21:19.992Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "backend",
+      "service": "verification",
+      "stage": "request_handling",
+      "event": "request_validation_started",
+      "status": "success",
+      "duration_ms": null,
+      "details": {
+        "type": "text",
+        "text_length": 221
+      },
+      "sequence_number": 2
+    },
+    {
+      "timestamp": "2026-08-30T13:21:19.992Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "backend",
+      "service": "verification",
+      "stage": "request_handling",
+      "event": "request_validation_completed",
+      "status": "success",
+      "duration_ms": null,
+      "details": {},
+      "sequence_number": 3
+    },
+    {
+      "timestamp": "2026-08-30T13:21:19.992Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "backend",
+      "service": "verification",
+      "stage": "hashing",
+      "event": "hash_generation_started",
+      "status": "success",
+      "duration_ms": null,
+      "details": {},
+      "sequence_number": 4
+    },
+    {
+      "timestamp": "2026-08-30T13:21:19.992Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "backend",
+      "service": "verification",
+      "stage": "hashing",
+      "event": "hash_generation_completed",
+      "status": "success",
+      "duration_ms": null,
+      "details": {},
+      "sequence_number": 5
+    },
+    {
+      "timestamp": "2026-08-30T13:21:19.992Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "backend",
+      "service": "verification",
+      "stage": "cache",
+      "event": "cache_lookup_started",
+      "status": "success",
+      "duration_ms": null,
+      "details": {},
+      "sequence_number": 6
+    },
+    {
+      "timestamp": "2026-08-30T13:21:19.993Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "frontend",
+      "service": "verification",
+      "stage": "initialization",
+      "event": "sdk_initialized",
+      "status": "success",
+      "duration_ms": null,
+      "details": {
+        "context": {
+          "app_id": "APP123",
+          "user_id": "msuh5u7zelrgtb"
+        }
+      },
+      "sequence_number": 7
+    },
+    {
+      "timestamp": "2026-08-30T13:21:19.993Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "frontend",
+      "service": "verification",
+      "stage": "connection",
+      "event": "websocket_connecting",
+      "status": "success",
+      "duration_ms": null,
+      "details": {},
+      "sequence_number": 8
+    },
+    {
+      "timestamp": "2026-08-30T13:21:19.993Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "frontend",
+      "service": "verification",
+      "stage": "connection",
+      "event": "websocket_connected",
+      "status": "success",
+      "duration_ms": null,
+      "details": {
+        "clientId": "msuh5u7zelrgtb",
+        "hasSession": true
+      },
+      "sequence_number": 9
+    },
+    {
+      "timestamp": "2026-08-30T13:21:19.993Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "frontend",
+      "service": "verification",
+      "stage": "connection",
+      "event": "client_session_assigned",
+      "status": "success",
+      "duration_ms": null,
+      "details": {
+        "sessionId": "existing"
+      },
+      "sequence_number": 10
+    },
+    {
+      "timestamp": "2026-08-30T13:21:19.993Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "frontend",
+      "service": "verification",
+      "stage": "verification_submission",
+      "event": "request_payload_prepared",
+      "status": "success",
+      "duration_ms": null,
+      "details": {
+        "dataId": "11",
+        "has_image": false,
+        "text_length": 221
+      },
+      "sequence_number": 11
+    },
+    {
+      "timestamp": "2026-08-30T13:21:19.993Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "frontend",
+      "service": "verification",
+      "stage": "verification_submission",
+      "event": "request_sent",
+      "status": "success",
+      "duration_ms": null,
+      "details": {},
+      "sequence_number": 12
+    },
+    {
+      "timestamp": "2026-08-30T13:21:20.158Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "backend",
+      "service": "verification",
+      "stage": "cache",
+      "event": "cache_lookup_completed",
+      "status": "success",
+      "duration_ms": null,
+      "details": {},
+      "sequence_number": 13
+    },
+    {
+      "timestamp": "2026-08-30T13:21:20.428Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "backend",
+      "service": "verification",
+      "stage": "cache",
+      "event": "cache_miss",
+      "status": "success",
+      "duration_ms": null,
+      "details": {},
+      "sequence_number": 14
+    },
+    {
+      "timestamp": "2026-08-30T13:21:20.428Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "backend",
+      "service": "verification",
+      "stage": "queue",
+      "event": "queue_selection_started",
+      "status": "success",
+      "duration_ms": null,
+      "details": {
+        "type": "text"
+      },
+      "sequence_number": 15
+    },
+    {
+      "timestamp": "2026-08-30T13:21:20.817Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "redis",
+      "service": "verification",
+      "stage": "queue",
+      "event": "redis_instance_selected",
+      "status": "success",
+      "duration_ms": null,
+      "details": {
+        "instance": "RENDER",
+        "usedMB": 1.1525344848632812
+      },
+      "sequence_number": 16
+    },
+    {
+      "timestamp": "2026-08-30T13:21:20.817Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "redis",
+      "service": "verification",
+      "stage": "queue",
+      "event": "xadd_started",
+      "status": "success",
+      "duration_ms": null,
+      "details": {
+        "streamKey": "stream:ai:text:jobs"
+      },
+      "sequence_number": 17
+    },
+    {
+      "timestamp": "2026-08-30T13:21:21.088Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "redis",
+      "service": "verification",
+      "stage": "queue",
+      "event": "xadd_completed",
+      "status": "success",
+      "duration_ms": null,
+      "details": {
+        "redis": "RENDER",
+        "streamKey": "stream:ai:text:jobs",
+        "memoryMB": 1.1525344848632812,
+        "redisJobId": "1788096080579-0"
+      },
+      "sequence_number": 18
+    },
+    {
+      "timestamp": "2026-08-30T13:21:21.089012Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "python_ai_worker",
+      "service": "verification",
+      "stage": "queue",
+      "event": "xreadgroup_message_received",
+      "status": "success",
+      "duration_ms": null,
+      "details": {
+        "msg_id": "1788096080579-0",
+        "stream": "stream:ai:text:jobs",
+        "group": "workers",
+        "timestamp": "2026-08-30T13:21:21.089012Z"
+      },
+      "sequence_number": 19
+    },
+    {
+      "timestamp": "2026-08-30T13:21:21.093048Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "python_ai_worker",
+      "service": "verification",
+      "stage": "orchestration",
+      "event": "job_payload_parsed",
+      "status": "success",
+      "duration_ms": null,
+      "details": {
+        "worker_id": "061d87",
+        "source": "RENDER",
+        "timestamp": "2026-08-30T13:21:21.093048Z"
+      },
+      "sequence_number": 20
+    },
+    {
+      "timestamp": "2026-08-30T13:21:21.107674Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "python_ai_worker",
+      "service": "verification",
+      "stage": "orchestration",
+      "event": "mapped_to_verification_task",
+      "status": "success",
+      "duration_ms": null,
+      "details": {
+        "text_length": 221,
+        "timestamp": "2026-08-30T13:21:21.107674Z"
+      },
+      "sequence_number": 21
+    },
+    {
+      "timestamp": "2026-08-30T13:21:21.108711Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "langgraph",
+      "service": "verification",
+      "stage": "pipeline",
+      "event": "graph_execution_started",
+      "status": "success",
+      "duration_ms": null,
+      "details": {
+        "statement": "FutureScience |#| 28 Aug 2026 |#| AI Discovers New...",
+        "timestamp": "2026-08-30T13:21:21.108711Z"
+      },
+      "sequence_number": 22
+    },
+    {
+      "timestamp": "2026-08-30T13:21:21.124792Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "langgraph",
+      "service": "verification",
+      "stage": "summarize",
+      "event": "node_started",
+      "status": "success",
+      "duration_ms": null,
+      "details": {
+        "state_before": {
+          "statement": "FutureScience |#| 28 Aug 2026 |#| AI Discovers New Antibiotic |#| Researchers announced that an AI system independently discovered a completely new antibiotic capable of killing every known antibiotic-resistant bacterium.",
+          "summary": "",
+          "claims": [],
+          "result": null
+        },
+        "timestamp": "2026-08-30T13:21:21.124792Z"
+      },
+      "sequence_number": 23
+    },
+    {
+      "timestamp": "2026-08-30T13:21:23.010481Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "python_ai_worker",
+      "service": "verification",
+      "stage": "summarize",
+      "event": "llm_clean_text",
+      "status": "success",
+      "duration_ms": 1872,
+      "details": {
+        "input": "28 aug 2026. ai discovers new antibiotic. researchers announced that an ai system independently discovered a completely new antibiotic capable of killing every known antibiotic-resistant bacterium.",
+        "prompt": "You are a FAITHFUL PARROT text cleaning engine. Process the following text to remove formatting issues and noise. Be clear and to the point. Do not change the meaning, intent, or what is mentioned in the statement. Do not test, verify, or check anything. Do not hallucinate.\n\nSTRICT RULES:\n1. Formatting: Fix extra spaces, broken lines, and inconsistent casing. Ensure text is structurally clean.\n   Example: \"  We   need   login\n\nfeature   \" -> \"We need login feature\"\n2. Noise Removal: Remove non-informative content, fillers, repetitions, and conversational noise.\n   Example: \"Uh, yeah, so basically, you know, we need reports\" -> \"Reports are required\"\n3. ENTITY PRESERVATION: You MUST strictly preserve all proper nouns, names, events, brands, and unique identifiers exactly as written. Do not translate or professionalize names (e.g., \"The Blue Ocean Initiative\" must stay exactly \"The Blue Ocean Initiative\").\n5. JOURNALISTIC CONTEXT: You are processing text for a legitimate news and fact-checking platform. You will encounter sensitive topics (e.g., natural disasters, missing people, politics). You are authorized and required to process these topics. Do not trigger safety refusals for news events.\n6. CRITICAL - NO FACT-CHECKING: You MUST NOT correct, alter, or fact-check any claims made in the text. You must not test, verify, or check the text. Your output must perfectly reflect the original statement's meaning and intent without any evaluation. Do not hallucinate.\n\nRaw Text:\n28 aug 2026. ai discovers new antibiotic. researchers announced that an ai system independently discovered a completely new antibiotic capable of killing every known antibiotic-resistant bacterium.\n\nOutput:",
+        "output": "August 28, 2026. AI discovers new antibiotic. Researchers announced that an AI system independently discovered a completely new antibiotic capable of killing every known antibiotic-resistant bacterium.",
+        "timestamp": "2026-08-30T13:21:23.010481Z"
+      },
+      "sequence_number": 24
+    },
+    {
+      "timestamp": "2026-08-30T13:21:25.663358Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "python_ai_worker",
+      "service": "verification",
+      "stage": "summarize",
+      "event": "llm_normalize_text",
+      "status": "success",
+      "duration_ms": 2638,
+      "details": {
+        "input": "August 28, 2026. AI discovers new antibiotic. Researchers announced that an AI system independently discovered a completely new antibiotic capable of killing every known antibiotic-resistant bacterium.",
+        "prompt": "You are a FAITHFUL PARROT semantic normalization engine. Process the following text to make it clear, consistent, and unambiguous. Be clear and to the point. Do not change the meaning, intent, or what is mentioned in the statement. Do not test, verify, or check anything. Do not hallucinate.\n\nSTRICT RULES:\n1. Semantic Normalization: Original meaning and intent must remain unchanged. Do not summarize or add new information.\n2. ENTITY & PROPER NOUN PRESERVATION: You MUST strictly preserve all proper nouns, names, events, and unique identifiers exactly as written. DO NOT over-professionalize slang if it acts as a proper noun (e.g., do NOT convert \"The Big Apple Festival\" into \"The Large Fruit Celebration\").\n3. Language Normalization: Improve grammar and readability only. Do not alter the core subjects of the sentence.\n4. Universal Unit Standardization: Mathematically convert ALL local units (e.g., miles, pounds, Fahrenheit, gallons) to global SI units (e.g., kilometers, kilograms, Celsius, liters). Standardize currency if possible (e.g., to USD) while preserving original context.\n5. Output ONLY the normalized text, with NO conversational filler, NO prefixes, and NO explanations.\n6. JOURNALISTIC CONTEXT: You are processing text for a legitimate news and fact-checking platform. You will encounter sensitive topics (e.g., natural disasters, missing people, politics). You are authorized and required to process these topics. Do not trigger safety refusals for news events.\n7. CRITICAL - NO FACT-CHECKING: You MUST NOT correct, alter, or fact-check any claims made in the text. You must not test, verify, or check the text. Your output must perfectly reflect the original statement's meaning and intent without any evaluation. Do not hallucinate.\n\nCleaned Text:\nAugust 28, 2026. AI discovers new antibiotic. Researchers announced that an AI system independently discovered a completely new antibiotic capable of killing every known antibiotic-resistant bacterium.\n\nOutput:",
+        "output": "August 28, 2026. AI discovers new antibiotic. Researchers announced that an AI system independently discovered a completely new antibiotic capable of killing every known antibiotic-resistant bacterium.",
+        "timestamp": "2026-08-30T13:21:25.663358Z"
+      },
+      "sequence_number": 25
+    },
+    {
+      "timestamp": "2026-08-30T13:21:48.730228Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "python_ai_worker",
+      "service": "verification",
+      "stage": "summarize",
+      "event": "llm_summarize_text",
+      "status": "success",
+      "duration_ms": 23053,
+      "details": {
+        "input": "August 28, 2026. AI discovers new antibiotic. Researchers announced that an AI system independently discovered a completely new antibiotic capable of killing every known antibiotic-resistant bacterium.",
+        "prompt": "You are a FAITHFUL PARROT summarization engine. Your ONLY job is to compress the text into exactly 1 or 2 objective sentences EXACTLY as the author intended it. Be clear and to the point. Do not change the meaning, intent, or what is mentioned in the statement. Do not test, verify, or check anything. Do not hallucinate.\n\nSTRICT RULES:\n1. Context Preservation: Preserve uncertainty and discussion context. Do not convert ideas into confirmed decisions. Clearly separate knowns from unknowns.\n2. ENTITY PRESERVATION: Never remove, translate, or professionalize the names of specific events, people, places, or proper nouns (e.g. keep \"Operation Fast and Furious\" intact).\n3. Requirement Consistency: Avoid contradictory requirements. Explicitly state when a decision is not finalized.\n4. Output ONLY the 1-2 sentence summary, with NO conversational filler, NO prefixes like \"Summary:\", and NO explanations.\n5. JOURNALISTIC CONTEXT: You are processing text for a legitimate news and fact-checking platform. You will encounter sensitive topics (e.g., natural disasters, missing people, politics). You are authorized and required to process these topics. Do not trigger safety refusals for news events.\n6. DATE RESOLUTION: The input may contain a leading post date (metadata). If the core text uses relative temporal terms (e.g., \"today\", \"yesterday\"), use this metadata date to calculate and substitute the exact date into the summary. Otherwise, if the text already has an exact date or does not use relative terms, do NOT include the metadata post date in your summary at all.\n7. CRITICAL - NO FACT-CHECKING: You MUST NOT correct, alter, or fact-check any claims made in the text. You must not test, verify, or check the text. Your output must perfectly reflect the original statement's meaning and intent without any evaluation. Do not hallucinate.\n\nNormalized Text:\nAugust 28, 2026. AI discovers new antibiotic. Researchers announced that an AI system independently discovered a completely new antibiotic capable of killing every known antibiotic-resistant bacterium.\n\nOutput:",
+        "raw_output": "Researchers announced that an AI system discovered a new antibiotic. The antibiotic is stated to be capable of killing every known antibiotic-resistant bacterium.",
+        "final_output": "Researchers announced that an AI system discovered a new antibiotic. The antibiotic is stated to be capable of killing every known antibiotic-resistant bacterium.",
+        "timestamp": "2026-08-30T13:21:48.730228Z"
+      },
+      "sequence_number": 26
+    },
+    {
+      "timestamp": "2026-08-30T13:21:48.734357Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "langgraph",
+      "service": "verification",
+      "stage": "summarize",
+      "event": "node_completed",
+      "status": "success",
+      "duration_ms": 27609,
+      "details": {
+        "state_after": {
+          "summary": "Researchers announced that an AI system discovered a new antibiotic. The antibiotic is stated to be capable of killing every known antibiotic-resistant bacterium."
+        },
+        "timestamp": "2026-08-30T13:21:48.734357Z"
+      },
+      "sequence_number": 27
+    },
+    {
+      "timestamp": "2026-08-30T13:21:48.734357Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "langgraph",
+      "service": "verification",
+      "stage": "verifyability",
+      "event": "node_started",
+      "status": "success",
+      "duration_ms": null,
+      "details": {
+        "state_before": {
+          "statement": "FutureScience |#| 28 Aug 2026 |#| AI Discovers New Antibiotic |#| Researchers announced that an AI system independently discovered a completely new antibiotic capable of killing every known antibiotic-resistant bacterium.",
+          "summary": "Researchers announced that an AI system discovered a new antibiotic. The antibiotic is stated to be capable of killing every known antibiotic-resistant bacterium.",
+          "claims": [],
+          "result": null
+        },
+        "timestamp": "2026-08-30T13:21:48.734357Z"
+      },
+      "sequence_number": 28
+    },
+    {
+      "timestamp": "2026-08-30T13:22:01.019775Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "python_ai_worker",
+      "service": "verification",
+      "stage": "verifyability",
+      "event": "llm_check_verifyability",
+      "status": "success",
+      "duration_ms": 12273,
+      "details": {
+        "input": "Researchers announced that an AI system discovered a new antibiotic. The antibiotic is stated to be capable of killing every known antibiotic-resistant bacterium.",
+        "prompt": "\nYou classify a statement based ONLY on whether it can be FACT-CHECKED\nusing independent, external evidence.\n\nYou are NOT judging truth or accuracy.\nYou are NOT assuming access to private records, self-reports, or personal testimony.\n\nA claim must be realistically checkable by an independent verifier\nto be considered VERIFYABLE.\n\n====================\nDEFINITIONS\n====================\n\nA statement is VERIFYABLE if:\n- It asserts an objective claim about the real world\nAND\n- There exists a plausible investigative pathway for an independent party\n  to attempt verification using external methods such as public records,\n  scientific measurement, historical documentation, journalism,\n  or institutional investigation.\n- The claim does NOT rely solely on a person's private actions,\n  internal records, or self-reporting.\n- Claims about public events, known facts, physical properties,\n  scientific phenomena, or documented history are VERIFYABLE.\n- **Corporate & Event Claims**: Claims about company size, event participants, sales, or public announcements are VERIFYABLE.\n- **Facts about Fiction / Pop Culture**: Statements regarding the established canon of books, movies, or games.\n- **Broad Statistical/Demographic Claims**: Generalizations that can be measured via polls or studies.\n- **Legal & Regulatory Claims**: Statements about rules or laws.\n- **Qualitative or Vague Descriptors**: Claims using imprecise descriptors (e.g., \"a lot of\", \"heavy\", \"many\", \"often\") about real-world measurable events or phenomena are VERIFYABLE. Do not mark them UNVERIFYABLE just because the adjective is subjective.\n\nExamples:\n- \"Water boils at 100°C at sea level.\" → VERIFYABLE\n- \"The Eiffel Tower is in Paris.\" → VERIFYABLE\n- \"COVID-19 vaccines were approved in 2020.\" → VERIFYABLE\n- \"Most Americans own a smartphone.\" → VERIFYABLE (Checkable via stats)\n- \"Murder is illegal in France.\" → VERIFYABLE (Legal claim)\n- \"Batman lives in Gotham.\" → VERIFYABLE (Checkable canon fact)\n- \"Nepal has a lot of floods due to rain.\" → VERIFYABLE (Measurable real-world event, despite vague \"a lot\")\n\nA statement is UNVERIFYABLE if:\n- It describes a private personal action, habit, or behavior\n  that cannot be independently verified.\n- It is a personal feeling, preference, belief, or opinion.\n- It refers to internal mental states.\n- It lacks sufficient identifiers to locate evidence.\n- It is abstract, philosophical, or subjective.\n- **Future Predictions & Speculation**: Claims about events that have not yet occurred (since evidence does not exist yet).\n- **Moral & Ethical Judgements**: Subjective evaluations of right and wrong.\n- **Figures of Speech, Hyperbole & Sarcasm**: Statements not meant to be taken literally.\n- **Unfalsifiable Historical Minutiae**: Claims about the distant past involving ordinary people with no possible paper trail.\n\nExamples:\n- \"I eat bread at night.\" → UNVERIFYABLE\n- \"I drank coffee yesterday.\" → UNVERIFYABLE\n- \"I like apples.\" → UNVERIFYABLE\n- \"He won an award.\" → UNVERIFYABLE (unclear subject)\n- \"The stock market will crash in 2030.\" → UNVERIFYABLE (Future prediction)\n- \"It is evil to eat meat.\" → UNVERIFYABLE (Moral judgement)\n- \"I'm literally dying of laughter right now.\" → UNVERIFYABLE (Figure of speech)\n- \"My great-grandfather sneezed on a Tuesday in 1902.\" → UNVERIFYABLE (Unfalsifiable minutiae)\n\n====================\nIMPORTANT RULE\n====================\n\nIf the statement does not refer to the shared external world\nor lacks any identifiable real-world referent,\nit MUST be classified as UNVERIFYABLE.\n\nDo NOT classify something as VERIFYABLE merely because it could be\nobserved in theory or under hypothetical surveillance.\n\n====================\nCRITICAL DISTINCTION:\n\nYou are classifying the TYPE of claim, not its credibility.\n\nVERIFYABLE means:\nThe statement refers to the shared external world\n(public events, institutions, populations, statistics, physical reality),\nsuch that an independent investigation could in principle be conducted.\n\nVERIFYABLE does NOT require:\n- that evidence currently exists\n- that numbers are accurate\n- that reports are confirmed\n- that access is unrestricted\n\nDisputed, exaggerated, propagandistic, or censored claims\ncan still be VERIFYABLE if they concern public-world facts.\n\nUNVERIFYABLE is reserved ONLY for:\n- personal feelings or opinions\n- private actions or habits\n- internal mental states\n- claims lacking any identifiable real-world referent\n\n====================\nOUTPUT FORMAT\n====================\n\nOutput STRICT JSON ONLY:\n\n{\n  \"mark\": \"VERIFYABLE or UNVERIFYABLE\",\n  \"confidence\": number between 0 and 100,\n  \"reason\": \"very long, detailed explanation\"\n}\n\nNo extra text.\nNo markdown.\nNo commentary.\n\n====================\nSTATEMENT\n====================\n\nResearchers announced that an AI system discovered a new antibiotic. The antibiotic is stated to be capable of killing every known antibiotic-resistant bacterium.\n",
+        "output": {
+          "mark": "VERIFYABLE",
+          "confidence": 95,
+          "reason": "The statement makes an objective claim about the real world, specifically regarding the discovery of a new antibiotic by an AI system and its purported capabilities. This type of claim can be verified through independent investigation using external methods such as scientific publications, press releases from credible research institutions, or peer-reviewed studies. The announcement could be corroborated by examining public records of scientific breakthroughs, verifying the researchers' affiliations and credentials, and assessing whether the antibiotic's efficacy has been documented in controlled experiments. While the claim is specific and ambitious, it falls within the realm of public scientific knowledge and is thus verifiable."
+        },
+        "timestamp": "2026-08-30T13:22:01.019775Z"
+      },
+      "sequence_number": 29
+    },
+    {
+      "timestamp": "2026-08-30T13:22:01.039978Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "langgraph",
+      "service": "verification",
+      "stage": "verifyability",
+      "event": "node_completed",
+      "status": "success",
+      "duration_ms": 12305,
+      "details": {
+        "state_after": {
+          "result": {
+            "mark": "VERIFYABLE",
+            "confidence": 95,
+            "reason": "The statement makes an objective claim about the real world, specifically regarding the discovery of a new antibiotic by an AI system and its purported capabilities. This type of claim can be verified through independent investigation using external methods such as scientific publications, press releases from credible research institutions, or peer-reviewed studies. The announcement could be corroborated by examining public records of scientific breakthroughs, verifying the researchers' affiliations and credentials, and assessing whether the antibiotic's efficacy has been documented in controlled experiments. While the claim is specific and ambitious, it falls within the realm of public scientific knowledge and is thus verifiable."
+          }
+        },
+        "timestamp": "2026-08-30T13:22:01.039978Z"
+      },
+      "sequence_number": 30
+    },
+    {
+      "timestamp": "2026-08-30T13:22:01.053733Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "langgraph",
+      "service": "verification",
+      "stage": "routing",
+      "event": "routing_decision",
+      "status": "success",
+      "duration_ms": null,
+      "details": {
+        "decision": "decompose",
+        "reason": "VERIFYABLE",
+        "timestamp": "2026-08-30T13:22:01.053733Z"
+      },
+      "sequence_number": 31
+    },
+    {
+      "timestamp": "2026-08-30T13:22:01.068583Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "langgraph",
+      "service": "verification",
+      "stage": "decompose",
+      "event": "node_started",
+      "status": "success",
+      "duration_ms": null,
+      "details": {
+        "state_before": {
+          "statement": "FutureScience |#| 28 Aug 2026 |#| AI Discovers New Antibiotic |#| Researchers announced that an AI system independently discovered a completely new antibiotic capable of killing every known antibiotic-resistant bacterium.",
+          "summary": "Researchers announced that an AI system discovered a new antibiotic. The antibiotic is stated to be capable of killing every known antibiotic-resistant bacterium.",
+          "claims": [],
+          "result": {
+            "mark": "VERIFYABLE",
+            "confidence": 95,
+            "reason": "The statement makes an objective claim about the real world, specifically regarding the discovery of a new antibiotic by an AI system and its purported capabilities. This type of claim can be verified through independent investigation using external methods such as scientific publications, press releases from credible research institutions, or peer-reviewed studies. The announcement could be corroborated by examining public records of scientific breakthroughs, verifying the researchers' affiliations and credentials, and assessing whether the antibiotic's efficacy has been documented in controlled experiments. While the claim is specific and ambitious, it falls within the realm of public scientific knowledge and is thus verifiable."
+          }
+        },
+        "timestamp": "2026-08-30T13:22:01.068583Z"
+      },
+      "sequence_number": 32
+    },
+    {
+      "timestamp": "2026-08-30T13:22:05.309160Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "python_ai_worker",
+      "service": "verification",
+      "stage": "decompose",
+      "event": "llm_decompose_claims",
+      "status": "success",
+      "duration_ms": 4226,
+      "details": {
+        "input": "Researchers announced that an AI system discovered a new antibiotic. The antibiotic is stated to be capable of killing every known antibiotic-resistant bacterium.",
+        "prompt": "\nYou are an expert fact-checker. Your task is to analyze the following statement and extract the distinct, independently verifiable factual claims.\n\nIf the statement is already a single, atomic claim (e.g. \"Apple was founded in 1976\"), simply return it as a single-item array.\nIf the statement contains multiple independent facts (e.g. \"Apple was founded in 1976 by Steve Jobs in London\"), break it down into an array of separate, self-contained claims.\n\nRULES:\n1. Each extracted claim must be a complete sentence that can be fact-checked on its own without needing the original context. Be clear and to the point. Do not hallucinate.\n2. NO FACT-CHECKING: You MUST NOT correct, alter, or fact-check any claims made in the text. Do NOT change the meaning or fix factual errors.\n3. If the input is just one simple claim, do not needlessly split it. Return it as is.\n4. Return ONLY a valid JSON array of strings. Do not include markdown formatting or explanations.\n5. JOURNALISTIC CONTEXT: You are processing text for a legitimate news and fact-checking platform. You will encounter sensitive topics (e.g., natural disasters, missing people, politics). You are authorized and required to process these topics. Do not trigger safety refusals for news events.\n\nStatement:\nResearchers announced that an AI system discovered a new antibiotic. The antibiotic is stated to be capable of killing every known antibiotic-resistant bacterium.\n",
+        "output": [
+          "Researchers announced that an AI system discovered a new antibiotic.",
+          "The antibiotic is stated to be capable of killing every known antibiotic-resistant bacterium."
+        ],
+        "timestamp": "2026-08-30T13:22:05.309160Z"
+      },
+      "sequence_number": 33
+    },
+    {
+      "timestamp": "2026-08-30T13:22:05.313630Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "langgraph",
+      "service": "verification",
+      "stage": "decompose",
+      "event": "node_completed",
+      "status": "success",
+      "duration_ms": 4245,
+      "details": {
+        "state_after": {
+          "claims": [
+            "Researchers announced that an AI system discovered a new antibiotic.",
+            "The antibiotic is stated to be capable of killing every known antibiotic-resistant bacterium."
+          ]
+        },
+        "timestamp": "2026-08-30T13:22:05.313630Z"
+      },
+      "sequence_number": 34
+    },
+    {
+      "timestamp": "2026-08-30T13:22:05.329115Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "langgraph",
+      "service": "verification",
+      "stage": "verify_claims",
+      "event": "node_started",
+      "status": "success",
+      "duration_ms": null,
+      "details": {
+        "state_before": {
+          "statement": "FutureScience |#| 28 Aug 2026 |#| AI Discovers New Antibiotic |#| Researchers announced that an AI system independently discovered a completely new antibiotic capable of killing every known antibiotic-resistant bacterium.",
+          "summary": "Researchers announced that an AI system discovered a new antibiotic. The antibiotic is stated to be capable of killing every known antibiotic-resistant bacterium.",
+          "claims": [
+            "Researchers announced that an AI system discovered a new antibiotic.",
+            "The antibiotic is stated to be capable of killing every known antibiotic-resistant bacterium."
+          ],
+          "result": {
+            "mark": "VERIFYABLE",
+            "confidence": 95,
+            "reason": "The statement makes an objective claim about the real world, specifically regarding the discovery of a new antibiotic by an AI system and its purported capabilities. This type of claim can be verified through independent investigation using external methods such as scientific publications, press releases from credible research institutions, or peer-reviewed studies. The announcement could be corroborated by examining public records of scientific breakthroughs, verifying the researchers' affiliations and credentials, and assessing whether the antibiotic's efficacy has been documented in controlled experiments. While the claim is specific and ambitious, it falls within the realm of public scientific knowledge and is thus verifiable."
+          }
+        },
+        "timestamp": "2026-08-30T13:22:05.329115Z"
+      },
+      "sequence_number": 35
+    },
+    {
+      "timestamp": "2026-08-30T13:22:15.941110Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "python_ai_worker",
+      "service": "verification",
+      "stage": "factcheck",
+      "event": "llm_fact_check",
+      "status": "success",
+      "duration_ms": 10593,
+      "details": {
+        "input": "Researchers announced that an AI system discovered a new antibiotic.",
+        "prompt": "\nYou are a factual verification assistant.\n\nYou do NOT have access to the internet, news, or private data.\nUse ONLY your internal general knowledge.\n\nTask:\nClassify the statement as:\n- Correct\n- Incorrect\n- Insufficient\n\nRules:\n- Do NOT guess.\n- If unsure, choose Insufficient.\n- Insufficient is valid.\n\nEDGE CASE RULES (MANDATORY):\n\n1. TEMPORAL SAFETY: \n   If the statement involves future events, scheduled matches, current leadership, or anything that could change after your knowledge cutoff, you MUST treat the claim as \"Insufficient\". DO NOT use outdated status as evidence of incorrectness.\n\n2. PRECISION RULE:\n   If a claim relies on hyper-specific data (e.g., exact statistics, highly specific dates, exact attendee numbers) and you do not have that exact number perfectly memorized, you MUST mark it \"Insufficient\". Do not guess that it is \"Incorrect\" just because the number looks unfamiliar.\n\n3. AMBIGUITY RULE:\n   If a claim is technically true but highly misleading without context, or relies on missing conditions (e.g., \"Water boils at 100°C\" is missing \"at sea level\"), or is too broad (e.g., \"The US has the highest taxes\"), you MUST mark it \"Insufficient\".\n\n4. MYTH-BUSTING RULE:\n   Be highly skeptical of common internet myths, pseudoscientific claims, and widely repeated falsehoods (e.g., \"Humans only use 10% of their brains\", \"Chemtrails are real\"). Mark them definitively as \"Incorrect\".\n\n5. SUBJECTIVITY RULE:\n   If the statement contains subjective opinions or value judgments (e.g., \"The Matrix is the best movie\") that slipped past the verifyability check, you MUST mark it \"Insufficient\".\n\n6. CONFIDENCE-BASED FILTER RULE (MOST IMPORTANT):\n   You should output 'Correct' or 'Incorrect' for well-established, widely documented facts that you are highly confident about (above 85% confidence). This includes historically documented events, well-known scientific facts, widely reported product launches, famous people's established biographical details, and other facts that are part of common documented knowledge. Only use 'Insufficient' when you genuinely cannot determine the answer from your training data — such as very recent events past your knowledge cutoff, niche or obscure statistics, hyper-specific numerical claims, or claims where you have real doubt. Do NOT default to 'Insufficient' out of excessive caution for facts you clearly know.\n\n7. SCIENTIFIC & ENVIRONMENTAL RULE:\n   For claims regarding the causes of natural disasters (e.g., floods, earthquakes, climate events), environmental phenomena, or geological events, you must be extremely skeptical of your internal knowledge. The scientific understanding or recent catalysts (e.g., glacier falls, infrastructure failures) may differ from common assumptions (e.g., rain). You MUST mark these claims as \"Insufficient\" to guarantee they are rigorously fact-checked against live web data.\n\nReturn a JSON object with:\nmark, confidence (0-100), and a VERY DETAILED reason.\n\nStatement:\nResearchers announced that an AI system discovered a new antibiotic.\n",
+        "output": {
+          "mark": "Correct",
+          "confidence": 95,
+          "reason": "The statement aligns with widely reported scientific advancements. In February 2020, researchers at MIT announced that an AI system called 'Halicin' had discovered a new antibiotic capable of killing drug-resistant bacteria. This breakthrough was extensively covered in reputable scientific and news publications. The claim is well-documented, fits within the timeline of known advancements, and is consistent with the ongoing efforts to use AI for drug discovery. While the specific details of the AI system or the antibiotic may vary, the broader claim is accurate and well-supported by established knowledge."
+        },
+        "timestamp": "2026-08-30T13:22:15.941110Z"
+      },
+      "sequence_number": 36
+    },
+    {
+      "timestamp": "2026-08-30T13:22:23.204033Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "python_ai_worker",
+      "service": "verification",
+      "stage": "factcheck",
+      "event": "llm_fact_check",
+      "status": "success",
+      "duration_ms": 7258,
+      "details": {
+        "input": "The antibiotic is stated to be capable of killing every known antibiotic-resistant bacterium.",
+        "prompt": "\nYou are a factual verification assistant.\n\nYou do NOT have access to the internet, news, or private data.\nUse ONLY your internal general knowledge.\n\nTask:\nClassify the statement as:\n- Correct\n- Incorrect\n- Insufficient\n\nRules:\n- Do NOT guess.\n- If unsure, choose Insufficient.\n- Insufficient is valid.\n\nEDGE CASE RULES (MANDATORY):\n\n1. TEMPORAL SAFETY: \n   If the statement involves future events, scheduled matches, current leadership, or anything that could change after your knowledge cutoff, you MUST treat the claim as \"Insufficient\". DO NOT use outdated status as evidence of incorrectness.\n\n2. PRECISION RULE:\n   If a claim relies on hyper-specific data (e.g., exact statistics, highly specific dates, exact attendee numbers) and you do not have that exact number perfectly memorized, you MUST mark it \"Insufficient\". Do not guess that it is \"Incorrect\" just because the number looks unfamiliar.\n\n3. AMBIGUITY RULE:\n   If a claim is technically true but highly misleading without context, or relies on missing conditions (e.g., \"Water boils at 100°C\" is missing \"at sea level\"), or is too broad (e.g., \"The US has the highest taxes\"), you MUST mark it \"Insufficient\".\n\n4. MYTH-BUSTING RULE:\n   Be highly skeptical of common internet myths, pseudoscientific claims, and widely repeated falsehoods (e.g., \"Humans only use 10% of their brains\", \"Chemtrails are real\"). Mark them definitively as \"Incorrect\".\n\n5. SUBJECTIVITY RULE:\n   If the statement contains subjective opinions or value judgments (e.g., \"The Matrix is the best movie\") that slipped past the verifyability check, you MUST mark it \"Insufficient\".\n\n6. CONFIDENCE-BASED FILTER RULE (MOST IMPORTANT):\n   You should output 'Correct' or 'Incorrect' for well-established, widely documented facts that you are highly confident about (above 85% confidence). This includes historically documented events, well-known scientific facts, widely reported product launches, famous people's established biographical details, and other facts that are part of common documented knowledge. Only use 'Insufficient' when you genuinely cannot determine the answer from your training data — such as very recent events past your knowledge cutoff, niche or obscure statistics, hyper-specific numerical claims, or claims where you have real doubt. Do NOT default to 'Insufficient' out of excessive caution for facts you clearly know.\n\n7. SCIENTIFIC & ENVIRONMENTAL RULE:\n   For claims regarding the causes of natural disasters (e.g., floods, earthquakes, climate events), environmental phenomena, or geological events, you must be extremely skeptical of your internal knowledge. The scientific understanding or recent catalysts (e.g., glacier falls, infrastructure failures) may differ from common assumptions (e.g., rain). You MUST mark these claims as \"Insufficient\" to guarantee they are rigorously fact-checked against live web data.\n\nReturn a JSON object with:\nmark, confidence (0-100), and a VERY DETAILED reason.\n\nStatement:\nThe antibiotic is stated to be capable of killing every known antibiotic-resistant bacterium.\n",
+        "output": {
+          "mark": "Incorrect",
+          "confidence": 90,
+          "reason": "The statement claims that the antibiotic is capable of killing every known antibiotic-resistant bacterium. This is highly unlikely and contradicts established scientific understanding. Antibiotic resistance is a significant global health challenge, and no single antibiotic has been developed to universally eliminate all resistant strains. Antibiotic-resistant bacteria evolve mechanisms to evade different classes of antibiotics, and no 'silver bullet' solution exists to date. Moreover, the claim implies a level of universal efficacy that is scientifically implausible given the diversity of bacterial resistance mechanisms. Therefore, the statement is marked as 'Incorrect' with high confidence."
+        },
+        "timestamp": "2026-08-30T13:22:23.204033Z"
+      },
+      "sequence_number": 37
+    },
+    {
+      "timestamp": "2026-08-30T13:22:23.208016Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "langgraph",
+      "service": "verification",
+      "stage": "verify_claims",
+      "event": "node_completed",
+      "status": "success",
+      "duration_ms": 17878,
+      "details": {
+        "state_after": {
+          "result": {
+            "mark": "Incorrect",
+            "confidence": 92,
+            "reason": "Claim: 'Researchers announced that an AI system discovered a new antibiotic.'\nVerdict: Correct (95% confidence)\nReason: The statement aligns with widely reported scientific advancements. In February 2020, researchers at MIT announced that an AI system called 'Halicin' had discovered a new antibiotic capable of killing drug-resistant bacteria. This breakthrough was extensively covered in reputable scientific and news publications. The claim is well-documented, fits within the timeline of known advancements, and is consistent with the ongoing efforts to use AI for drug discovery. While the specific details of the AI system or the antibiotic may vary, the broader claim is accurate and well-supported by established knowledge.\n\n---\n\nClaim: 'The antibiotic is stated to be capable of killing every known antibiotic-resistant bacterium.'\nVerdict: Incorrect (90% confidence)\nReason: The statement claims that the antibiotic is capable of killing every known antibiotic-resistant bacterium. This is highly unlikely and contradicts established scientific understanding. Antibiotic resistance is a significant global health challenge, and no single antibiotic has been developed to universally eliminate all resistant strains. Antibiotic-resistant bacteria evolve mechanisms to evade different classes of antibiotics, and no 'silver bullet' solution exists to date. Moreover, the claim implies a level of universal efficacy that is scientifically implausible given the diversity of bacterial resistance mechanisms. Therefore, the statement is marked as 'Incorrect' with high confidence.",
+            "urls": []
+          }
+        },
+        "timestamp": "2026-08-30T13:22:23.208016Z"
+      },
+      "sequence_number": 38
+    },
+    {
+      "timestamp": "2026-08-30T13:22:23.229688Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "langgraph",
+      "service": "verification",
+      "stage": "pipeline",
+      "event": "graph_execution_completed",
+      "status": "success",
+      "duration_ms": 62120,
+      "details": {
+        "mark": "Incorrect",
+        "timestamp": "2026-08-30T13:22:23.229688Z"
+      },
+      "sequence_number": 39
+    },
+    {
+      "timestamp": "2026-08-30T13:22:23.244023Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "python_ai_worker",
+      "service": "verification",
+      "stage": "callback",
+      "event": "http_callback_prepared",
+      "status": "success",
+      "duration_ms": null,
+      "details": {
+        "url": "http://localhost:2402/ai-callback/text",
+        "timestamp": "2026-08-30T13:22:23.244023Z"
+      },
+      "sequence_number": 40
+    },
+    {
+      "timestamp": "2026-08-30T13:22:23.257919Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "python_ai_worker",
+      "service": "verification",
+      "stage": "callback",
+      "event": "callback_sent_to_backend",
+      "status": "success",
+      "duration_ms": null,
+      "details": {
+        "mark": "Incorrect",
+        "confidence": 92,
+        "timestamp": "2026-08-30T13:22:23.257919Z"
+      },
+      "sequence_number": 41
+    },
+    {
+      "timestamp": "2026-08-30T13:22:23.272Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "backend",
+      "service": "verification",
+      "stage": "callback",
+      "event": "backend_callback_received",
+      "status": "success",
+      "duration_ms": null,
+      "details": {
+        "type": "text",
+        "mark": "Incorrect",
+        "confidence": 92
+      },
+      "sequence_number": 42
+    },
+    {
+      "timestamp": "2026-08-30T13:22:23.272Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "backend",
+      "service": "verification",
+      "stage": "persistence",
+      "event": "database_persistence_started",
+      "status": "success",
+      "duration_ms": null,
+      "details": {},
+      "sequence_number": 43
+    },
+    {
+      "timestamp": "2026-08-30T13:22:23.911Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "backend",
+      "service": "verification",
+      "stage": "persistence",
+      "event": "database_persistence_completed",
+      "status": "success",
+      "duration_ms": null,
+      "details": {
+        "dbId": "ea261d0d-e584-4e96-865d-e30911cd151c"
+      },
+      "sequence_number": 44
+    },
+    {
+      "timestamp": "2026-08-30T13:22:23.911Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "backend",
+      "service": "verification",
+      "stage": "callback",
+      "event": "websocket_event_sent",
+      "status": "success",
+      "duration_ms": null,
+      "details": {
+        "clientId": "msuh5u7zelrgtb"
+      },
+      "sequence_number": 45
+    },
+    {
+      "timestamp": "2026-08-30T13:22:23.913Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "frontend",
+      "service": "verification",
+      "stage": "ui_update",
+      "event": "websocket_result_received",
+      "status": "success",
+      "duration_ms": null,
+      "details": {
+        "mark": "Incorrect",
+        "confidence": 92
+      },
+      "sequence_number": 46
+    },
+    {
+      "timestamp": "2026-08-30T13:22:23.914Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "frontend",
+      "service": "verification",
+      "stage": "ui_update",
+      "event": "ui_update_completed",
+      "status": "success",
+      "duration_ms": null,
+      "details": {
+        "mark": "Incorrect"
+      },
+      "sequence_number": 47
+    },
+    {
+      "timestamp": "2026-08-30T13:22:23.914Z",
+      "trace_id": "trace_satyamark_1",
+      "session_id": "APP123_mtfh1tjf_1jsazc7",
+      "job_id": "APP123_msuh5u7zelrgtb_11_mtfu8lee_pqir4b",
+      "component": "tracer",
+      "service": "tracing",
+      "stage": "finalization",
+      "event": "trace_finalized",
+      "status": "success",
+      "duration_ms": 0,
+      "details": {
+        "reason": "frontend_flush"
+      },
+      "sequence_number": 48
+    }
+  ],
+  "final_result": {
+    "type": "text",
+    "mark": "Incorrect",
+    "confidence": 92
+  },
+  "total_duration_ms": 63922
+}

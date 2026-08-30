@@ -3,6 +3,8 @@ import time
 from dotenv import load_dotenv
 from langchain_community.utilities import GoogleSerperAPIWrapper
 import logging
+import time
+from utils.tracer import trace_event
 
 logger = logging.getLogger(__name__)
 
@@ -87,14 +89,19 @@ def serper_search(query: str, tbs: str | None = None) -> dict:
         
         while network_retries < 3:
             try:
+                start_time = time.time()
                 search = GoogleSerperAPIWrapper(
                     serper_api_key=current_key,
                     search_params={"tbs": tbs} if tbs else None,
                 )
                 results = search.results(query, n=SEARCH_COUNT)
+                duration = int((time.time() - start_time) * 1000)
 
                 if isinstance(results, dict) and results.get("message") == "Unauthorized.":
                     raise ValueError("Unauthorized. Likely out of credits.")
+
+                num_results = len(results.get("organic", [])) if isinstance(results, dict) else 0
+                trace_event("python_ai_worker", "websearch", "serper_search", duration_ms=duration, details={"query": query, "provider": "serper", "num_results": num_results, "raw_results": results})
 
                 return results
 
@@ -117,9 +124,11 @@ def serper_search(query: str, tbs: str | None = None) -> dict:
                     if network_retries < 3:
                         delay = 2 ** network_retries
                         logger.warning(f"Serper search network error: {e}. Retrying in {delay}s...")
+                        trace_event("python_ai_worker", "websearch", "serper_search_retry", details={"query": query, "attempt": network_retries, "error": str(e)})
                         time.sleep(delay)
                     else:
                         logger.error(f"Serper search failed after 3 network retries: {e}", exc_info=True)
+                        trace_event("python_ai_worker", "websearch", "serper_search_failed", status="failed", details={"query": query, "error": str(e)})
                         attempts = len(SERPER_API_KEYS)
                         break
 
@@ -129,20 +138,30 @@ def serper_search(query: str, tbs: str | None = None) -> dict:
 def extract_urls_with_meta(result: dict) -> list:
     """Extracts ONLY valid, non-social-media URLs along with their snippets and credibility weights."""
     out = []
+    accepted_urls = []
+    rejected_urls = []
+    
     for item in result.get("organic", []):
         url = item.get("link")
 
-        if not url or is_excluded(url):
+        if not url:
+            continue
+            
+        if is_excluded(url):
+            rejected_urls.append({"url": url, "reason": "excluded_domain"})
             continue
 
+        weight = get_credibility_weight(url)
+        accepted_urls.append({"url": url, "credibility_weight": weight})
         out.append(
             {
                 "url": url,
                 "snippet": item.get("snippet", ""),
-                "credibility_weight": get_credibility_weight(url),
+                "credibility_weight": weight,
             }
         )
 
+    trace_event("python_ai_worker", "websearch", "url_extraction_and_source_selection", details={"accepted": accepted_urls, "rejected": rejected_urls})
     return out
 
 

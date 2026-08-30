@@ -3,8 +3,9 @@ import { generateJobId } from "../utils/generateIds";
 import { emitMessage, emitConnection } from "./eventBus";
 import { getSessionData, setSessionData, clearSession } from "../utils/manageSessions";
 import { initIcons } from "./status_controller";
+import { sendTraceEvent } from "../utils/tracer";
 
-const isDev = true;
+const isDev = false;
 
 type ConnectionContext = {
   app_id: string;
@@ -23,6 +24,18 @@ let hmacSecret: string = "";
 let handshakeTimer: ReturnType<typeof setTimeout> | null = null;
 let pingInterval: ReturnType<typeof setInterval> | null = null;
 let pongTimeout: ReturnType<typeof setTimeout> | null = null;
+
+export const bufferedConnectionEvents: any[] = [];
+
+function addBufferedEvent(stage: string, event: string, details: any = {}) {
+  bufferedConnectionEvents.push({
+    component: "frontend",
+    stage,
+    event,
+    timestamp: new Date().toISOString(),
+    details
+  });
+}
 
 /* -------------------------------------------------------------------------- */
 /*                          WebSocket URL Resolution                          */
@@ -71,6 +84,7 @@ async function signPayload(fields: string): Promise<string> {
 /* -------------------------------------------------------------------------- */
 
 export async function init(newContext: ConnectionContext) {
+  addBufferedEvent("initialization", "sdk_initialized", { context: newContext });
   context = newContext;
   initIcons();
   await connect();
@@ -80,6 +94,7 @@ async function connect() {
   if (isConnecting || isConnected) return;
 
   isConnecting = true;
+  addBufferedEvent("connection", "websocket_connecting", {});
 
   let url;
   try {
@@ -103,6 +118,8 @@ async function connect() {
         app_id: ctx.app_id,
         sessionId,
       });
+
+      addBufferedEvent("connection", "websocket_connected", { clientId: ctx.user_id, hasSession: !!sessionId });
 
       // Issue 5: Handshake timeout — if no response in 10s, reconnect
       handshakeTimer = setTimeout(() => {
@@ -142,6 +159,9 @@ async function connect() {
         if (!isConnected) {
           isConnected = true;
           isConnecting = false;
+
+          addBufferedEvent("connection", "client_session_assigned", { sessionId: data.sessionId || "existing" });
+
           emitConnection(getContext());
           startPing();
         }
@@ -283,5 +303,24 @@ export async function sendJob(text: string, imageUrl: string, dataId: string): P
     hmac,
   });
 
+  // Flush buffered connection events to this job's trace
+  bufferedConnectionEvents.forEach(evt => {
+    sendTraceEvent({
+      jobId,
+      sessionId,
+      ...evt
+    });
+  });
+
   return jobId;
+}
+
+export function sendTraceMessage(payload: any): void {
+  if (socketClient && isConnected) {
+    try {
+      socketClient.send(payload);
+    } catch (e) {
+      console.warn("Failed to send trace event");
+    }
+  }
 }

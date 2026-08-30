@@ -4,6 +4,8 @@ import concurrent.futures
 from typing import List, Dict, Any
 from utils.llm import invoke_llm
 import logging
+import time
+from utils.tracer import trace_event
 
 logger = logging.getLogger(__name__)
 
@@ -61,12 +63,20 @@ If there is NO relevant information, output exactly the word "NONE" and nothing 
 Do not explain your reasoning. Just output the extracted evidence or "NONE".
 """
     try:
+        start_time = time.time()
         result = invoke_llm(MAP_MODELS, prompt, parse_as_json=False)
+        duration = int((time.time() - start_time) * 1000)
+        
         result = result.strip()
         if result.upper() == "NONE" or result == "":
+            trace_event("python_ai_worker", "evidence_processing", "map_extraction", duration_ms=duration, details={"url": url, "statement": statement, "chunk_length": len(chunk), "relevance": "irrelevant", "extracted_evidence": "NONE"})
             return ""
+        
+        trace_event("python_ai_worker", "evidence_processing", "map_extraction", duration_ms=duration, details={"url": url, "statement": statement, "chunk_length": len(chunk), "relevance": "relevant", "extracted_evidence": result})
         return result
     except Exception as e:
+        duration = int((time.time() - start_time) * 1000) if 'start_time' in locals() else None
+        trace_event("python_ai_worker", "evidence_processing", "map_extraction", status="failed", duration_ms=duration, details={"url": url, "error": str(e)})
         logger.warning(f"Map extraction failed on a chunk: {e}", exc_info=True)
         return ""
 
@@ -89,6 +99,7 @@ def fact_check(statement: str, web_data: List[Dict[str, Any]]) -> dict:
         url = item.get("url", "")
         if len(data) > 50 and url:
             chunks = chunk_text(data)
+            trace_event("python_ai_worker", "evidence_processing", "chunking_details", details={"url": url, "original_length": len(data), "num_chunks": len(chunks), "chunk_size": 15000})
             for c in chunks:
                 all_chunks.append({"url": url, "text": c})
 
@@ -156,13 +167,18 @@ OUTPUT STRICT JSON ONLY. Do not use Markdown formatting blocks (like ```json).
 }}
 """
     try:
+        start_time = time.time()
         parsed = invoke_llm(MODELS, prompt, parse_as_json=True)
+        duration = int((time.time() - start_time) * 1000)
 
         if "reason" in parsed and isinstance(parsed["reason"], str):
             parsed["reason"] = _sanitize_reason(parsed["reason"])
 
+        trace_event("python_ai_worker", "evidence_processing", "reduce_fact_check", duration_ms=duration, details={"statement": statement, "num_evidence": len(condensed_evidence), "output": parsed})
         return parsed
 
     except Exception as e:
+        duration = int((time.time() - start_time) * 1000) if 'start_time' in locals() else None
+        trace_event("python_ai_worker", "evidence_processing", "reduce_fact_check", status="failed", duration_ms=duration, details={"statement": statement, "error": str(e)})
         logger.error(f"Verification failed during Reduce phase: {e}", exc_info=True)
         return fallback_response

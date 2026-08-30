@@ -4,6 +4,7 @@ import { sendJob } from "./connectionManager";
 import { updateIcon } from "./status_controller";
 import { process_data } from "../utils/process_data";
 import { generateHash } from "../utils/hash";
+import { sendTraceEvent, flushTrace } from "../utils/tracer";
 
 let isConnected = false;
 let isSendingJobs = false;
@@ -137,6 +138,13 @@ async function queueProcessing(containerRef: HTMLDivElement, dataId: string) {
             return;
         }
 
+        sendTraceEvent({
+            component: "frontend",
+            stage: "verification",
+            event: "verification_started",
+            details: { dataId }
+        });
+
         updateIcon(containerRef, { mark: "pending" });
 
         process_queue.push({ containerRef, dataId });
@@ -181,6 +189,22 @@ async function sendJobs(): Promise<void> {
             }
 
             const jobId: string = await sendJob(text, image_url, dataId);
+            
+            sendTraceEvent({
+                jobId,
+                component: "frontend",
+                stage: "verification_submission",
+                event: "request_payload_prepared",
+                details: { dataId, has_image: !!image_url, text_length: text?.length }
+            });
+
+            sendTraceEvent({
+                jobId,
+                component: "frontend",
+                stage: "verification_submission",
+                event: "request_sent",
+                details: {}
+            });
 
             jobMap.set(jobId, { containerRef, dataId, hash: contentHash });
             process_queue.shift();
@@ -208,6 +232,14 @@ onMessage((data) => {
 
     if (!data || !data.jobId) return;
 
+    sendTraceEvent({
+        jobId: data.jobId,
+        component: "frontend",
+        stage: "ui_update",
+        event: "websocket_result_received",
+        details: { mark: data.mark, confidence: data.confidence }
+    });
+
     const jobInfo = jobMap.get(data.jobId);
 
     if (!jobInfo) return;
@@ -232,6 +264,16 @@ onMessage((data) => {
         if (currentHashes.get(containerRef) === hash) {
             updateIcon(containerRef, finalData);
         }
+        
+        sendTraceEvent({
+            jobId: data.jobId,
+            component: "frontend",
+            stage: "ui_update",
+            event: "ui_update_completed",
+            details: { mark: finalData.mark }
+        });
+        
+        flushTrace(data.jobId);
     }
 });
 

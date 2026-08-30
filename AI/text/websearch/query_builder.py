@@ -1,6 +1,8 @@
 import json
 from utils.llm import invoke_llm
 import logging
+import time
+from utils.tracer import trace_event
 
 logger = logging.getLogger(__name__)
 
@@ -27,10 +29,19 @@ Example output:
 def generate_search_query(text: str) -> list:
     prompt = prompt_template.format(text=text)
     try:
+        start_time = time.time()
         raw = invoke_llm(QUERY_MODELS, prompt, parse_as_json=True)
+        duration = int((time.time() - start_time) * 1000)
+        
         if isinstance(raw, list) and len(raw) > 0:
-            return [str(q) for q in raw[:2]]
+            queries = [str(q) for q in raw[:2]]
+            trace_event("python_ai_worker", "websearch", "llm_query_builder", duration_ms=duration, details={"input": text, "prompt": prompt, "generated_queries": queries})
+            return queries
+            
+        trace_event("python_ai_worker", "websearch", "llm_query_builder", duration_ms=duration, details={"input": text, "prompt": prompt, "generated_queries": [text], "note": "Failed to parse list"})
         return [text]
     except Exception as e:
+        duration = int((time.time() - start_time) * 1000) if 'start_time' in locals() else None
+        trace_event("python_ai_worker", "websearch", "llm_query_builder", status="failed", duration_ms=duration, details={"input": text, "error": str(e)})
         logger.warning(f"Query generation failed: {e}", exc_info=True)
         return [text]

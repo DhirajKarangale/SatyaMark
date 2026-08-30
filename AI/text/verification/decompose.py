@@ -1,5 +1,7 @@
 from utils.llm import invoke_llm
 import logging
+import time
+from utils.tracer import trace_event
 
 logger = logging.getLogger(__name__)
 
@@ -30,11 +32,20 @@ def decompose_claims(text: str) -> list[str]:
         return []
         
     try:
+        start_time = time.time()
         prompt = PROMPT_TEMPLATE.format(text=text)
         result = invoke_llm(MODELS, prompt, parse_as_json=True)
+        duration = int((time.time() - start_time) * 1000)
+        
         if isinstance(result, list) and len(result) > 0:
-            return [str(c) for c in result]
+            claims = [str(c) for c in result]
+            trace_event("python_ai_worker", "decompose", "llm_decompose_claims", duration_ms=duration, details={"input": text, "prompt": prompt, "output": claims})
+            return claims
+            
+        trace_event("python_ai_worker", "decompose", "llm_decompose_claims", duration_ms=duration, details={"input": text, "prompt": prompt, "output": [text], "note": "Failed to parse list, returning original text"})
         return [text]
     except Exception as e:
+        duration = int((time.time() - start_time) * 1000)
+        trace_event("python_ai_worker", "decompose", "llm_decompose_claims", status="failed", duration_ms=duration, details={"input": text, "error": str(e)})
         logger.warning(f"Failed to decompose claims: {e}")
         return [text]

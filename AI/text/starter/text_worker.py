@@ -16,6 +16,8 @@ from redis.exceptions import ConnectionError, TimeoutError
 from dotenv import load_dotenv
 from starter.text_verify import verify_text
 from utils.redis_proxy import RedisProxy
+from utils.tracer import job_id_var, backend_url_var, trace_event
+import urllib.parse
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -61,6 +63,33 @@ def process_job_data(client, job_data, source_name):
             logger.error(f"[{CONSUMER_NAME} | {source_name}] Job {jobId} missing 'callback_url'. Dropping job.")
             return True
             
+        parsed_url = urllib.parse.urlparse(callback_url)
+        backend_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
+        
+        job_id_var.set(jobId)
+        backend_url_var.set(backend_url)
+
+        trace_event(
+            component="python_ai_worker",
+            stage="orchestration",
+            event="job_payload_parsed",
+            details={
+                "worker_id": WORKER_ID,
+                "source": source_name,
+            }
+        )
+
+        trace_event(
+            component="python_ai_worker",
+            stage="orchestration",
+            event="mapped_to_verification_task",
+            details={
+                "text_length": len(text) if text else 0
+            }
+        )
+        
+        start_time = time.time()
+            
         output = verify_text(text)
         summary = output.get("summary")
         result = output.get("result")
@@ -77,12 +106,43 @@ def process_job_data(client, job_data, source_name):
             "retry": retry
         }
 
+        trace_event(
+            component="python_ai_worker",
+            stage="callback",
+            event="http_callback_prepared",
+            details={"url": callback_url}
+        )
+
+        trace_event(
+            component="python_ai_worker",
+            stage="callback",
+            event="callback_sent_to_backend",
+            details={"mark": payload["mark"], "confidence": payload["confidence"]}
+        )
+
         res = requests.post(callback_url, json=payload, timeout=25)
         res.raise_for_status()
+        
+        duration_ms = int((time.time() - start_time) * 1000)
+        trace_event(
+            component="python_ai_worker",
+            stage="orchestration",
+            event="job_completed",
+            duration_ms=duration_ms,
+            details={"mark": payload["mark"], "confidence": payload["confidence"]}
+        )
+        
         logger.info(f"[{CONSUMER_NAME} | {source_name}] Job completed successfully: {jobId}")
         return True
 
     except Exception as e:
+        trace_event(
+            component="python_ai_worker",
+            stage="orchestration",
+            event="job_failed",
+            status="failed",
+            details={"error": str(e)}
+        )
         logger.error(f"[{CONSUMER_NAME} | {source_name}] AI/Callback ERROR for {jobId}: {e}", exc_info=True)
         return False
 
@@ -91,10 +151,24 @@ import concurrent.futures
 executor = concurrent.futures.ThreadPoolExecutor(max_workers=5)
 
 def process_job_async(client, msg_id, job_data, source_name):
+    job_id_var.set(job_data.get("jobId"))
+    parsed_url = urllib.parse.urlparse(job_data.get("callback_url", ""))
+    if parsed_url.scheme and parsed_url.netloc:
+        backend_url_var.set(f"{parsed_url.scheme}://{parsed_url.netloc}")
+    
+    trace_event(
+        component="python_ai_worker",
+        stage="queue",
+        event="xreadgroup_message_received",
+        details={"msg_id": msg_id, "stream": STREAM_KEY, "group": GROUP}
+    )
+
     success = process_job_data(client, job_data, source_name)
     if success:
+        trace_event(component="python_ai_worker", stage="queue", event="xack_started", details={"msg_id": msg_id})
         client.xack(STREAM_KEY, GROUP, msg_id)
         client.xdel(STREAM_KEY, msg_id)
+        trace_event(component="python_ai_worker", stage="queue", event="xack_completed", details={"msg_id": msg_id})
     else:
         logger.warning(f"[{source_name}] Job {job_data.get('jobId')} failed. Leaving in PEL.")
 

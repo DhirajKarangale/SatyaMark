@@ -5,6 +5,7 @@ const modelText = require('../model/modelText');
 const modelImage = require('../model/modelImage');
 const redisEventBus = require("./redisEventBus");
 const messages = require("../utils/messages.json");
+const tracer = require("../utils/tracer");
 
 const app = express();
 
@@ -115,6 +116,14 @@ app.post("/ai-callback/text", async (req, res) => {
         const { jobId, clientId, mark, reason, confidence, summary, urls } = body;
         console.log(`[TEXT] Callback received → client=${clientId}, job=${jobId}`);
 
+        tracer.traceEvent({
+            jobId,
+            component: "backend",
+            stage: "callback",
+            event: "backend_callback_received",
+            details: { type: "text", mark, confidence }
+        });
+
         const reasonText = (reason || "").toLowerCase();
 
         const isInternalError = mark === "ERROR" || reasonText.includes("internal error occurred") ||
@@ -125,6 +134,14 @@ app.post("/ai-callback/text", async (req, res) => {
         let dbId = null;
         if (!isInternalError) {
             try {
+                tracer.traceEvent({
+                    jobId,
+                    component: "backend",
+                    stage: "persistence",
+                    event: "database_persistence_started",
+                    details: {}
+                });
+
                 // Fix #13: Recompute summary_hash using the AI's normalized summary output
                 const { generateTextHashes } = require("../hash/text_hash");
                 if (body.summary) {
@@ -132,8 +149,23 @@ app.post("/ai-callback/text", async (req, res) => {
                 }
                 const dbResult = await modelText.PostText(body);
                 dbId = dbResult?.id;
+                
+                tracer.traceEvent({
+                    jobId,
+                    component: "backend",
+                    stage: "persistence",
+                    event: "database_persistence_completed",
+                    details: { dbId }
+                });
             } catch (dbErr) {
                 console.log("[TEXT] DB Insert Error:", dbErr.message);
+                tracer.traceEvent({
+                    jobId,
+                    component: "backend",
+                    stage: "persistence",
+                    event: "database_persistence_failed",
+                    details: { error: dbErr.message }
+                });
             }
         }
 
@@ -148,6 +180,14 @@ app.post("/ai-callback/text", async (req, res) => {
             type: "text",
             dataId: dbId,
         };
+
+        tracer.traceEvent({
+            jobId,
+            component: "backend",
+            stage: "callback",
+            event: "websocket_event_sent",
+            details: { clientId }
+        });
 
         await redisEventBus.publishData({ clientId: body.clientId, payload: payload });
         res.json({ ok: true });
@@ -164,6 +204,14 @@ app.post("/ai-callback/image", async (req, res) => {
         const { jobId, clientId, image_hash, image_url, mark, reason, confidence } = body;
 
         console.log(`[IMAGE] Callback received → client=${clientId}, job=${jobId}`);
+
+        tracer.traceEvent({
+            jobId,
+            component: "backend",
+            stage: "callback",
+            event: "backend_callback_received",
+            details: { type: "image", mark, confidence }
+        });
 
         const reasonText = (reason || "").toLowerCase();
 
@@ -199,6 +247,16 @@ app.post("/ai-callback/image", async (req, res) => {
     } catch (err) {
         console.log("Callback error:", err);
         res.status(500).json({ error: "server_error" });
+    }
+});
+
+app.post("/trace-event", async (req, res) => {
+    try {
+        tracer.traceEvent(req.body);
+        res.json({ ok: true });
+    } catch (err) {
+        console.error("Trace error:", err);
+        res.status(500).json({ error: "trace_error" });
     }
 });
 

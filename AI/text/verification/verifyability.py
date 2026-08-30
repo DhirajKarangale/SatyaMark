@@ -1,12 +1,13 @@
-from typing import Dict
 from utils.llm import invoke_llm
+import time
+from utils.tracer import trace_event
 
 MODELS = {
     "huggingface": ["deepseek_v3", "llama3_3_70b", "deepseek_r1", "qwen2_5_72b"],
     "claude": ["claude_haiku", "claude_sonnet"]
 }
 
-def check_verifyability(text: str) -> Dict:
+def check_verifyability(text: str) -> dict:
     prompt = f"""
 You classify a statement based ONLY on whether it can be FACT-CHECKED
 using independent, external evidence.
@@ -128,7 +129,9 @@ STATEMENT
 {text}
 """
     try:
+        start_time = time.time()
         data = invoke_llm(MODELS, prompt.strip(), parse_as_json=True)
+        duration = int((time.time() - start_time) * 1000)
 
         mark = data.get("mark", "").upper()
         if mark not in ("VERIFYABLE", "UNVERIFYABLE"):
@@ -140,13 +143,17 @@ STATEMENT
         if len(reason) < 10:
             raise ValueError("Reason too short")
 
-        return {
+        result = {
             "mark": mark,
             "confidence": confidence,
             "reason": reason,
         }
+        trace_event("python_ai_worker", "verifyability", "llm_check_verifyability", duration_ms=duration, details={"input": text, "prompt": prompt, "output": result})
+        return result
 
     except Exception as e:
+        duration = int((time.time() - start_time) * 1000) if 'start_time' in locals() else None
+        trace_event("python_ai_worker", "verifyability", "llm_check_verifyability", status="failed", duration_ms=duration, details={"input": text, "error": str(e)})
         return {
             "mark": "ERROR",
             "confidence": 0,

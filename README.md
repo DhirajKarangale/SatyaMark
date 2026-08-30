@@ -43,6 +43,7 @@ SatyaMark is an open-source, multi-modal content verification platform. It solve
 - **Non-Binary Verdicts:** Outputs confidence scores and explainable reasoning instead of absolute "True/False" labels.
 - **Asynchronous Processing:** Uses Redis Streams (xAdd, xReadGroup) to queue expensive tasks without blocking the UI.
 - **Multi-Modal AI Pipeline:** Evaluates text via LangGraph state-machines and tests images against 22+ local forensic heuristics.
+- **End-to-End Observability:** Built-in tracing pipeline that captures complete request lifecycles—from SDK initialization through AI processing to final UI updates.
 
 The ecosystem also includes:
 
@@ -134,6 +135,7 @@ Verdicts + Confidence + Explanation
 - **Relational Persistence & Caching (PostgreSQL):** Persists verified objects and acts as a massive deduplication caching layer.
 - **AI Pipelines (Python, LangGraph, LangChain):** Uses LangGraph to model the text verification pipeline as a strict, observable state-machine.
 - **Vector Retrieval & LLMs:** Uses FAISS/Milvus for semantic searches, supported by Anthropic Claude, Hugging Face, and Google Search.
+- **Observability (File-based Tracing):** Centralized Node.js tracer that aggregates events from React, Express, and Python workers into chronological, per-job JSON files.
 
 ---
 
@@ -153,6 +155,28 @@ SatyaMark ensures expensive jobs are never lost in the ether:
 - **Job Janitor:** A daemon sweeps for "stuck" jobs (e.g., claimed by a crashed worker) and reassigns them using a 3-strike retry system. Fatal jobs are routed to a Dead Letter Queue (DLQ).
 - **Job Transfer:** Actively scoops unassigned jobs from saturated Redis clusters and transfers them to free clusters to prevent deadlocks.
 - **Independent Scaling:** Because Python workers are decoupled from the Node.js orchestrator via Redis, each component (e.g., text workers vs. image workers) scales horizontally on its own.
+
+---
+
+## 📊 End-to-End Tracing
+
+SatyaMark includes a powerful tracing pipeline designed for extreme visibility across the distributed architecture:
+- **Frontend Buffering:** The React SDK buffers pre-job connection events (`sdk_initialized`, `websocket_connecting`) and injects them once a job is created.
+- **Distributed Event Aggregation:** The Node.js backend serves as the centralized sink, aggregating events from the WebSocket API, Redis routing algorithms, and HTTP callbacks from Python.
+- **Deep AI Introspection:** Traces explicitly capture LangGraph routing decisions, web search queries, chunk relevance evaluations, and Map/Reduce evidence extraction states.
+- **Per-Job Timelines:** Every claim verified generates a standalone `trace_satyamark_*.json` file depicting a perfect chronological timeline of the entire request lifecycle.
+
+### Configuring Tracing
+
+By default, the trace files are saved in a `traces/` folder at the root of the project. You can easily enable or disable this feature via environment variables.
+
+To toggle tracing:
+1. Open the `Backend/.env` file.
+2. Set the `ENABLE_TRACE` variable:
+   - `ENABLE_TRACE=true` (Turns on full end-to-end tracing)
+   - `ENABLE_TRACE=false` (Completely disables tracing to save disk space and overhead)
+
+*Note: Since the Node.js backend acts as the central sink, disabling it here automatically halts all trace file generation across the entire system.*
 
 ---
 

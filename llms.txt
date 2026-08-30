@@ -17,6 +17,7 @@ SatyaMark separates verification workloads from user interactions using asynchro
 - **Distributed Queues (Redis Streams):** Event persistence, consumer groups (`xReadGroup`), reliable delivery, and decoupled horizontal scaling.
 - **Relational Persistence & Caching (PostgreSQL):** Persists verified objects and acts as a massive deduplication caching layer via SHA-256 hashes.
 - **AI Pipelines (Python, LangGraph, LangChain):** Autonomous intelligence layer. Text is verified via LangGraph pipelines; images undergo comprehensive forensic analysis (22+ heuristics). Uses FAISS/Milvus for semantic searches, supported by Anthropic Claude, Hugging Face, and Google Search.
+- **Observability (File-based Tracing):** Centralized Node.js tracer that aggregates events from the React SDK, Express middleware, and Python workers into chronological, per-job JSON files for complete end-to-end pipeline visibility.
 
 ## Repository Structure
 

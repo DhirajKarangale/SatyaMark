@@ -71,26 +71,5 @@
         "imageURL": "https://res.cloudinary.com/dfamljkyo/image/upload/v1765866684/jnosohvjltegdoufkvef.png",
         "userName": "NightWatcher",
         "date": "2026-06-11"
-    },
-    {
-        "id": "11",
-        "title": "AI Discovers New Antibiotic",
-        "description": "Researchers announced that an AI system independently discovered a completely new antibiotic capable of killing every known antibiotic-resistant bacterium.",
-        "userName": "FutureScience",
-        "date": "2026-08-28"
-    },
-    {
-        "id": "12",
-        "title": "Quantum Computing Breakthrough",
-        "description": "A new quantum computer has officially solved a mathematical problem in 30 seconds that would take the world's fastest supercomputer millions of years to complete.",
-        "userName": "QuantumDaily",
-        "date": "2026-08-27"
-    },
-    {
-        "id": "13",
-        "title": "Global Internet Shutdown",
-        "description": "Scientists have warned that a massive solar storm expected this week could cause a global internet outage lasting several months.",
-        "userName": "GlobalNewsNow",
-        "date": "2026-08-29"
     }
 ]

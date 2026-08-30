@@ -1,5 +1,7 @@
 const EventEmitter = require('events');
 
+const DEFAULT_TIMEOUT_MS = 60000;
+
 class ConnectionManager extends EventEmitter {
     constructor() {
         super();
@@ -30,7 +32,11 @@ class ConnectionManager extends EventEmitter {
         return this.states.get(serviceName).status;
     }
 
-    async ensureConnection(serviceName, triggerConnectFn = null) {
+    isConnected(serviceName) {
+        return this.getStatus(serviceName) === 'connected';
+    }
+
+    async ensureConnection(serviceName, triggerConnectFn = null, timeoutMs = DEFAULT_TIMEOUT_MS) {
         this._initState(serviceName);
         const state = this.states.get(serviceName);
 
@@ -51,13 +57,20 @@ class ConnectionManager extends EventEmitter {
             }
         }
 
-        // Wait until it becomes connected
+        // Wait until it becomes connected, with timeout to prevent infinite blocking
         if (this.states.get(serviceName).status !== 'connected') {
-            await new Promise(resolve => {
+            await new Promise((resolve, reject) => {
                 const onConnect = () => {
+                    clearTimeout(timer);
                     this.removeListener(`${serviceName}:connected`, onConnect);
                     resolve();
                 };
+
+                const timer = setTimeout(() => {
+                    this.removeListener(`${serviceName}:connected`, onConnect);
+                    reject(new Error(`[ConnectionManager] Timeout: ${serviceName} did not reconnect within ${timeoutMs}ms`));
+                }, timeoutMs);
+
                 this.on(`${serviceName}:connected`, onConnect);
             });
             console.log(`[ConnectionManager] Operation resumed for ${serviceName}.`);

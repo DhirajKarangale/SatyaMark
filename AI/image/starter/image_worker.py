@@ -37,7 +37,7 @@ STREAM_KEY = "stream:ai:image:jobs"
 def ensure_consumer_group(client, source_name):
     """Creates the consumer group once on startup to save quota."""
     try:
-        client.xgroup_create(STREAM_KEY, GROUP, id="$", mkstream=True)
+        client.xgroup_create(STREAM_KEY, GROUP, id="0", mkstream=True)
     except redis.exceptions.ResponseError as e:
         if "BUSYGROUP" not in str(e):
             logger.warning(f"[{source_name}] Group creation issue: {e}")

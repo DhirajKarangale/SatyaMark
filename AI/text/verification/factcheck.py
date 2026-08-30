@@ -1,4 +1,6 @@
 from utils.llm import invoke_llm
+import time
+from utils.tracer import trace_event
 
 MODELS = {
     "huggingface": ["deepseek_v3", "llama3_3_70b", "qwen2_5_72b", "deepseek_r1", "veritas_8b_fact_checker"],
@@ -61,8 +63,10 @@ def fact_check(text: str) -> dict:
         }
 
     try:
+        start_time = time.time()
         prompt = PROMPT_TEMPLATE.format(text=text)
         data = invoke_llm(MODELS, prompt, parse_as_json=True)
+        duration = int((time.time() - start_time) * 1000)
         
         mark = data.get("mark", "").strip()
         confidence = max(0, min(int(data.get("confidence", 0)), 100))
@@ -74,13 +78,17 @@ def fact_check(text: str) -> dict:
         if not reason:
             reason = "Reasoning was not provided by the model."
 
-        return {
+        result = {
             "mark": mark,
             "confidence": confidence,
             "reason": reason,
         }
+        trace_event("python_ai_worker", "factcheck", "llm_fact_check", duration_ms=duration, details={"input": text, "prompt": prompt, "output": result})
+        return result
 
     except Exception as e:
+        duration = int((time.time() - start_time) * 1000) if 'start_time' in locals() else None
+        trace_event("python_ai_worker", "factcheck", "llm_fact_check", status="failed", duration_ms=duration, details={"input": text, "error": str(e)})
         return {
             "mark": "Insufficient",
             "confidence": 0,

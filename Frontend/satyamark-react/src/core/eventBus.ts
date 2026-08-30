@@ -6,6 +6,7 @@ export type ServerMessage = {
   type?: string;
   jobId?: string;
   mark?: string;
+  confidence?: number;
   dataId?: string;
   clientId?: string;
   sessionId?: string;

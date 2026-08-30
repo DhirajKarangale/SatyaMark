@@ -1,5 +1,6 @@
 const { getClients } = require("../redis/redisClient");
 const connectionManager = require("./connectionManager");
+const tracer = require("./tracer");
 require("dotenv").config();
 
 const JOB_ENQUEUE_RATE = parseInt(process.env.JOB_ENQUEUE_RATE) || 1000;
@@ -73,19 +74,66 @@ class RedisQueueManager {
                 // Try Render first (if connected and under memory limit)
                 if (renderReady && renderClient && usedMB < this.maxMemoryMB) {
                     try {
-                        await renderClient.xAdd(streamKey, "*", jobPayload);
+                        tracer.traceEvent({
+                            jobId: currentJob.jobId,
+                            component: "redis",
+                            stage: "queue",
+                            event: "redis_instance_selected",
+                            details: { instance: "RENDER", usedMB }
+                        });
+                        
+                        tracer.traceEvent({
+                            jobId: currentJob.jobId,
+                            component: "redis",
+                            stage: "queue",
+                            event: "xadd_started",
+                            details: { streamKey }
+                        });
+                        
+                        const redisJobId = await renderClient.xAdd(streamKey, "*", jobPayload);
                         console.log(`[${this.queueName}] Job ${currentJob.jobId} → RENDER`);
+                        
+                        tracer.traceEvent({
+                            jobId: currentJob.jobId,
+                            component: "redis",
+                            stage: "queue",
+                            event: "xadd_completed",
+                            details: { redis: "RENDER", streamKey, memoryMB: usedMB, redisJobId }
+                        });
                         pushed = true;
                     } catch (err) {
                         // Render failed mid-operation, fall through to Upstash
                     }
                 }
 
-                // Fallback to Upstash
                 if (!pushed && upstashReady && upstashClient) {
                     try {
-                        await upstashClient.xAdd(streamKey, "*", jobPayload);
+                        tracer.traceEvent({
+                            jobId: currentJob.jobId,
+                            component: "redis",
+                            stage: "queue",
+                            event: "redis_instance_selected",
+                            details: { instance: "UPSTASH" }
+                        });
+
+                        tracer.traceEvent({
+                            jobId: currentJob.jobId,
+                            component: "redis",
+                            stage: "queue",
+                            event: "xadd_started",
+                            details: { streamKey }
+                        });
+
+                        const redisJobId = await upstashClient.xAdd(streamKey, "*", jobPayload);
                         console.log(`[${this.queueName}] Job ${currentJob.jobId} → UPSTASH`);
+                        
+                        tracer.traceEvent({
+                            jobId: currentJob.jobId,
+                            component: "redis",
+                            stage: "queue",
+                            event: "xadd_completed",
+                            details: { redis: "UPSTASH", streamKey, redisJobId }
+                        });
                         pushed = true;
                     } catch (err) {
                         // Both clusters failed
@@ -128,6 +176,14 @@ const imageQueue = new RedisQueueManager(
 );
 
 async function enqueueJob(jobData) {
+    tracer.traceEvent({
+        jobId: jobData.jobId,
+        component: "backend",
+        stage: "queue",
+        event: "queue_selection_started",
+        details: { type: jobData.type }
+    });
+
     if (jobData.type === "image") {
         imageQueue.enqueue(jobData);
     } else {

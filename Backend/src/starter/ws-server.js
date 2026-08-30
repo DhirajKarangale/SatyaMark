@@ -2,6 +2,7 @@ const WebSocket = require("ws");
 const crypto = require("crypto");
 const redisEventBus = require("./redisEventBus");
 const process_task = require("../utils/process_task");
+const tracer = require("../utils/tracer");
 const { generateSessionId, generateHmacSecret } = require("../utils/generateIds");
 
 function heartbeat() {
@@ -35,6 +36,16 @@ function startws(server) {
         return;
       }
 
+      if (data.type === "trace_event") {
+        tracer.traceEvent(data.payload);
+        return;
+      }
+
+      if (data.type === "flush_trace") {
+        tracer.flushTrace(data.jobId, "frontend_flush");
+        return;
+      }
+
       // Issue 16: Respond to application-level ping
       if (data.type === "ping") {
         if (socket.readyState === WebSocket.OPEN) {
@@ -52,6 +63,17 @@ function startws(server) {
       if (!verifyHmac(data, socket.hmacSecret)) {
         console.log("HMAC verification failed for client:", socket.clientId);
         return;
+      }
+
+      if (data.jobId) {
+        tracer.traceEvent({
+          jobId: data.jobId,
+          sessionId: socket.sessionId,
+          component: "backend",
+          stage: "request_handling",
+          event: "backend_ws_received",
+          details: {}
+        });
       }
 
       process_task.getTask(data, socket.sessionId);

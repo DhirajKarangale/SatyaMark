@@ -2,6 +2,8 @@ import re
 import requests
 import trafilatura
 import logging
+import time
+from utils.tracer import trace_event
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +18,8 @@ def clean_raw_text(raw_text: str) -> str:
 def extract_article_text(url: str, snippet: str) -> str:
     """Instantly scrapes and cleans text using pure Python. No LLM delays."""
     try:
+        start_time = time.time()
+        trace_event("python_ai_worker", "websearch", "web_scrape_started", details={"url": url})
         r = requests.get(
             url,
             timeout=25,
@@ -29,9 +33,17 @@ def extract_article_text(url: str, snippet: str) -> str:
 
             if extracted:
                 combined_text = f"{extracted} \n\n[search engine snippet: {snippet}]"
-                return clean_raw_text(combined_text)
+                cleaned = clean_raw_text(combined_text)
+                duration = int((time.time() - start_time) * 1000)
+                trace_event("python_ai_worker", "websearch", "web_scrape", duration_ms=duration, details={"url": url, "status": "success", "length": len(cleaned), "content": cleaned})
+                return cleaned
+
+        duration = int((time.time() - start_time) * 1000)
+        trace_event("python_ai_worker", "websearch", "web_scrape", duration_ms=duration, details={"url": url, "status": "failed", "error": f"HTTP {r.status_code}" if 'r' in locals() else "No extraction"})
 
     except Exception as e:
+        duration = int((time.time() - start_time) * 1000) if 'start_time' in locals() else None
+        trace_event("python_ai_worker", "websearch", "web_scrape", status="failed", duration_ms=duration, details={"url": url, "error": str(e)})
         logger.error(f"Scraping failed for URL: {url}", exc_info=True)
 
     clean_snippet = clean_raw_text(snippet)

@@ -7,6 +7,8 @@ from verification.factcheck import fact_check
 from verification.verifyability import check_verifyability
 from verification.decompose import decompose_claims
 from websearch.web_verify import web_verify
+import time
+from utils.tracer import trace_event
 
 logger = logging.getLogger(__name__)
 
@@ -21,21 +23,49 @@ class GraphState(TypedDict):
 
 def summarize_node(state: GraphState):
     logger.info("Executing summarize_node")
+    start_time = time.time()
+    
+    trace_event("langgraph", "summarize", "node_started", details={"state_before": dict(state)})
+    
     summary = summarize(state["statement"])
+    
+    duration = int((time.time() - start_time) * 1000)
+    trace_event("langgraph", "summarize", "node_completed", duration_ms=duration, details={"state_after": {"summary": summary}})
+    
     return {"summary": summary}
 
 def verifyability_node(state: GraphState):
     logger.info("Executing verifyability_node")
+    start_time = time.time()
+    
+    trace_event("langgraph", "verifyability", "node_started", details={"state_before": dict(state)})
+    
     res = check_verifyability(state["summary"])
+    
+    duration = int((time.time() - start_time) * 1000)
+    trace_event("langgraph", "verifyability", "node_completed", duration_ms=duration, details={"state_after": {"result": res}})
+    
     return {"result": res}
 
 def decompose_node(state: GraphState):
     logger.info("Executing decompose_node")
+    start_time = time.time()
+    
+    trace_event("langgraph", "decompose", "node_started", details={"state_before": dict(state)})
+    
     claims = decompose_claims(state["summary"])
+    
+    duration = int((time.time() - start_time) * 1000)
+    trace_event("langgraph", "decompose", "node_completed", duration_ms=duration, details={"state_after": {"claims": claims}})
+    
     return {"claims": claims}
 
 def verify_claims_node(state: GraphState):
     logger.info("Executing verify_claims_node")
+    start_time = time.time()
+    
+    trace_event("langgraph", "verify_claims", "node_started", details={"state_before": dict(state)})
+    
     claims = state.get("claims")
     if not claims:
         claims = [state["summary"]]
@@ -43,8 +73,10 @@ def verify_claims_node(state: GraphState):
     results = []
     for claim in claims:
         res = fact_check(claim)
+        
         if res.get("mark") == "Insufficient":
             res = web_verify(claim)
+            
         results.append((claim, res))
         
     final_mark = "Correct"
@@ -81,22 +113,30 @@ def verify_claims_node(state: GraphState):
     avg_conf = overall_confidence // len(results) if results else 0
     urls = list(set(urls))
     
-    return {"result": {
+    final_res = {
         "mark": final_mark,
         "confidence": avg_conf,
         "reason": "\n\n---\n\n".join(reasons) if len(claims) > 1 else reasons[0],
         "urls": urls
-    }}
+    }
+    
+    duration = int((time.time() - start_time) * 1000)
+    trace_event("langgraph", "verify_claims", "node_completed", duration_ms=duration, details={"state_after": {"result": final_res}})
+    
+    return {"result": final_res}
 
 def should_continue_verifyability(state: GraphState):
     res = state.get("result")
     if res and res.get("mark") == "ERROR":
         logger.info("Verifyability check encountered an error. Falling through to decompose.")
+        trace_event("langgraph", "routing", "routing_decision", details={"decision": "decompose", "reason": "ERROR"})
         return "decompose"
     if res and res.get("mark") == "UNVERIFYABLE":
         logger.info("Claim is UNVERIFYABLE. Ending pipeline.")
+        trace_event("langgraph", "routing", "routing_decision", details={"decision": "END", "reason": "UNVERIFYABLE"})
         return END
     logger.info("Claim is VERIFYABLE. Proceeding to decompose.")
+    trace_event("langgraph", "routing", "routing_decision", details={"decision": "decompose", "reason": "VERIFYABLE"})
     return "decompose"
 
 
@@ -136,8 +176,14 @@ def verify_text(statement: str):
     logger.info(f"Starting text verification for statement: {statement[:50]}...")
     initial_state = {"statement": statement, "summary": "", "claims": [], "result": None}
     
+    start_time = time.time()
+    trace_event("langgraph", "pipeline", "graph_execution_started", details={"statement": statement[:50] + "..."})
+    
     try:
         final_state = workflow.invoke(initial_state)
+        duration = int((time.time() - start_time) * 1000)
+        trace_event("langgraph", "pipeline", "graph_execution_completed", duration_ms=duration, details={"mark": final_state.get("result", {}).get("mark")})
+        
         return {
             "summary": final_state.get("summary"),
             "result": final_state.get("result")

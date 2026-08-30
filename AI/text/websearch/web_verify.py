@@ -4,6 +4,8 @@ from websearch.search_engine import get_urls_with_meta
 from websearch.scraper import extract_article_text
 from websearch.verifier import fact_check
 import logging
+import time
+from utils.tracer import trace_event
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +35,9 @@ def web_verify(claim: str):
 
     scraped_dict = {}
 
+    start_time = time.time()
+    trace_event("python_ai_worker", "websearch", "scraping_pool_started", details={"num_urls": len(search_results), "claim": claim})
+
     with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         future_to_item = {
             executor.submit(extract_article_text, item["url"], item["snippet"]): item
@@ -46,6 +51,9 @@ def web_verify(claim: str):
                 scraped_dict[item["url"]] = text
             except Exception as e:
                 logger.error(f"Failed to process {item['url']}: {e}", exc_info=True)
+
+    duration = int((time.time() - start_time) * 1000)
+    trace_event("python_ai_worker", "websearch", "scraping_pool_completed", duration_ms=duration, details={"scraped_urls": list(scraped_dict.keys())})
 
     ordered_scraped_data = []
     for item in search_results:

@@ -33,6 +33,8 @@ npm install satyamark-react
 
 ### 1. Initialize Connection
 
+> **Note:** During the current phase, you may provide any arbitrary `app_id` and `user_id`. We recommend using a snake_case version of your project name for the `app_id`, and a stable, unique identifier for the `user_id`.
+
 ``` tsx
 import { useEffect } from "react";
 import { init } from "satyamark-react";
@@ -247,6 +249,8 @@ SatyaMark displays different marks based on verification results:
 ------------------------------------------------------------------------
 
 ## Troubleshooting
+
+> **System Status Check:** If you are experiencing unexpected behavior or connectivity issues, you can verify whether our core services are operational by testing the chat demo on the [SatyaMark website](https://satyamark.js.org). If the demo is also unresponsive, we may be experiencing a temporary service degradation. We apologize for any disruption and appreciate your patience as we restore full functionality. For further support, please contact [dakarangale02@gmail.com](mailto:dakarangale02@gmail.com).
 
 ### 1. Invalid root element
 

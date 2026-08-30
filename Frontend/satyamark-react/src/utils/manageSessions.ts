@@ -1,19 +1,30 @@
 import { encrypt, decrypt } from "./encryption";
 import { setCookie, getCookie } from "./storage";
 
-async function getSessionId(): Promise<string> {
+type SessionData = {
+  sessionId: string;
+  hmacSecret: string;
+};
+
+async function getSessionData(): Promise<SessionData> {
   const raw = getCookie("satya_session");
-  if (!raw) return "";
+  if (!raw) return { sessionId: "", hmacSecret: "" };
 
   try {
-    return await decrypt(raw);
+    const decrypted = await decrypt(raw);
+    const data = JSON.parse(decrypted);
+    return {
+      sessionId: data.sessionId || "",
+      hmacSecret: data.hmacSecret || "",
+    };
   } catch {
-    return "";
+    return { sessionId: "", hmacSecret: "" };
   }
 }
 
-async function setSessionId(sessionId: string) {
-  const encrypted = await encrypt(sessionId);
+async function setSessionData(sessionId: string, hmacSecret: string) {
+  const data = JSON.stringify({ sessionId, hmacSecret });
+  const encrypted = await encrypt(data);
   setCookie("satya_session", encrypted);
 }
 
@@ -21,4 +32,4 @@ function clearSession() {
   setCookie("satya_session", "", -1);
 }
 
-export { getSessionId, setSessionId, clearSession }
+export { getSessionData, setSessionData, clearSession };

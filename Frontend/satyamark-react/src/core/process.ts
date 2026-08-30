@@ -8,6 +8,9 @@ import { generateHash } from "../utils/hash";
 let isConnected = false;
 let isSendingJobs = false;
 
+// Issue 27: LRU cache with max size
+const MAX_CACHE_SIZE = 500;
+
 type JobInfo = {
     containerRef: HTMLDivElement;
     dataId: string;
@@ -28,10 +31,34 @@ type ProcessQueueItem = {
 
 const process_queue: ProcessQueueItem[] = [];
 
-export function process(containerRef: HTMLDivElement, dataId: string) {
+// Issue 27: Cache with FIFO eviction at max size
+function cacheSet(key: string, value: any) {
+    if (verificationCache.size >= MAX_CACHE_SIZE) {
+        const oldestKey = verificationCache.keys().next().value;
+        if (oldestKey !== undefined) {
+            verificationCache.delete(oldestKey);
+        }
+    }
+    verificationCache.set(key, value);
+}
+
+// Issue 26: Return cleanup function to disconnect observer and free resources
+export function process(containerRef: HTMLDivElement, dataId: string): () => void {
     validateStatusContainer(containerRef);
     setupObserver(containerRef, dataId);
     void queueProcessing(containerRef, dataId);
+
+    return () => {
+        const observer = containerObservers.get(containerRef);
+        if (observer) {
+            observer.disconnect();
+            containerObservers.delete(containerRef);
+        }
+        const timer = debounceTimers.get(containerRef);
+        if (timer) clearTimeout(timer);
+        debounceTimers.delete(containerRef);
+        currentHashes.delete(containerRef);
+    };
 }
 
 function setupObserver(containerRef: HTMLDivElement, dataId: string) {
@@ -67,10 +94,11 @@ function setupObserver(containerRef: HTMLDivElement, dataId: string) {
     containerObservers.set(containerRef, observer);
 }
 
+// Issue 17: generateHash is now async (SHA-256)
 async function queueProcessing(containerRef: HTMLDivElement, dataId: string) {
     try {
         const { text, image_url } = await process_data(containerRef, dataId);
-        const contentHash = generateHash(text + image_url);
+        const contentHash = await generateHash(text + image_url);
 
         const currentHash = currentHashes.get(containerRef);
         if (currentHash === contentHash) {
@@ -122,7 +150,7 @@ async function sendJobs(): Promise<void> {
         try {
             const { text, image_url } = await process_data(containerRef, dataId);
 
-            const newContentHash = generateHash(text + image_url);
+            const newContentHash = await generateHash(text + image_url);
             if (newContentHash !== contentHash) {
                 process_queue.shift();
                 continue;
@@ -132,7 +160,6 @@ async function sendJobs(): Promise<void> {
 
             jobMap.set(jobId, { containerRef, dataId, hash: contentHash });
             process_queue.shift();
-            // In the original code, this was set to null. We omit it here since queueProcessing sets it to pending.
         } catch (error) {
             if (error instanceof Error && error.message === "notready") {
                 isSendingJobs = false;
@@ -175,7 +202,7 @@ onMessage((data) => {
         const finalData = { ...data, dataId: finalDataId };
 
         if (hash) {
-            verificationCache.set(hash, finalData);
+            cacheSet(hash, finalData);
         }
 
         if (currentHashes.get(containerRef) === hash) {

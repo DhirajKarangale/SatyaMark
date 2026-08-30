@@ -5,7 +5,7 @@ import { getSessionData, setSessionData, clearSession } from "../utils/manageSes
 import { initIcons } from "./status_controller";
 import { sendTraceEvent } from "../utils/tracer";
 
-const isDev = true;
+const isDev = false;
 
 type ConnectionContext = {
   app_id: string;
@@ -159,9 +159,9 @@ async function connect() {
         if (!isConnected) {
           isConnected = true;
           isConnecting = false;
-          
+
           addBufferedEvent("connection", "client_session_assigned", { sessionId: data.sessionId || "existing" });
-          
+
           emitConnection(getContext());
           startPing();
         }

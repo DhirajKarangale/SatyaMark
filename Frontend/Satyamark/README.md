@@ -140,44 +140,27 @@ The documentation is intended for both developers and general users.
 
 ---
 
-## Running SatyaMark Locally
+## Running SatyaMark Locally (Full-Stack Evaluation)
 
-### 1. Clone the Project
+### 1. Configure Frontend Environment Variables
 
+Navigate to the `Frontend/Satyamark/` directory, create a `.env` file from the example, and fill it with your real configuration (or use the command below):
 ```bash
-git clone https://github.com/DhirajKarangale/SatyaMark.git
+# On Mac/Linux
+cp .env.example .env
+
+# On Windows (Command Prompt)
+copy .env.example .env
 ```
+Open the newly created `.env` file in your editor and input your real values (like Cloudinary presets if required).
 
-### 2. Navigate to the Frontend
-
-```bash
-cd Frontend/Satyamark
-```
-
-### 3. Create Environment File
-
-Create a `.env` file in `Frontend/Satyamark` with the following values:
-
-```env
-# Required for API endpoints
-VITE_URL_BASE=<backend_base_url>
-
-# Required for image uploads
-VITE_CLOUD_NAME=<cloudinary_cloud_name>
-VITE_UPLOAD_PRESET=<cloudinary_upload_preset>
-
-# Optional: Only needed if running the WebSocket server locally
-VITE_IS_DEV=true
-VITE_WS_URL_BASE=ws://localhost:2402
-```
-
-### 4. Install Dependencies
+### 2. Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 5. Run in Development Mode
+### 3. Run in Development Mode
 
 ```bash
 npm run dev

@@ -48,21 +48,20 @@ AI Workers → Callback → Backend → PostgreSQL → WebSocket → Client
 
 ## Environment Setup
 
-Create a `.env` file in the backend root:
+**Prerequisites:** Node.js (v18+), Local Redis (Port 6379), Local PostgreSQL.
 
+Create a `.env` file from the example, and fill it with your real configuration (or use the command below):
+```bash
+# On Mac/Linux
+cp .env.example .env
+
+# On Windows (Command Prompt)
+copy .env.example .env
 ```
-PORT=1000
-REDIS_TEXT_URL=rediss://your-upstash-url
-REDIS_IMAGE_URL=rediss://your-upstash-url
-RESULT_RECEIVER_TEXT=http://localhost:1000/ai-callback/text
-RESULT_RECEIVER_IMG=http://localhost:1000/ai-callback/image
-IMAGE_ALGO=FORENSIC
-DB_HOST=your-db-host
-DB_PORT=5432
-DB_NAME=your-db-name
-DB_USER=your-db-user
-DB_PASSWORD=your-db-password
-```
+Open the newly created `.env` file in your editor and input your real credentials for the following keys:
+- **Database:** PostgreSQL connection string
+- **Redis Orchestration:** `REDIS_RENDER_TEXT_URL`, `REDIS_UPSTASH_TEXT_URL`, `REDIS_RENDER_IMAGE_URL`, `REDIS_UPSTASH_IMAGE_URL`
+- **Tracing:** Set `ENABLE_TRACE=true` to generate chronological trajectory logs.
 
 ---
 
@@ -98,11 +97,11 @@ CREATE TABLE image_results (
 
 ---
 
-## Run Locally
+## Run Locally (Full-Stack Evaluation)
+
+Connect to your PostgreSQL instance and create the required tables (listed above) before starting the server.
 
 ```bash
-git clone <repo-url>
-cd Backend
 npm install
 npm start
 ```

@@ -1,7 +1,7 @@
-import { memo } from "react";
+import { memo, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import FAQ from "../components/FAQ";
-import { motion, type Variants } from "framer-motion";
+import { m, type Variants } from "framer-motion";
 import { Link } from "react-router-dom";
 import { MARK_META } from "../utils/MARK_META";
 import { routeChat, routeDoccu } from "../utils/Routes";
@@ -17,6 +17,18 @@ const fadeUp: Variants = {
 };
 
 function Home() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const handleVideoClick = () => {
+    if (videoRef.current) {
+      if (videoRef.current.paused) {
+        videoRef.current.play();
+      } else {
+        videoRef.current.pause();
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 text-gray-100">
       <Helmet>
@@ -60,12 +72,12 @@ function Home() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-blue-500/10 via-transparent to-transparent" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32">
-          <motion.div
+          <m.div
             initial="hidden"
             animate="visible"
             className="text-center space-y-8"
           >
-            <motion.div custom={0} variants={fadeUp} className="space-y-4">
+            <m.div custom={0} variants={fadeUp} className="space-y-4">
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight">
                 <span className="bg-linear-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent">
                   SatyaMark
@@ -74,9 +86,9 @@ function Home() {
               <p className="text-xl sm:text-2xl text-gray-400 max-w-3xl mx-auto">
                 AI-Powered Content Verification for the Modern Web
               </p>
-            </motion.div>
+            </m.div>
 
-            <motion.p
+            <m.p
               custom={1}
               variants={fadeUp}
               className="text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed"
@@ -84,9 +96,9 @@ function Home() {
               A centralized verification platform that helps users and platforms
               distinguish truth from misinformation in real-time — across text,
               images, and media.
-            </motion.p>
+            </m.p>
 
-            <motion.div
+            <m.div
               custom={2}
               variants={fadeUp}
               className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4 pt-4 w-full"
@@ -149,10 +161,10 @@ function Home() {
                 <Package size={18} />
                 NPM Package
               </a>
-            </motion.div>
+            </m.div>
 
             {/* NPM Badges */}
-            <motion.div
+            <m.div
               custom={3}
               variants={fadeUp}
               className="flex flex-wrap items-center justify-center gap-3 pt-6"
@@ -160,56 +172,69 @@ function Home() {
               <img
                 src="https://img.shields.io/npm/v/satyamark-react?color=22c55e&label=version"
                 alt="npm version"
+                loading="lazy"
+                decoding="async"
                 className="h-5"
               />
               <img
                 src="https://img.shields.io/npm/dt/satyamark-react?color=38bdf8&label=total%20downloads"
                 alt="npm downloads"
+                loading="lazy"
+                decoding="async"
                 className="h-5"
               />
               <img
                 src="https://img.shields.io/npm/l/satyamark-react?color=818cf8"
                 alt="npm license"
+                loading="lazy"
+                decoding="async"
                 className="h-5"
               />
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         </div>
       </section>
 
       {/* Demo Video Section */}
       <section className="relative z-10 -mt-10 pb-20 px-4 sm:px-6 lg:px-8">
-        <motion.div 
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.7, ease: "easeOut" }}
-            className="max-w-5xl mx-auto rounded-2xl overflow-hidden shadow-2xl shadow-cyan-500/20 border border-white/10 bg-slate-900/80 backdrop-blur-md p-2 sm:p-4"
+        <m.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.7, ease: "easeOut" }}
+          className="max-w-5xl mx-auto rounded-2xl overflow-hidden shadow-2xl shadow-cyan-500/20 border border-white/10 bg-slate-900/95 md:bg-slate-900/80 md:backdrop-blur-md p-2 sm:p-4"
         >
-          <div className="rounded-xl overflow-hidden border border-white/5 bg-black flex justify-center items-center">
-            <video 
-              controls 
-              playsInline 
-              preload="metadata"
+          <div className="relative rounded-xl overflow-hidden border border-white/5 bg-black flex justify-center items-center group">
+            <video
+              ref={videoRef}
+              controls
+              playsInline
+              preload="none"
+              poster="/og-image.png"
               aria-label="Demonstration of SatyaMark in action"
-              className="w-full h-auto max-h-[70vh] object-contain opacity-90 hover:opacity-100 transition-opacity duration-300"
+              className="w-full aspect-video max-h-[70vh] object-cover opacity-90 hover:opacity-100 transition-opacity duration-300 bg-black"
             >
               <source src="/Satyamark.mp4" type="video/mp4" />
               Your browser does not support the video tag.
             </video>
+            <div
+              className="absolute inset-0 bottom-16 cursor-pointer z-10"
+              onClick={handleVideoClick}
+              aria-label="Toggle play/pause"
+            />
           </div>
-        </motion.div>
+        </m.div>
       </section>
 
       {/* Problem Section */}
       <section className="py-20 bg-slate-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
+          <m.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             className="grid md:grid-cols-2 gap-12 items-center"
           >
-            <motion.div custom={0} variants={fadeUp} className="space-y-6">
+            <m.div custom={0} variants={fadeUp} className="space-y-6">
               <h2 className="text-3xl sm:text-4xl font-bold text-white">
                 The Misinformation Problem
               </h2>
@@ -233,9 +258,9 @@ function Home() {
                   <p className="text-gray-400">Lack of transparent, evidence-backed verdicts</p>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
 
-            <motion.div custom={1} variants={fadeUp} className="space-y-6">
+            <m.div custom={1} variants={fadeUp} className="space-y-6">
               <h2 className="text-3xl sm:text-4xl font-bold text-white">
                 Our Solution
               </h2>
@@ -259,31 +284,31 @@ function Home() {
                   <p className="text-gray-400">Easy integration with React SDK</p>
                 </div>
               </div>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         </div>
       </section>
 
       {/* How It Works */}
       <section className="py-20 bg-linear-to-b from-slate-950 to-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
+          <m.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             className="text-center space-y-12"
           >
-            <motion.div custom={0} variants={fadeUp}>
+            <m.div custom={0} variants={fadeUp}>
               <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
                 How SatyaMark Works
               </h2>
               <p className="text-lg text-gray-400 max-w-2xl mx-auto">
                 Our AI-powered system analyzes content through multiple layers of verification
               </p>
-            </motion.div>
+            </m.div>
 
             <div className="grid md:grid-cols-3 gap-8">
-              <motion.div
+              <m.div
                 custom={1}
                 variants={fadeUp}
                 className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4
@@ -297,9 +322,9 @@ function Home() {
                 <p className="text-gray-400 leading-relaxed">
                   Extracts factual claims using NLP and vision models from text and images
                 </p>
-              </motion.div>
+              </m.div>
 
-              <motion.div
+              <m.div
                 custom={2}
                 variants={fadeUp}
                 className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4
@@ -313,9 +338,9 @@ function Home() {
                 <p className="text-gray-400 leading-relaxed">
                   Verifies claims using trusted sources, RAG, vector search, and AI detection
                 </p>
-              </motion.div>
+              </m.div>
 
-              <motion.div
+              <m.div
                 custom={3}
                 variants={fadeUp}
                 className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4
@@ -329,33 +354,33 @@ function Home() {
                 <p className="text-gray-400 leading-relaxed">
                   Assigns verification marks with confidence scores and detailed explanations
                 </p>
-              </motion.div>
+              </m.div>
             </div>
-          </motion.div>
+          </m.div>
         </div>
       </section>
 
       {/* Verification Marks */}
       <section className="py-20 bg-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
+          <m.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             className="space-y-12"
           >
-            <motion.div custom={0} variants={fadeUp} className="text-center">
+            <m.div custom={0} variants={fadeUp} className="text-center">
               <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
                 Verification Marks
               </h2>
               <p className="text-lg text-gray-400 max-w-2xl mx-auto">
                 Clear, visual trust indicators that are instantly understandable
               </p>
-            </motion.div>
+            </m.div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {Object.values(MARK_META).map((mark, i) => (
-                <motion.div
+                <m.div
                   key={mark.label}
                   custom={i + 1}
                   variants={fadeUp}
@@ -367,6 +392,8 @@ function Home() {
                     <img
                       src={mark.icon}
                       alt={mark.label}
+                      loading="lazy"
+                      decoding="async"
                       className="w-8 h-8 object-contain"
                     />
                     <span className={`font-semibold text-lg ${mark.color}`}>
@@ -376,33 +403,33 @@ function Home() {
                   <p className="text-sm text-gray-400 leading-relaxed">
                     {mark.description}
                   </p>
-                </motion.div>
+                </m.div>
               ))}
             </div>
-          </motion.div>
+          </m.div>
         </div>
       </section>
 
       {/* Features */}
       <section className="py-20 bg-slate-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
+          <m.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             className="space-y-12"
           >
-            <motion.div custom={0} variants={fadeUp} className="text-center">
+            <m.div custom={0} variants={fadeUp} className="text-center">
               <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
                 Key Features
               </h2>
               <p className="text-lg text-gray-400 max-w-2xl mx-auto">
                 Built for developers, trusted by users
               </p>
-            </motion.div>
+            </m.div>
 
             <div className="grid md:grid-cols-2 gap-8">
-              <motion.div
+              <m.div
                 custom={1}
                 variants={fadeUp}
                 className="bg-linear-to-br from-cyan-500/10 to-blue-500/10 
@@ -431,9 +458,9 @@ function Home() {
                     Documentation →
                   </Link>
                 </div>
-              </motion.div>
+              </m.div>
 
-              <motion.div
+              <m.div
                 custom={2}
                 variants={fadeUp}
                 className="bg-linear-to-br from-purple-500/10 to-pink-500/10 
@@ -445,9 +472,9 @@ function Home() {
                   ephemerally. Only short AI-generated summaries are stored for
                   transparency.
                 </p>
-              </motion.div>
+              </m.div>
 
-              <motion.div
+              <m.div
                 custom={3}
                 variants={fadeUp}
                 className="bg-linear-to-br from-green-500/10 to-emerald-500/10 
@@ -467,9 +494,9 @@ function Home() {
                 >
                   View on GitHub <ExternalLink size={16} />
                 </a>
-              </motion.div>
+              </m.div>
 
-              <motion.div
+              <m.div
                 custom={4}
                 variants={fadeUp}
                 className="bg-linear-to-br from-orange-500/10 to-red-500/10 
@@ -489,38 +516,38 @@ function Home() {
                 >
                   Try Demo <ExternalLink size={16} />
                 </a>
-              </motion.div>
+              </m.div>
             </div>
-          </motion.div>
+          </m.div>
         </div>
       </section>
 
       {/* CTA Section */}
       <section className="py-20 bg-linear-to-b from-slate-950 to-slate-900">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
+          <m.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
             className="space-y-8"
           >
-            <motion.h2
+            <m.h2
               custom={0}
               variants={fadeUp}
               className="text-3xl sm:text-4xl font-bold text-white"
             >
               Ready to Build Trust?
-            </motion.h2>
+            </m.h2>
 
-            <motion.p
+            <m.p
               custom={1}
               variants={fadeUp}
               className="text-lg text-gray-300"
             >
               Start integrating SatyaMark into your platform today
-            </motion.p>
+            </m.p>
 
-            <motion.div
+            <m.div
               custom={2}
               variants={fadeUp}
               className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4 w-full"
@@ -552,15 +579,15 @@ function Home() {
               >
                 Contact Us
               </a>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         </div>
       </section>
 
       {/* System Updates Section */}
       <section id="updates" className="py-20 bg-black border-t border-white/5" aria-labelledby="updates-heading">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -571,7 +598,7 @@ function Home() {
               <h2 id="updates-heading" className="text-3xl sm:text-4xl font-bold text-white">Upcoming Updates</h2>
               <p className="text-gray-400 text-lg">The roadmap and upcoming improvements for the SatyaMark engine</p>
             </div>
-            
+
             <div className="bg-slate-900/50 border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-cyan-500/30 transition-colors duration-300">
               <article className="space-y-3" itemScope itemType="https://schema.org/NewsArticle">
                 <meta itemProp="publisher" content="SatyaMark" />
@@ -595,7 +622,7 @@ function Home() {
                 </div>
               </article>
             </div>
-          </motion.div>
+          </m.div>
         </div>
       </section>
 

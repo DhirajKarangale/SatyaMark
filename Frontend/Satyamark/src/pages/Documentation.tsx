@@ -1,6 +1,6 @@
 import { memo, useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
-import { motion, type Variants } from "framer-motion";
+import { m, type Variants } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
   BookOpen, Code, Package, Github, ExternalLink,
@@ -56,21 +56,21 @@ function Documentation() {
       {/* Hero Section */}
       <section className="bg-linear-to-b from-slate-900 to-slate-950 border-b border-white/10">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <motion.div
+          <m.div
             initial="hidden"
             animate="visible"
             className="space-y-6"
           >
-            <motion.div custom={0} variants={fadeUp}>
+            <m.div custom={0} variants={fadeUp}>
               <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">
                 Documentation
               </h1>
               <p className="text-xl text-gray-400 max-w-3xl">
                 Complete guide to integrating SatyaMark verification into your React application
               </p>
-            </motion.div>
+            </m.div>
 
-            <motion.div custom={1} variants={fadeUp} className="flex flex-wrap gap-4">
+            <m.div custom={1} variants={fadeUp} className="flex flex-wrap gap-4">
               <a
                 href="https://www.npmjs.com/package/satyamark-react"
                 target="_blank"
@@ -111,9 +111,9 @@ function Documentation() {
                 <ExternalLink size={18} />
                 Live Demo
               </a>
-            </motion.div>
+            </m.div>
 
-            <motion.div custom={2} variants={fadeUp} className="flex flex-wrap gap-3 pt-2">
+            <m.div custom={2} variants={fadeUp} className="flex flex-wrap gap-3 pt-2">
               <img
                 src="https://img.shields.io/npm/v/satyamark-react?color=22c55e&label=version"
                 alt="npm version"
@@ -129,8 +129,8 @@ function Documentation() {
                 alt="npm license"
                 className="h-5"
               />
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         </div>
       </section>
 
@@ -767,7 +767,7 @@ function PostCard({ post }) {
 
       {/* Scroll to Top Button */}
       {showScrollTop && (
-        <motion.button
+        <m.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           onClick={scrollToTop}
@@ -776,10 +776,10 @@ function PostCard({ post }) {
                         bg-gradient-to-r from-cyan-600 to-blue-600 
                         hover:from-cyan-500 hover:to-blue-500
                         text-white shadow-lg shadow-cyan-500/25 
-                        flex items-center justify-center transition-all z-40"
+                        flex items-center justify-center transition-all z-40 cursor-pointer"
         >
           ↑
-        </motion.button>
+        </m.button>
       )}
     </div>
   );

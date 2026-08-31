@@ -42,65 +42,67 @@ A robust cascading pipeline that attempts external model validation before falli
 ## ⚙️ Setup & Installation
 
 ### 1. Prerequisites
-- Python 3.9+
+- Python (3.9+)
 - Redis (for production workers)
 
-### 2. Installation
+### 2. Configure Environment Variables
+Copy the `.env.example` file and rename it to `.env` (or use the command below):
+```bash
+# On Mac/Linux
+cp .env.example .env
+
+# On Windows (Command Prompt)
+copy .env.example .env
+```
+Open the newly created `.env` file in your editor and input your real credentials for the following keys:
+- **LLM & Search APIs:** `ANTHROPIC_API_KEY`, `HF_TOKENS`, `SERPER_API_KEYS`
+- **Forensic APIs:** `TRUTHSCAN_API_KEY`, `SIGHTENGINE_API_USERS`, `SIGHTENGINE_API_SECRET`
+*(Resource Note: Agent testing costs roughly $0.14 per 20 runs. Image forensics are heavily API-dependent).*
+
+### 3. Installation
 Clone the repository and set up a virtual environment:
 ```bash
 git clone https://github.com/DhirajKarangale/SatyaMark.git
 cd SatyaMark/AI
 
-# Create and activate virtual environment
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-# Install all dependencies (includes both text and image requirements)
+# Activate the virtual environment:
+# On Mac/Linux:
+source venv/bin/activate
+# On Windows:
+venv\Scripts\activate
+
 pip install -r requirements.txt
-```
-
-### 3. Environment Variables
-Create a `.env` file in the `AI` directory with the following keys. (Make sure you also check the individual text and image documentation for any specific models you might be enabling/disabling):
-
-```env
-# Required for Text Web Search fallback
-SERPER_API_KEY=your_serper_api_key
-
-# Required for LLM integration (if using HF models)
-HF_TOKEN=your_huggingface_token
-
-# Required for Production Workers
-REDIS_URL=redis://localhost:6379/0
-
-# Optional API keys depending on active image verification services
-SIGHTENGINE_API_USER=your_user
-SIGHTENGINE_API_SECRET=your_secret
 ```
 
 ---
 
 ## ▶️ Usage
 
-### Local Testing & Development
-Use the unified entry point to run localized tests on both pipelines. You can modify the `statements` or `image_source` variables directly in `verify.py`.
+### Fast AI Evaluation (Local Testing)
+Use the unified entry point to run localized tests directly on the LangGraph state machine and Forensic heuristics.
 
+1. **Select a Test Case:** Open `verify.py`. On lines 39-40, modify the `ACTIVE_TEXT` or `ACTIVE_IMAGE` variables to input the claim or image URL you wish to verify.
+2. **Execute the Agent:**
 ```bash
 python verify.py
 ```
+**Expected Output:** The console will trace the agent's trajectory and output a final structured verdict with confidence scores and citations.
 
-### Production Workers
-For production deployments, the system is designed to consume verification jobs asynchronously via Redis. Run these in separate terminal instances or as background services.
+### Production Workers (Full-Stack Evaluation)
+For production deployments or the Full-Stack Evaluation method, the system consumes jobs asynchronously via Redis.
 
 **Start the Text Worker:**
 ```bash
-cd AI/text
+cd text
 python ./starter/text_worker.py
 ```
 
 **Start the Image Worker:**
 ```bash
-cd AI/image
-python ./image_worker.py
+cd image
+python ./starter/image_worker.py
 ```
 
 ---

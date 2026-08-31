@@ -79,11 +79,11 @@ registerStatus(jobId, domElement);
 
 ---
 
-## 🚀 Run Locally
+## 🚀 Run Locally (Full-Stack Evaluation)
+
+*Ensure you have configured the Backend and AI workers as described in the main repository's Reproduction Guide.*
 
 ```bash
-git clone https://github.com/DhirajKarangale/SatyaMark.git
-cd Frontend/DemoMedia
 npm install
 npm run dev
 ```

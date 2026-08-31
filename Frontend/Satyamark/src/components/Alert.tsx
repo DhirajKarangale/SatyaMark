@@ -1,5 +1,5 @@
 import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 
 type Props = {
     isOpen: boolean;
@@ -23,9 +23,9 @@ function Alert({
     return (
         <AnimatePresence>
             {isOpen && (
-                <motion.div
+                <m.div
                     className="fixed inset-0 z-50 flex items-center justify-center
-                    bg-black/60 backdrop-blur-sm p-4"
+                    bg-black/80 md:bg-black/60 md:backdrop-blur-sm p-4"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -35,7 +35,7 @@ function Alert({
                         if (!disableClose) onClose();
                     }}
                 >
-                    <motion.div
+                    <m.div
                         onClick={(e) => e.stopPropagation()}
                         className="bg-black/80 border border-white/10 text-white
                         rounded-2xl w-full max-w-sm sm:max-w-md
@@ -51,7 +51,7 @@ function Alert({
 
                         <div className="mt-6 flex flex-col-reverse sm:flex-row
                         justify-end gap-3 sm:gap-4">
-                            <motion.button
+                            <m.button
                                 disabled={disableClose}
                                 onClick={onClose}
                                 whileHover={!disableClose ? { scale: 1.05 } : {}}
@@ -64,9 +64,9 @@ function Alert({
                                     }`}
                             >
                                 Cancel
-                            </motion.button>
+                            </m.button>
 
-                            <motion.button
+                            <m.button
                                 disabled={disableConfirm}
                                 onClick={onConfirm}
                                 whileHover={!disableConfirm ? { scale: 1.05 } : {}}
@@ -84,10 +84,10 @@ function Alert({
                                     rounded-full animate-spin" />
                                 )}
                                 Confirm
-                            </motion.button>
+                            </m.button>
                         </div>
-                    </motion.div>
-                </motion.div>
+                    </m.div>
+                </m.div>
             )}
         </AnimatePresence>
     );

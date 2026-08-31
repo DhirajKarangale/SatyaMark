@@ -1,6 +1,6 @@
 import { memo, useState, useRef, useEffect } from "react";
 import { Send, Paperclip, X, AlertCircle } from "lucide-react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { jobStore } from "../store/jobStore";
 import { getDataId } from "../utils/GenerateIds";
 import { process } from "../process/satyamark_process";
@@ -36,8 +36,17 @@ function ChatInput() {
   }, [text]);
 
   useEffect(() => {
-    window.addEventListener("resize", adjustHeight);
-    return () => window.removeEventListener("resize", adjustHeight);
+    let timeoutId: number;
+    const debouncedAdjustHeight = () => {
+      clearTimeout(timeoutId);
+      timeoutId = window.setTimeout(adjustHeight, 100);
+    };
+    
+    window.addEventListener("resize", debouncedAdjustHeight);
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener("resize", debouncedAdjustHeight);
+    };
   }, []);
 
   useEffect(() => {
@@ -111,12 +120,12 @@ function ChatInput() {
 
   return (
     <>
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, ease: "easeOut" }}
-        className="w-full bg-slate-900/50 border border-white/10 
-                    backdrop-blur-sm rounded-2xl shadow-lg"
+        className="w-full bg-slate-900/95 md:bg-slate-900/50 border border-white/10 
+                    md:backdrop-blur-sm rounded-2xl shadow-lg"
       >
         {/* Connection Status Bar */}
         {!connected && (
@@ -139,7 +148,7 @@ function ChatInput() {
                 />
 
                 {uploading && (
-                  <div className="absolute inset-0 bg-black/60 backdrop-blur-sm
+                  <div className="absolute inset-0 bg-black/80 md:bg-black/60 md:backdrop-blur-sm
                                         flex items-center justify-center">
                     <div className="flex flex-col items-center gap-2">
                       <div className="w-8 h-8 border-2 border-cyan-400/30
@@ -208,7 +217,7 @@ function ChatInput() {
                 <Paperclip size={20} />
               </button>
 
-              <motion.button
+              <m.button
                 onClick={send}
                 disabled={!isValid || uploading}
                 whileTap={{ scale: 0.95 }}
@@ -221,7 +230,7 @@ function ChatInput() {
                 title="Send"
               >
                 <Send size={20} />
-              </motion.button>
+              </m.button>
             </div>
           </div>
 
@@ -243,7 +252,7 @@ function ChatInput() {
           hidden
           onChange={onFileChange}
         />
-      </motion.div>
+      </m.div>
 
       <Alert
         isOpen={msg !== ""}

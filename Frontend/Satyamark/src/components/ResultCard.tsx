@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet-async";
 import { jobStore } from "../store/jobStore";
 import { resultBus } from "../store/resultBus";
 import { memo, useState, useEffect } from "react";
-import { motion, type Variants } from "framer-motion";
+import { m, type Variants } from "framer-motion";
 import { onReceive } from "../process/satyamark_connect";
 import { process } from "../process/satyamark_process";
 import { getDataId } from "../utils/GenerateIds";
@@ -282,7 +282,7 @@ function ResultCard() {
 
     return (
       <div className="w-full h-full flex flex-col items-center justify-start pb-6 sm:pb-12">
-        <motion.div
+        <m.div
           variants={cardVariants}
           initial="hidden"
           animate="visible"
@@ -317,7 +317,7 @@ function ResultCard() {
               </p>
             </div>
           </div>
-        </motion.div>
+        </m.div>
       </div>
     );
   }
@@ -349,7 +349,7 @@ function ResultCard() {
           </script>
         </Helmet>
       )}
-      <motion.div
+      <m.div
         variants={cardVariants}
         initial="hidden"
         animate="visible"
@@ -358,7 +358,7 @@ function ResultCard() {
         <div className="bg-slate-900/50 border border-white/10 rounded-2xl shadow-xl overflow-hidden">
           {/* Header Section */}
           <div className="bg-gradient-to-r from-slate-800 to-slate-900 border-b border-white/10 p-6">
-            <motion.div
+            <m.div
               custom={0}
               variants={contentVariants}
               initial="hidden"
@@ -389,14 +389,14 @@ function ResultCard() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           </div>
 
           {/* Content Sections */}
           <div className="p-6 space-y-6">
             {/* Input Content */}
             {currentData.type === "text" && currentData.summary && (
-              <motion.div
+              <m.div
                 custom={1}
                 variants={contentVariants}
                 initial="hidden"
@@ -411,11 +411,11 @@ function ResultCard() {
                     {currentData.summary}
                   </div>
                 </div>
-              </motion.div>
+              </m.div>
             )}
 
             {currentData.type === "image" && currentData.image_url && (
-              <motion.div
+              <m.div
                 custom={1}
                 variants={contentVariants}
                 initial="hidden"
@@ -428,11 +428,11 @@ function ResultCard() {
                 <div className="bg-white/5 border border-white/10 rounded-xl p-4">
                   <LazyImage src={currentData.image_url} />
                 </div>
-              </motion.div>
+              </m.div>
             )}
 
             {/* Verification Result */}
-            <motion.div
+            <m.div
               custom={2}
               variants={contentVariants}
               initial="hidden"
@@ -447,11 +447,11 @@ function ResultCard() {
                   {currentData.reason}
                 </div>
               </div>
-            </motion.div>
+            </m.div>
 
             {/* Sources */}
             {currentData.urls && currentData.urls.length > 0 && (
-              <motion.div
+              <m.div
                 custom={3}
                 variants={contentVariants}
                 initial="hidden"
@@ -481,7 +481,7 @@ function ResultCard() {
                     ))}
                   </div>
                 </div>
-              </motion.div>
+              </m.div>
             )}
           </div>
 
@@ -530,7 +530,7 @@ function ResultCard() {
             </div>
           </div>
         </div>
-      </motion.div>
+      </m.div>
 
       <Alert
         isOpen={showAlert}

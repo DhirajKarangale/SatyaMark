@@ -1,6 +1,6 @@
 import { memo, useState, useEffect, useRef } from "react";
 import { NavLink } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { Home, MessageCircleCode, FileText, Menu, X, Github, ExternalLink, Package } from "lucide-react";
 import { routeHome, routeChat, routeDoccu } from "../utils/Routes";
 
@@ -35,13 +35,13 @@ function Navbar() {
   return (
     <>
       {/* Desktop & Mobile Navbar */}
-      <motion.nav
+      <m.nav
         ref={navRef}
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
         className="fixed top-0 left-0 right-0 z-50 
-                    bg-slate-950/80 backdrop-blur-xl 
+                    bg-slate-950/95 md:bg-slate-950/80 md:backdrop-blur-xl 
                     border-b border-white/10
                     shadow-lg shadow-black/20"
       >
@@ -135,13 +135,13 @@ function Navbar() {
         {/* Mobile Menu */}
         <AnimatePresence>
           {mobileMenuOpen && (
-            <motion.div
+            <m.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.2 }}
               className="md:hidden border-t border-white/10 
-                                bg-slate-950/95 backdrop-blur-xl overflow-hidden"
+                                bg-slate-950 md:bg-slate-950/95 md:backdrop-blur-xl overflow-hidden"
             >
               <div className="px-4 py-3 space-y-1">
                 {/* External links in mobile menu */}
@@ -188,14 +188,14 @@ function Navbar() {
                   <span>Live Demo</span>
                 </a>
               </div>
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
-      </motion.nav>
+      </m.nav>
 
       {/* Mobile Bottom Navigation */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 
-                      bg-slate-950/90 backdrop-blur-xl border-t border-white/10">
+                      bg-slate-950/95 md:bg-slate-950/90 md:backdrop-blur-xl border-t border-white/10">
         <div className="flex items-center justify-around h-16 px-2">
           {[navItems[1], navItems[0], navItems[2]].map((item) => (
             <NavLink

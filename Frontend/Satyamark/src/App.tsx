@@ -4,8 +4,6 @@ import Chat from './pages/Chat';
 import Home from './pages/Home';
 import NotFound from "./pages/NotFound";
 import Documentation from './pages/Documentation';
-
-import SetBG from './backgrounds/SetBG';
 import LayoutNavbar from './components/LayoutNavbar';
 
 import { useEffect } from "react";
@@ -21,8 +19,6 @@ function App() {
 
   return (
     <Router>
-      <SetBG />
-
       <Routes>
         <Route element={<LayoutNavbar />}>
           <Route path={routeHome} element={<Home />} />

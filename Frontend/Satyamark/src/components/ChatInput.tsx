@@ -200,7 +200,7 @@ function ChatInput() {
                 aria-label="Upload an image to verify"
                 className="w-11 h-11 rounded-xl flex justify-center items-center
                 bg-white/5 hover:bg-white/10 border border-white/10
-                text-gray-300 hover:text-white
+                text-gray-300 hover:text-white cursor-pointer
                 disabled:opacity-50 disabled:cursor-not-allowed
                 transition-all duration-200"
                 title="Upload image"
@@ -215,7 +215,7 @@ function ChatInput() {
                 aria-label="Submit content for verification"
                 className={`w-11 h-11 rounded-xl flex justify-center items-center transition-all duration-200
                 ${isValid && !uploading
-                    ? "bg-linear-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white shadow-lg shadow-cyan-500/25"
+                    ? "bg-linear-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white shadow-lg shadow-cyan-500/25 cursor-pointer"
                     : "bg-slate-700 text-gray-500 cursor-not-allowed"
                   }`}
                 title="Send"

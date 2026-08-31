@@ -776,7 +776,7 @@ function PostCard({ post }) {
                         bg-gradient-to-r from-cyan-600 to-blue-600 
                         hover:from-cyan-500 hover:to-blue-500
                         text-white shadow-lg shadow-cyan-500/25 
-                        flex items-center justify-center transition-all z-40"
+                        flex items-center justify-center transition-all z-40 cursor-pointer"
         >
           ↑
         </motion.button>

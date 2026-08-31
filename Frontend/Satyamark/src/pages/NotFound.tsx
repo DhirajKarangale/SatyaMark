@@ -1,7 +1,6 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import GradientText from "../reactbits/GradientText/GradientText";
 
 function NotFound() {
   const navigate = useNavigate();
@@ -15,14 +14,9 @@ function NotFound() {
         className="max-w-xl w-full border border-white/15 backdrop-blur-sm
         rounded-2xl p-8 text-center flex flex-col gap-6"
       >
-        <GradientText
-          colors={["#40ffaa", "#4079ff", "#40ffaa"]}
-          animationSpeed={6}
-          showBorder={false}
-          className="text-6xl font-bold bg-transparent"
-        >
+        <h1 className="text-6xl font-bold bg-linear-to-r from-emerald-400 via-blue-500 to-emerald-400 bg-clip-text text-transparent">
           404
-        </GradientText>
+        </h1>
 
         <h2 className="text-white text-2xl font-semibold">
           Page Not Found
@@ -36,7 +30,7 @@ function NotFound() {
           <button
             onClick={() => navigate("/")}
             aria-label="Go to Homepage"
-            className="px-6 py-3 rounded-xl bg-cyan-500 text-black font-medium hover:bg-cyan-400 transition"
+            className="px-6 py-3 rounded-xl bg-cyan-500 text-black font-medium hover:bg-cyan-400 transition cursor-pointer"
           >
             Go to Home
           </button>

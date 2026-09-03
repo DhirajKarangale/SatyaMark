@@ -43,13 +43,13 @@ function Documentation() {
   return (
     <div className="min-h-screen bg-slate-950 text-gray-100">
       <Helmet>
-        <title>Documentation | SatyaMark API & SDK</title>
+        <title>Documentation | SatyaMark</title>
         <meta name="description" content="Complete guide to integrating SatyaMark verification into your React application. Learn about our SDK, WebSocket API, and Core Concepts." />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://satyamark.js.org/documentation" />
-        <meta property="og:title" content="Documentation | SatyaMark API & SDK" />
+        <meta property="og:title" content="Documentation | SatyaMark" />
         <meta property="og:description" content="Complete guide to integrating SatyaMark verification into your React application. Learn about our SDK, WebSocket API, and Core Concepts." />
-        <meta property="twitter:title" content="Documentation | SatyaMark API & SDK" />
+        <meta property="twitter:title" content="Documentation | SatyaMark" />
         <meta property="twitter:description" content="Complete guide to integrating SatyaMark verification into your React application. Learn about our SDK, WebSocket API, and Core Concepts." />
         <meta name="keywords" content="SatyaMark documentation, react verification SDK, content verification API, SatyaMark integration, open source trust infrastructure, WebSocket React SDK" />
       </Helmet>

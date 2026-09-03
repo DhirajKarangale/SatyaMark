@@ -6,8 +6,9 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#020617" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="SatyaMark" />
@@ -15,8 +16,9 @@
     <link rel="canonical" href="https://satyamark.js.org/" />
     
     <!-- Primary Meta Tags -->
-    <title>SatyaMark | AI-Powered Content Verification</title>
-    <meta name="title" content="SatyaMark | AI-Powered Content Verification" />
+    <title>SatyaMark | Real-Time Content Verification</title>
+    <meta name="title" content="SatyaMark | Real-Time Content Verification" />
+    <meta name="application-name" content="SatyaMark" />
     <meta name="description" content="SatyaMark is a centralized platform that helps users verify digital content, distinguish truth from misinformation, and view transparent verification results." />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="keywords" content="SatyaMark, AI content verification, fact checking engine, deepfake detection, open source trust infrastructure, misinformation detection, react verification SDK, AI credibility platform, real-time content analysis, trust signals" />
@@ -25,26 +27,39 @@
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="SatyaMark" />
     <meta property="og:url" content="https://satyamark.js.org/" />
-    <meta property="og:title" content="SatyaMark | AI Content Verification" />
+    <meta property="og:title" content="SatyaMark | Real-Time Content Verification" />
     <meta property="og:description" content="A centralized platform that helps users verify digital content and distinguish truth from misinformation." />
     <meta property="og:image" content="https://satyamark.js.org/og-image.png" />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content="https://satyamark.js.org/" />
-    <meta property="twitter:title" content="SatyaMark | AI Content Verification" />
+    <meta property="twitter:title" content="SatyaMark | Real-Time Content Verification" />
     <meta property="twitter:description" content="A centralized platform that helps users verify digital content and distinguish truth from misinformation." />
     <meta property="twitter:image" content="https://satyamark.js.org/twitter-card.png" />
 
     <!-- Structured Data -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "SatyaMark",
-      "alternateName": ["Satya Mark", "SatyaMark AI"],
-      "url": "https://satyamark.js.org/" 
-    }
+    [
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "SatyaMark",
+        "alternateName": ["Satya Mark", "SatyaMark AI"],
+        "url": "https://satyamark.js.org/" 
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "SatyaMark",
+        "url": "https://satyamark.js.org/",
+        "logo": "https://satyamark.js.org/favicon-32x32.png",
+        "sameAs": [
+          "https://github.com/DhirajKarangale/SatyaMark",
+          "https://www.npmjs.com/package/satyamark-react"
+        ]
+      }
+    ]
     </script>
   </head>
   <body style="margin: 0; padding: 0; background-color: black;">

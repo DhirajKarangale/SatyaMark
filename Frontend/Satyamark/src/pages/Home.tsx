@@ -35,12 +35,12 @@ function Home() {
         <title>SatyaMark | Real-Time Content Verification</title>
         <meta name="description" content="SatyaMark is an open-source AI content verification infrastructure. Integrate our real-time React SDK for deepfake detection, fact-checking, and trust signals." />
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="SatyaMark | AI Content Verification" />
+        <meta property="og:title" content="SatyaMark | Real-Time Content Verification" />
         <meta property="og:description" content="A real-time AI content verification infrastructure. Integrate our React SDK for deepfake detection, fact-checking, and trust signals." />
         <meta property="og:site_name" content="SatyaMark" />
         <meta property="og:url" content="https://satyamark.js.org/" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="SatyaMark | AI Content Verification" />
+        <meta name="twitter:title" content="SatyaMark | Real-Time Content Verification" />
         <meta name="twitter:description" content="A real-time AI content verification infrastructure. Integrate our React SDK for deepfake detection and fact-checking." />
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
         <link rel="canonical" href="https://satyamark.js.org/" />
@@ -62,6 +62,17 @@ function Home() {
               "applicationCategory": "DeveloperApplication",
               "description": "Open-source multi-modal content verification infrastructure with an official React SDK.",
               "url": "https://satyamark.js.org/"
+            },
+            {
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": "SatyaMark",
+              "url": "https://satyamark.js.org/",
+              "logo": "https://satyamark.js.org/favicon-32x32.png",
+              "sameAs": [
+                "https://github.com/DhirajKarangale/SatyaMark",
+                "https://www.npmjs.com/package/satyamark-react"
+              ]
             }
           ])}
         </script>

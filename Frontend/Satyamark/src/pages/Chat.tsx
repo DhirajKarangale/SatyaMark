@@ -48,13 +48,13 @@ function Chat() {
     return (
         <div className="flex-1 min-h-0 bg-slate-950 flex flex-col">
             <Helmet>
-                <title>Live Verification Chat | SatyaMark API</title>
+                <title>Live Verification Chat | SatyaMark</title>
                 <meta name="description" content="Test SatyaMark's real-time verification engine. Upload images or paste text to instantly check for misinformation, deepfakes, and factual accuracy." />
                 <meta name="robots" content="index, follow" />
                 <link rel="canonical" href="https://satyamark.js.org/chat" />
-                <meta property="og:title" content="Live Verification Chat | SatyaMark API" />
+                <meta property="og:title" content="Live Verification Chat | SatyaMark" />
                 <meta property="og:description" content="Submit text or images to verify their authenticity in real-time with SatyaMark's AI verification engine." />
-                <meta property="twitter:title" content="Live Verification Chat | SatyaMark API" />
+                <meta property="twitter:title" content="Live Verification Chat | SatyaMark" />
                 <meta property="twitter:description" content="Submit text or images to verify their authenticity in real-time with SatyaMark's AI verification engine." />
                 <meta name="keywords" content="SatyaMark live demo, verify images, deepfake scanner, real-time AI fact checking, check text authenticity, SatyaMark API testing" />
                 <script type="application/ld+json">

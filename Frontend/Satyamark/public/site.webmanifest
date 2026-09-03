@@ -1,5 +1,5 @@
 {
-  "name": "SatyaMark | AI Content Verification",
+  "name": "SatyaMark",
   "short_name": "SatyaMark",
   "icons": [
     {
@@ -10,10 +10,12 @@
     {
       "src": "/android-chrome-512x512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ],
   "theme_color": "#020617",
   "background_color": "#020617",
-  "display": "standalone"
+  "display": "standalone",
+  "start_url": "/"
 }

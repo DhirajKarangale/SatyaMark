@@ -1,7 +1,8 @@
-import { getSessionId, setSessionId, clearSession } from "./manageSessions";
+import { getSessionData, setSessionData, clearSession } from "./manageSessions";
 
 let socket: WebSocket | null = null;
 let storedConnectionData: SatyaMarkConnectionData | null = null;
+let hmacSecret: string = "";
 
 let isConnected = false;
 let reconnectAttempts = 0;
@@ -56,6 +57,28 @@ export function onReceive(cb: ReceiveCallback) {
     };
 }
 
+async function signPayload(fields: string): Promise<string> {
+    if (!hmacSecret) {
+        const data = await getSessionData();
+        if (data.hmacSecret) {
+            hmacSecret = data.hmacSecret;
+        }
+    }
+
+    if (!hmacSecret) return "";
+
+    const encoder = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+        "raw",
+        encoder.encode(hmacSecret),
+        { name: "HMAC", hash: "SHA-256" },
+        false,
+        ["sign"]
+    );
+    const signature = await crypto.subtle.sign("HMAC", key, encoder.encode(fields));
+    return btoa(String.fromCharCode(...new Uint8Array(signature)));
+}
+
 export async function init(connectionData: SatyaMarkConnectionData) {
     if (socket && socket.readyState == WebSocket.OPEN && storedConnectionData == connectionData) {
         console.log("Already Connected: ", connectionData);
@@ -72,7 +95,7 @@ export async function init(connectionData: SatyaMarkConnectionData) {
     }
 
     socket.onopen = async () => {
-        const sessionId = await getSessionId();
+        const { sessionId } = await getSessionData();
         safeSend({
             type: "handshake",
             clientId: connectionData.user_id,
@@ -91,8 +114,16 @@ export async function init(connectionData: SatyaMarkConnectionData) {
     socket.onmessage = async (event) => {
         const data = JSON.parse(event.data);
 
-        if (data.type === "session_created" && data.sessionId) {
-            await setSessionId(data.sessionId);
+        if ((data.type === "session_created" || data.type === "session_confirmed") && data.hmacSecret) {
+            hmacSecret = data.hmacSecret;
+
+            if (data.type === "session_created" && data.sessionId) {
+                await setSessionData(data.sessionId, data.hmacSecret);
+            } else {
+                const { sessionId } = await getSessionData();
+                await setSessionData(sessionId, data.hmacSecret);
+            }
+
             if (!isConnected) {
                 notifyConnectionState(true);
             }
@@ -161,14 +192,18 @@ export async function sendData(text: string, image_url: string, dataId: string) 
 
     const { app_id, user_id } = storedConnectionData;
     const jobId = generateJobId(app_id, user_id, dataId);
-    const sessionId = await getSessionId();
+    const { sessionId } = await getSessionData();
+
+    const signString = `${user_id}:${sessionId}:${jobId}`;
+    const hmac = await signPayload(signString);
 
     const data = {
         clientId: user_id,
         jobId: jobId,
         text,
         image_url,
-        sessionId
+        sessionId,
+        hmac
     };
 
     socket.send(JSON.stringify(data));
